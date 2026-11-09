@@ -1,6 +1,6 @@
-/* Inlined into every page at build (build/inlineStyles.ts): no stylesheet request */
+/* Inlined into every page at build (build/inlineStyles.ts): no stylesheet request. The fonts are
+   declared there too, each page its own (build/faces.ts) */
 @import './tokens.css';
-@import './fonts.css';
 @import './base.css';
 @import './layout.css';
 @import './components.css';

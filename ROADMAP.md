@@ -44,7 +44,9 @@ on a real phone. Patterns come from the playbook in
   each chapter (the user's request, 2026-11-09)
 - ✅ The board comes in and leaves with the finish instead of vanishing (the user's request)
 - ✅ A realistic dart and board, built in Blender from the shared 3D toolkit (the user's request)
-- ⬜ French, Russian, Spanish, Italian and Indonesian (the user's request, 2026-11-09)
+- ✅ French, Russian, Spanish, Italian and Indonesian (the user's request, 2026-11-09): a static
+  page per language, a language menu, hreflang; Oswald for Russian. A native speaker still has to
+  review the Russian and Indonesian copy
 
 **Done when** the gate is green, Lighthouse stays 100 × 4 and the user has tried it on a phone.
 

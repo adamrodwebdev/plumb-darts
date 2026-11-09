@@ -1,6 +1,8 @@
 import { BOARD, SEGMENT_DEGREES, SEGMENTS } from './board'
 
-export type Ring = 'bull' | 'outer-bull' | 'single' | 'double' | 'treble' | 'miss'
+/** Where a dart can land; each ring has its label in every language (score.<ring>) */
+export const RINGS = ['bull', 'outer-bull', 'single', 'double', 'treble', 'miss'] as const
+export type Ring = (typeof RINGS)[number]
 
 export interface Score {
   readonly ring: Ring

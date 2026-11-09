@@ -1,0 +1,160 @@
+{
+  "meta": {
+    "title": "Plumb, freccette in tungsteno · demo di design",
+    "description": "Plumb è una freccetta in tungsteno fittizia, raccontata come una pagina prodotto immersiva in 3D: una demo di design e sviluppo pensata per tenere Lighthouse a 100 e rispettare le WCAG 2.2 AA.",
+    "notFoundTitle": "Fuori bersaglio · Plumb"
+  },
+  "a11y": {
+    "skip": "Vai al contenuto",
+    "home": "Plumb, torna su"
+  },
+  "header": {
+    "tag": "Marchio fittizio · demo di design",
+    "themeToLight": "Passa al tema chiaro",
+    "themeToDark": "Passa al tema scuro",
+    "sound": "Audio",
+    "language": "Lingua"
+  },
+  "hud": {
+    "label": "Punti rimasti",
+    "chapters": "Capitoli",
+    "current": "Capitoli. Ora: {chapter}, restano {remaining}."
+  },
+  "chapters": {
+    "hero": "Si gioca",
+    "press": "Sulla linea",
+    "grip": "La presa",
+    "weight": "Il peso",
+    "anatomy": "Anatomia",
+    "throw": "Il colpo finale",
+    "checkout": "La chiusura"
+  },
+  "hero": {
+    "eyebrow": "{tungsten} tungsteno · {weight} · punta in acciaio",
+    "title1": "Il peso,",
+    "title2": "al posto",
+    "title3": "giusto.",
+    "lede": "Le freccette Plumb hanno il tungsteno spostato in avanti e una lavorazione pensata per una presa che smetti di notare. Il nome viene dalla plumbata, il dardo appesantito col piombo dei soldati romani.",
+    "ctaThrow": "Lancia una freccetta",
+    "ctaMeet": "Scopri la freccetta",
+    "scroll": "Scorri"
+  },
+  "press": {
+    "kicker": "01 · Sulla linea",
+    "title": "Scelta dai giocatori.",
+    "body": "Ritagli di esempio, mostrati come il sito del club mostrerà quelli veri: la testata, la data, il titolo, una breve citazione con il suo autore e un link all’articolo.",
+    "sample": "Ritaglio d’esempio · fittizio",
+    "previous": "Ritaglio precedente",
+    "next": "Ritaglio successivo",
+    "status": "Ritaglio {index} di {count}: {outlet}",
+    "card1Outlet": "The Oche Gazette",
+    "card1Headline": "Con gli anelli, addio dita sudate",
+    "card1Quote": "Diciotto anelli sottili: la freccetta si posa sempre nello stesso punto.",
+    "card2Outlet": "Sisal Review",
+    "card2Headline": "Venticinque grammi che volano di punta",
+    "card2Quote": "Così ben bilanciata in avanti che smetti di guidarla.",
+    "card3Outlet": "Checkout Weekly",
+    "card3Headline": "Trecento leg, nessuno scivolone",
+    "card3Quote": "L’abbiamo lanciata per un mese. La presa non ha mai ceduto.",
+    "card4Outlet": "Flight Path Monthly",
+    "card4Headline": "La freccetta più silenziosa sul bersaglio",
+    "card4Quote": "Entra con un colpo sordo, senza vibrare.",
+    "card5Outlet": "The Bullseye Bulletin",
+    "card5Headline": "La nuova preferita dei giocatori di club",
+    "card5Quote": "A ogni serata al club, qualcuno chiede di provarla.",
+    "card6Outlet": "Leg & Set",
+    "card6Headline": "Tungsteno tornito su un solo asse",
+    "card6Quote": "Punta, fusto, stelo e aletta condividono un asse perfetto."
+  },
+  "grip": {
+    "kicker": "02 · La presa",
+    "title": "Una presa che dimentichi.",
+    "body": "Diciotto anelli, profondi {ringDepth} e distanziati di {ringPitch}. Le tue dita trovano lo stesso punto, lancio dopo lancio, senza cercarlo.",
+    "spec1Label": "Profondità",
+    "spec2Label": "Passo",
+    "spec3Label": "Anelli"
+  },
+  "weight": {
+    "kicker": "03 · Il peso",
+    "title": "Il peso dove conta.",
+    "body": "Il sessanta per cento della massa sta davanti alle tue dita. La freccetta vuole volare di punta, così smetti di guidarla.",
+    "cog": "Baricentro",
+    "cogValue": "Al {cog} dalla punta",
+    "spec1Label": "Tungsteno",
+    "spec2Label": "Fusto",
+    "spec3Label": "Lunghezza"
+  },
+  "anatomy": {
+    "kicker": "04 · Anatomia",
+    "title1": "Quattro parti,",
+    "title2": "un solo asse.",
+    "body": "Ogni parte è tornita sullo stesso asse, così la freccetta parte esattamente dove hai mirato.",
+    "tipName": "Punta",
+    "tipSpec": "Acciaio temprato, {tipLength}",
+    "barrelName": "Fusto",
+    "barrelSpec": "Tungsteno al {tungsten}, anellato",
+    "shaftName": "Stelo",
+    "shaftSpec": "Alluminio, medio",
+    "flightName": "Aletta",
+    "flightSpec": "Standard, {flightThickness} micron"
+  },
+  "throw": {
+    "kicker": "05 · Il colpo finale",
+    "title": "Chiudi il leg.",
+    "body": "Restano quaranta. Colpisci il doppio 20, in cima al bersaglio, per vincere il leg. Hai tre freccette.",
+    "pointerHint": "Tocca o fai clic sul bersaglio per lanciare dove punti, oppure scegli un obiettivo qui sotto.",
+    "aimLabel": "Mira a",
+    "aimD20": "Doppio 20 (in cima)",
+    "aimT20": "Triplo 20",
+    "aimBull": "Centro (bull)",
+    "aimT19": "Triplo 19",
+    "aimAny": "Ovunque",
+    "throwButton": "Lancia",
+    "collect": "Raccogli le freccette",
+    "visit": "Questo turno",
+    "dartsLeftInitial": "Restano 3 freccette",
+    "dartsLeft": {
+      "one": "Resta {count} freccetta",
+      "many": "Restano {count} di freccette",
+      "other": "Restano {count} freccette"
+    },
+    "hit": {
+      "one": "{label}, {count} punto.",
+      "many": "{label}, {count} di punti.",
+      "other": "{label}, {count} punti."
+    },
+    "win": "Doppio 20. Leg vinto!",
+    "noDarts": "Freccette finite. Raccoglile per lanciare ancora.",
+    "collected": "Freccette raccolte. Ne hai di nuovo tre."
+  },
+  "score": {
+    "single": "Singolo {segment}",
+    "double": "Doppio {segment}",
+    "treble": "Triplo {segment}",
+    "outer-bull": "Bull esterno",
+    "bull": "Centro",
+    "miss": "Fuori bersaglio"
+  },
+  "checkout": {
+    "kicker": "06 · La chiusura",
+    "title": "Leg vinto.",
+    "body": "Plumb non esiste. Questa pagina mostra come un racconto di prodotto immersivo possa caricarsi in fretta e funzionare per tutti: con la tastiera, con uno screen reader, con il movimento ridotto o senza 3D.",
+    "ctaSource": "Scopri come è fatta",
+    "ctaAgain": "Lancia ancora"
+  },
+  "footer": {
+    "wordmark": "Plumb",
+    "disclaimer": "Plumb è un marchio fittizio creato per una demo di design e sviluppo. Niente è in vendita.",
+    "source": "Codice sorgente su GitHub",
+    "credit": "Design e codice: AdamRodWebDev",
+    "fonts": "Caratteri: Big Shoulders Display e Geist Mono, SIL Open Font License.",
+    "top": "Torna su"
+  },
+  "notFound": {
+    "kicker": "Errore 404",
+    "title": "Fuori bersaglio.",
+    "body": "Questa pagina non esiste. Anche i migliori a volte sbagliano.",
+    "back": "Torna sulla linea",
+    "languages": "La linea nella tua lingua"
+  }
+}

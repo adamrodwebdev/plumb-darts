@@ -3,7 +3,10 @@ import { dirname, resolve } from 'node:path'
 import { bundle } from 'lightningcss'
 import subsetFont from 'subset-font'
 import type { Plugin, ResolvedConfig } from 'vite'
-import { lookup, type Messages } from './htmlI18n.ts'
+import { languageOf, type Language } from '../src/i18n/languages.ts'
+import { fontCharacters, missingCharacters, unicodeRange } from './fontCoverage.ts'
+import { lookup, type Messages, valuesFor, withFacts } from './htmlI18n.ts'
+import { type CopyFace, cutFace, type FontFile, fontFaceRules, shownText } from './pageFonts.ts'
 
 /** lightningcss version encoding: major << 16 | minor << 8 */
 const version = (major: number, minor = 0): number => (major << 16) | (minor << 8)
@@ -20,50 +23,121 @@ const TARGETS = {
   ios_saf: version(16, 4),
 }
 
-export interface HeroFont {
-  /** Variable woff2 the subset is cut from */
-  file: string
-  family: string
-  weight: number
+/**
+ * A face embedded in the page, set from the first paint with no request and no swap: the glyphs of
+ * a few messages, cut from one or more files of the same typeface (a Latin and a Cyrillic file),
+ * pinned to one weight. Each file gives the glyphs it holds, declared by their unicode-range.
+ */
+export interface EmbeddedFace {
+  readonly family: string
+  /** Variable woff2 files the subset is cut from, in order of preference */
+  readonly files: readonly string[]
+  readonly weight: number
   /** Message keys whose text is set in this face from the first paint */
-  keys: readonly string[]
+  readonly keys: readonly string[]
   /** Glyphs needed beyond those messages (the score counter's digits) */
-  extraGlyphs: string
-  messagesFile: string
+  readonly extraGlyphs: string
+}
+
+/** The faces each script's pages embed */
+export type EmbeddedFaces = Readonly<Record<Language['script'], readonly EmbeddedFace[]>>
+
+/** The text a face must draw: its messages (facts filled) in both cases, and its extra glyphs */
+export function faceText(face: EmbeddedFace, messages: Messages, language: Language): string {
+  const facts = valuesFor(language).facts
+  const text = face.keys
+    .map((key) => withFacts(lookup(messages, key) ?? '', facts, `${language.code} ${key}`))
+    .join(' ')
+  return `${text}${text.toLocaleUpperCase(language.intl)}${face.extraGlyphs}`
 }
 
 /**
- * The hero headline's face: only its glyphs, pinned to one weight and embedded as a data URL.
- * The first paint is already set in the brand face, with no request and no swap.
+ * The @font-face rules of one embedded face: one per file that holds some of its glyphs, each
+ * limited to those glyphs. A glyph none of the files holds fails the build: the browser would draw
+ * it in another font, in the middle of the headline.
  */
-export async function heroFontFace(font: HeroFont): Promise<string> {
-  const messages = JSON.parse(readFileSync(font.messagesFile, 'utf8')) as Messages
-  const text = font.keys.map((key) => lookup(messages, key) ?? '').join(' ')
-  const glyphs = `${text}${text.toUpperCase()}${font.extraGlyphs}`
-  const subset = await subsetFont(readFileSync(font.file), glyphs, {
-    targetFormat: 'woff2',
-    variationAxes: { wght: font.weight },
-  })
-  return (
-    `@font-face{font-family:"${font.family}";` +
-    `src:url(data:font/woff2;base64,${subset.toString('base64')}) format("woff2");` +
-    `font-weight:${font.weight};font-display:block}`
-  )
+export async function embeddedFace(
+  face: EmbeddedFace,
+  text: string,
+  where: string,
+): Promise<string> {
+  // The space too: a face that did not claim it would leave the headline's spaces to the next
+  // font, which swaps in later and moves the words
+  let wanted = new Set([...text].map((character) => character.codePointAt(0) ?? 0))
+  const rules: string[] = []
+  for (const file of face.files) {
+    const font = readFileSync(file)
+    const held = fontCharacters(font)
+    const glyphs = [...wanted].filter((code) => held.has(code))
+    if (glyphs.length === 0) continue
+    wanted = new Set([...wanted].filter((code) => !held.has(code)))
+    const subset = await subsetFont(font, String.fromCodePoint(...glyphs), {
+      targetFormat: 'woff2',
+      variationAxes: { wght: face.weight },
+    })
+    rules.push(
+      `@font-face{font-family:"${face.family}";` +
+        `src:url(data:font/woff2;base64,${subset.toString('base64')}) format("woff2");` +
+        `font-weight:${face.weight};font-display:block;unicode-range:${unicodeRange(glyphs)}}`,
+    )
+  }
+  const missing = missingCharacters(String.fromCodePoint(...wanted), new Set())
+  if (missing.length > 0) {
+    throw new Error(`${where}: "${face.family}" has no glyph for ${missing.join(', ')}`)
+  }
+  return rules.join('')
 }
 
-/** Font URLs written `url(fonts/…)` become absolute under the base path (404.html is served anywhere). */
-export function absoluteFontUrls(css: string, base: string): string {
-  return css.replace(/url\((["']?)fonts\//g, (_, quote: string) => `url(${quote}${base}fonts/`)
+const LANG_ATTRIBUTE = /<html\s+lang="([^"]*)"/
+
+/** A page's fonts: the embedded headline faces' rules, and its copy faces' files and rules */
+interface PageFonts {
+  readonly embedded: string
+  readonly files: readonly FontFile[]
 }
 
 /**
  * The whole stylesheet (src/styles/index.css and its @imports) is inlined in every page: no
- * render-blocking request, and the first paint is complete. Minified in builds.
+ * render-blocking request, and the first paint is complete. Minified in builds. Each page (read
+ * from its <html lang>) embeds the faces of its own headline, and declares its copy faces cut to
+ * its own language: written under fonts/ by the build, served from memory by the dev server.
  */
-export function inlineStyles(options: { entry: string; heroFont: HeroFont }): Plugin {
+export function inlineStyles(options: {
+  entry: string
+  faces: EmbeddedFaces
+  copyFaces: Readonly<Record<Language['script'], readonly CopyFace[]>>
+  localesDir: string
+}): Plugin {
   let config: ResolvedConfig
-  let fontFace: Promise<string> | undefined
+  const pageFonts = new Map<string, Promise<PageFonts>>()
   const stylesDir = dirname(resolve(options.entry))
+
+  const fontsFor = (language: Language): Promise<PageFonts> => {
+    const cached = pageFonts.get(language.code)
+    if (cached) return cached
+    const messages = JSON.parse(
+      readFileSync(resolve(options.localesDir, `${language.code}.json`), 'utf8'),
+    ) as Messages
+    const text = shownText(language, messages)
+    const fonts = Promise.all([
+      Promise.all(
+        options.faces[language.script].map((face) =>
+          embeddedFace(face, faceText(face, messages, language), language.code),
+        ),
+      ),
+      Promise.all(
+        options.copyFaces[language.script].map((face) => cutFace(face, text, language.code)),
+      ),
+    ]).then(([embedded, files]) => ({ embedded: embedded.join(''), files: files.flat() }))
+    pageFonts.set(language.code, fonts)
+    return fonts
+  }
+
+  /** Every file the pages made so far, by name (a file shared by two languages appears once) */
+  const fontFiles = async (): Promise<Map<string, FontFile>> => {
+    const all = await Promise.all(pageFonts.values())
+    return new Map(all.flatMap((fonts) => fonts.files.map((file) => [file.fileName, file])))
+  }
 
   return {
     name: 'inline-styles',
@@ -73,23 +147,50 @@ export function inlineStyles(options: { entry: string; heroFont: HeroFont }): Pl
     configureServer(server) {
       server.watcher.add(stylesDir)
       server.watcher.on('change', (changed) => {
-        if (changed.endsWith('.css') || changed.endsWith('en.json')) {
-          fontFace = undefined
+        if (changed.endsWith('.css') || changed.endsWith('.json')) {
+          pageFonts.clear()
           server.ws.send({ type: 'full-reload' })
         }
       })
+      // The cut faces have no file in development: served from memory, under the same names
+      server.middlewares.use((request, response, next) => {
+        const path = (request.url ?? '').split('?')[0] ?? ''
+        if (!path.startsWith(`${config.base}fonts/`)) return next()
+        void fontFiles().then((files) => {
+          const file = files.get(path.slice(config.base.length))
+          if (!file) return next()
+          response.setHeader('Content-Type', 'font/woff2')
+          response.end(file.source)
+        }, next)
+      })
+    },
+    // Last: Vite transforms the pages (and so cuts their faces) in its own generateBundle
+    generateBundle: {
+      order: 'post',
+      async handler() {
+        if (config.command !== 'build') return
+        const files = await fontFiles()
+        if (files.size === 0) return this.error('no page cut its fonts before the bundle closed')
+        for (const file of files.values()) {
+          this.emitFile({ type: 'asset', fileName: file.fileName, source: file.source })
+        }
+      },
     },
     transformIndexHtml: {
       order: 'post',
       async handler(html) {
-        fontFace ??= heroFontFace(options.heroFont)
+        const language = languageOf(LANG_ATTRIBUTE.exec(html)?.[1])
         const { code } = bundle({
           filename: resolve(options.entry),
           minify: config.command === 'build',
           targets: TARGETS,
         })
-        const css = absoluteFontUrls(code.toString(), config.base)
-        return html.replace('<!-- inline-styles -->', `<style>${await fontFace}${css}</style>`)
+        const fonts = await fontsFor(language)
+        const faces = fonts.embedded + fontFaceRules(fonts.files, config.base)
+        return html.replace(
+          '<!-- inline-styles -->',
+          () => `<style>${faces}${code.toString()}</style>`,
+        )
       },
     },
   }

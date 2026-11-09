@@ -6,6 +6,11 @@ All notable changes to this project are written here. The format follows
 
 ## [Unreleased]
 
+## [0.3.0] - 2026-11-09
+
+The journey, realistic models and six languages. Lighthouse 100 in the four categories on
+mobile (worst of three runs, in CI).
+
 ### Added
 
 - The page in French, Russian, Spanish, Italian and Indonesian, beside English: one static page
@@ -91,6 +96,12 @@ All notable changes to this project are written here. The format follows
 
 ### Fixed
 
+- Phones, 640 px tall or less: the tip's label rose under the masthead; a part label now stays
+  below it. An end-to-end test checks at 320, 360, 390 and 430 px wide that the anatomy's labels
+  cover neither its words nor the masthead (they covered its paragraph at 360 px in v0.2).
+- The press orbit's print faded with each clipping's angle, so it stayed half clear wherever the
+  reader stopped with a clipping at the side (below WCAG contrast): it is now whole or hidden,
+  switching over a quarter second.
 - On devices with a GPU the 3D scene started with one long task: three's reflections (PMREM)
   compiled their room, blur, GGX and integration shader programs on the main thread at first use
   (a 250 ms task on a laptop GPU, more on a phone). They now compile in parallel beforehand
@@ -199,5 +210,6 @@ First published version, on GitHub Pages. Lighthouse 100 in the four categories 
 - Reduced-motion and no-3D versions, an 8-second watchdog, light and dark themes.
 - Content Security Policy by hash in each page; unit tests (70).
 
-[Unreleased]: https://github.com/adamrodwebdev/plumb-darts/compare/v0.2.0...dev
+[Unreleased]: https://github.com/adamrodwebdev/plumb-darts/compare/v0.3.0...dev
+[0.3.0]: https://github.com/adamrodwebdev/plumb-darts/releases/tag/v0.3.0
 [0.2.0]: https://github.com/adamrodwebdev/plumb-darts/releases/tag/v0.2.0

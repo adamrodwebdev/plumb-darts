@@ -37,7 +37,7 @@ on a real phone. Patterns come from the playbook in
 
 **Done when** the full gate is green and Lighthouse shows 100 × 4 on the worst run.
 
-## v0.3 — The journey and realism (in progress)
+## v0.3 — The journey and realism (published on 2026-11-09)
 
 - ✅ Chapters 3 to 7 travel sideways on tall screens (sticky frame, holds, the 3D following),
   stacked on short screens and under reduced motion; links, focus and the chapter menu land on

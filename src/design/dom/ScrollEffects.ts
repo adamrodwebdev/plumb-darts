@@ -138,6 +138,8 @@ export class ScrollEffects {
   /** The chapter a jump landed on, and the control it must show (focus), kept until the reader moves */
   private landing: { readonly id: ChapterId; readonly show: Element | null } | null = null
   private refreshQueued = false
+  /** The chapter on screen the last time the page came to rest, kept for a change of layout */
+  private resting: ChapterId | null = null
   private generation = 0
   /** While the triggers are rebuilt, the page's geometry is only half there: no landing then */
   private laying = false
@@ -184,6 +186,11 @@ export class ScrollEffects {
     }
     if (this.arrival) this.arrive(this.arrival)
     else this.revealHash()
+    // Where the reader rests, read while nothing moves the page: when the screen crosses the
+    // journey's height, Chromium may move the page and refresh the triggers before this hears of
+    // it, and the position then named the chapter before (2026-11-09)
+    ScrollTrigger.addEventListener('scrollEnd', () => this.rest())
+    this.rest()
     this.sideways.addEventListener('change', () => void this.relayOut())
     document.addEventListener('click', (event) => this.followLink(event))
     window.addEventListener('hashchange', () => this.revealHash())
@@ -285,7 +292,7 @@ export class ScrollEffects {
 
   /** After the screen crossed the journey's height: the same chapter, in the new layout */
   private async relayOut(): Promise<void> {
-    const chapter = this.chapterAt(window.scrollY)
+    const chapter = this.resting ?? this.chapterAt(window.scrollY)
     // Held from now: the refresh after the resize would put back the old pixels
     if (chapter) this.landing = { id: chapter, show: null }
     await this.layOut()
@@ -462,6 +469,28 @@ export class ScrollEffects {
     if (!pin || !stop || this.plan.length <= 0) return null
     const unit = (pin.end - pin.start) / this.plan.length
     return { id, start: pin.start + stop.start * unit, end: pin.start + stop.end * unit }
+  }
+
+  /** Notes the chapter on screen, unless the layout is being rebuilt */
+  private rest(): void {
+    if (this.laying) return
+    this.resting = this.landing?.id ?? this.panelOnScreen() ?? this.chapterAt(window.scrollY)
+  }
+
+  /** The journey chapter on screen, read from where the panels are */
+  private panelOnScreen(): ChapterId | null {
+    const frame = this.journey?.frame.getBoundingClientRect()
+    const middle = window.innerHeight / 2
+    if (!this.journeyScroll || !frame || frame.top > middle || frame.bottom < middle) return null
+    let nearest: ChapterId | null = null
+    let distance = Number.POSITIVE_INFINITY
+    for (const id of JOURNEY_CHAPTERS) {
+      const left = document.getElementById(id)?.getBoundingClientRect().left
+      if (left === undefined || Math.abs(left) >= distance) continue
+      distance = Math.abs(left)
+      nearest = id
+    }
+    return nearest
   }
 
   /** The chapter holding the screen at a scroll position (the last one started) */

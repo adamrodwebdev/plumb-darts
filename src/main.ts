@@ -94,7 +94,7 @@ async function start(view: Window): Promise<void> {
   const markers = new MarkerLayer(page)
   root.classList.add(tier ? 'has-3d' : 'no-3d')
 
-  // The journey chapter the visitor came to, kept aside by the head script (build/inline/arrival.js)
+  // The chapter the visitor came to, kept aside by the head script (build/inline/arrival.js)
   const arrival = chapterById(root.dataset['arrival'] ?? '')?.id ?? null
   delete root.dataset['arrival']
 

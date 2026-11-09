@@ -690,7 +690,7 @@
        it, its leader still meets the tip */
     transform: translate3d(
       calc(var(--x, -500) * 1px + var(--leader)),
-      calc(max(var(--y, -500) * 1px, var(--masthead-height) + 0.25rem + 50%) - 50%),
+      calc(max(var(--y, -500) * 1px, var(--masthead-height) + 0.25rem + 50% - var(--top, 0) * 1px) - 50%),
       0
     );
   }

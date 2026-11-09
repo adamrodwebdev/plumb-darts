@@ -184,3 +184,22 @@ for (const language of LANGUAGES) {
     }
   })
 }
+
+test('on a short screen, a link to a chapter lands on it once the chapters are pinned', async ({
+  page,
+}) => {
+  // Stacked (under 40rem tall): the browser jumped before the pins added their room above the
+  // chapter, and landed 2531 px short of the anatomy at 360 × 496 (2026-11-09)
+  await page.setViewportSize({ width: 360, height: 496 })
+  await page.goto('#anatomy')
+  await settled(page)
+
+  await expect
+    .poll(() =>
+      page.locator('#anatomy').evaluate((element) => Math.round(element.getBoundingClientRect().top)),
+    )
+    .toBeLessThan(120)
+  expect(
+    await page.locator('#anatomy').evaluate((element) => element.getBoundingClientRect().bottom),
+  ).toBeGreaterThan(0)
+})

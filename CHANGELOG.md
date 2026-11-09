@@ -6,6 +6,18 @@ All notable changes to this project are written here. The format follows
 
 ## [Unreleased]
 
+### Fixed
+
+- On a short screen (under 40rem tall, the chapters stacked and pinned), a link to a chapter
+  landed far from it: the browser jumped and held the place while the page loaded, before the pins
+  added their room above the chapter (421 px into the anatomy's pin at 360 × 496). The head script
+  now keeps the fragment aside wherever the story pins, at any height, and the page lands on the
+  chapter itself; back and forward land on it too.
+- On a short phone, a part label of the exploded view went under the masthead while its chapter
+  scrolled: the floor below the masthead is now kept on screen, not in the chapter.
+- Tests: the anatomy's labels cover neither its words nor the masthead at 320 × 568, 320 × 640,
+  360 × 640, 360 × 496, 390 × 844 and 430 × 932; a link to a chapter lands on it on a short screen.
+
 ## [0.3.0] - 2026-11-09
 
 The journey, realistic models and six languages. Lighthouse 100 in the four categories on

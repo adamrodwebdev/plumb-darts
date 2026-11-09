@@ -51,6 +51,9 @@ export class MarkerLayer {
       }
       marker.style.setProperty('--x', String(Math.round(point.x - origin.left)))
       marker.style.setProperty('--y', String(Math.round(point.y - origin.top)))
+      // Where the label's frame starts on screen: CSS keeps a label below the masthead, which is
+      // fixed to the screen, not to the chapter (a stacked chapter scrolls past it)
+      marker.style.setProperty('--top', String(Math.round(origin.top)))
       marker.style.setProperty('--o', shown.toFixed(2))
     })
   }

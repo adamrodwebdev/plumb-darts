@@ -584,11 +584,13 @@ export class ScrollEffects {
     this.landOn(id)
   }
 
-  /** The address names a journey chapter (on arrival, or back and forward) */
+  /** The address names a chapter (on arrival, or back and forward) */
   private revealHash(): void {
     const id = chapterById(window.location.hash.slice(1))?.id
-    // Outside the sideways journey the browser's own jump is right
-    if (id && this.journeyStop(id)) this.landOn(id)
+    // Stacked too: on arrival the browser jumps before the pins add their room above the chapter,
+    // and landed 2531 px short of the anatomy on a 360 × 496 phone (2026-11-09). land() goes by
+    // the chapter's trigger there, which the pins have already moved
+    if (id) this.landOn(id)
   }
 
   /**

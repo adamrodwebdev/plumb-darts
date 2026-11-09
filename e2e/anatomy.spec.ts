@@ -23,12 +23,14 @@ async function shownLabels(page: Page): Promise<Box[]> {
   )
 }
 
-// Phones tall enough for the sideways journey: the labels sat on the anatomy's paragraph at 360 px
-// wide in v0.2 (found by the marketing capture, 2026-11-09). The stacked layout of short screens
-// (360 × 496) lands differently and comes with its own case
+// Phones from the narrowest the site supports (320 px), sideways (tall enough) and stacked (320 × 568,
+// 360 × 496): the labels sat on the anatomy's paragraph at 360 px wide in v0.2 (found by the
+// marketing capture, 2026-11-09)
 for (const { width, height } of [
+  { width: 320, height: 568 },
   { width: 320, height: 640 },
   { width: 360, height: 640 },
+  { width: 360, height: 496 },
   { width: 390, height: 844 },
   { width: 430, height: 932 },
 ]) {

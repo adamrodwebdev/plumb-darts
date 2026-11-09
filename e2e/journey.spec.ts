@@ -93,16 +93,18 @@ test.describe('the journey of chapters 3 to 7', () => {
     await page.setViewportSize({ width, height: 500 })
 
     await expect.poll(() => isSideways(page)).toBe(false)
-    expect(await stacked(page, 'grip', 'weight')).toBe(true)
-    // The chapters are pinned again one task at a time (slower in WebKit): wait for the end, where
-    // the anatomy's top is back near the top of the screen
+    // The chapters are pinned again one task at a time, at the old scroll position until the
+    // landing: on the way a pinned chapter covers the next one (WebKit in CI read it there, twice,
+    // 2026-11-09). The end state is read at once: the chapters stacked, the anatomy's top back near
+    // the top of the screen
     await expect
-      .poll(() =>
-        page.locator('#anatomy').evaluate((element) => {
+      .poll(async () => {
+        const anatomyOnTop = await page.locator('#anatomy').evaluate((element) => {
           const top = element.getBoundingClientRect().top
           return top >= -1 && top < 250
-        }),
-      )
+        })
+        return anatomyOnTop && (await stacked(page, 'grip', 'weight'))
+      })
       .toBe(true)
   })
 })

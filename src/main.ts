@@ -3,7 +3,7 @@ import { Announcer, SoundToggle, ThemeToggle, revealOnScroll } from './design/do
 import { Hud } from './design/dom/Hud'
 import { MarkerLayer } from './design/dom/MarkerLayer'
 import { OrbitCarousel } from './design/dom/OrbitCarousel'
-import type { ScrollEffects } from './design/dom/ScrollEffects'
+import type { JourneyElements, ScrollEffects } from './design/dom/ScrollEffects'
 import { ThrowPanel } from './design/dom/ThrowPanel'
 import type { SceneHandle } from './design/scene/createScene'
 import { openStageContext } from './design/scene/stageContext'
@@ -14,6 +14,8 @@ import { probeDevice } from './logic/deviceProbe'
 import { BrowserStore, MotionPreference, ThemePreference } from './logic/preferences'
 import { ThrowSession } from './logic/ThrowSession'
 import type { Layout } from './rules/choreography'
+import { chapterById } from './rules/chapters'
+import { JOURNEY_MEDIA } from './rules/journey'
 import { turnFor } from './rules/orbit'
 import { QUALITY, chooseTier } from './rules/quality'
 import { performanceClock } from './time/clock'
@@ -81,6 +83,10 @@ async function start(view: Window): Promise<void> {
   const markers = new MarkerLayer(page)
   root.classList.add(tier ? 'has-3d' : 'no-3d')
 
+  // The journey chapter the visitor came to, kept aside by the head script (build/inline/arrival.js)
+  const arrival = chapterById(root.dataset['arrival'] ?? '')?.id ?? null
+  delete root.dataset['arrival']
+
   // 4. Scroll effects, only when motion is welcome
   let effects: ScrollEffects | null = null
   if (motionAllowed()) {
@@ -94,11 +100,21 @@ async function start(view: Window): Promise<void> {
     const { ScrollEffects } = await import('./design/dom/ScrollEffects')
     // The module's evaluation (GSAP) is a task of its own, then each chapter's trigger
     await nextTask()
-    effects = new ScrollEffects(sections)
+    effects = new ScrollEffects({
+      sections,
+      journey: journeyOf(page),
+      sideways: view.matchMedia(JOURNEY_MEDIA),
+      arrival,
+    })
     await effects.init()
     if (orbit) effects.onOrbitTurn(turnFor(orbit.count() - 1, orbit.count()), (turn) => orbit.setTurn(turn))
   }
   const progress = required<HTMLElement>(page, '[data-boot-progress]')
+  if (arrival && !effects) {
+    // Motion turned off since the head script ran: the browser's own jump, done here
+    view.history.replaceState(view.history.state, '', `#${arrival}`)
+    page.getElementById(arrival)?.scrollIntoView({ block: 'start' })
+  }
   if (!tier || !context) {
     // Nothing more to load: the page is complete, its scroll effects included
     progress.classList.add('is-done')
@@ -178,6 +194,14 @@ async function start(view: Window): Promise<void> {
     clearTimeout(watchdog)
     if (!settled) fallBack()
   }
+}
+
+/** Chapters 3 to 7's journey, its sticky frame and its strip, when the page has them */
+function journeyOf(page: ParentNode): JourneyElements | null {
+  const root = page.querySelector<HTMLElement>('[data-journey]')
+  const frame = page.querySelector<HTMLElement>('[data-journey-frame]')
+  const track = page.querySelector<HTMLElement>('[data-journey-track]')
+  return root && frame && track ? { root, frame, track } : null
 }
 
 /** Pointer aiming over the 3D board: the pad follows the board's circle on screen */

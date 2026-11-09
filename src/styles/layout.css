@@ -184,6 +184,41 @@
   overflow: clip;
 }
 
+/* ---------- The journey: chapters 3 to 7 ----------
+   Stacked like the rest of the page by default (no script, reduced motion, a short screen). The
+   script turns it sideways (.is-sideways): the journey grows as tall as its scrolling (set by the
+   script), and its frame sticks to the screen while a strip of five screens slides left inside it,
+   each chapter holding the screen for a while. Sticky, not pinned by the script: nothing moves in
+   the page, so a focused control keeps its focus (bug lessons, 2026-11-09). */
+.journey {
+  position: relative;
+  /* Above the 3D stage like every chapter */
+  z-index: 3;
+}
+
+.journey.is-sideways .journey__frame {
+  position: sticky;
+  inset-block-start: 0;
+  container-type: inline-size;
+  height: 100svh;
+  /* The strip is five screens wide: clipped here, it never widens the page, which a phone would
+     zoom out to show (bug lessons, 2026-11-09) */
+  overflow: clip;
+}
+
+.journey.is-sideways .journey__track {
+  display: flex;
+  height: 100%;
+}
+
+.journey.is-sideways .chapter {
+  flex: 0 0 100cqi;
+  height: 100%;
+  min-height: 0;
+  /* Labels that follow the 3D model stay in their own screen */
+  overflow: clip;
+}
+
 /* Short screens (a laptop with its toolbars, a landscape phone): pinned chapters must fit */
 @media (height < 50rem) {
   .chapter {
@@ -556,4 +591,10 @@
     grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
     align-items: center;
   }
+}
+
+/* A chapter reached by an in-page link takes the focus (where the next Tab starts), without the
+   outline meant for controls */
+.chapter[tabindex='-1']:focus {
+  outline: none;
 }

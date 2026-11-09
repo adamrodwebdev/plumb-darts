@@ -111,30 +111,27 @@ export async function createScene(options: SceneOptions): Promise<SceneHandle> {
           return
         }
         stage.camera.updateMatrixWorld()
-        // A dart from an earlier visit may still be pinned in the board: it flies in the scene
-        stage.scene.attach(dart.root)
-        const from = stage.camera.localToWorld(HAND.clone())
-        const to = board.toWorld(thrownDart.landing, new Vector3())
+        board.root.updateWorldMatrix(true, false)
+        // The dart belongs to the board from the throw on: it flies in the board's own frame (the
+        // board only moves, never turns or scales) and goes wherever the board goes. Thrown darts
+        // once stayed in the air behind the story after the reader scrolled on (2026-11-09).
+        dart.root.userData['keepLook'] = true
+        board.root.add(dart.root)
+        const from = board.root.worldToLocal(stage.camera.localToWorld(HAND.clone()))
+        const to = board.root.worldToLocal(board.toWorld(thrownDart.landing, new Vector3()))
         sound.play('whoosh')
-        const flight = new DartFlight(dart, {
-          from,
-          to,
-          start: clock.now(),
-          instant: !motion(),
-          onLand: () => {
-            sound.play(thrownDart.gameShot ? 'win' : 'thud')
-            resolve()
-          },
-        })
-        stage.play({
-          step: (now) => {
-            if (flight.step(now)) return true
-            // Settled: pinned in the board, it leaves with it (it once floated in the air)
-            dart.root.userData['keepLook'] = true
-            board.root.attach(dart.root)
-            return false
-          },
-        })
+        stage.play(
+          new DartFlight(dart, {
+            from,
+            to,
+            start: clock.now(),
+            instant: !motion(),
+            onLand: () => {
+              sound.play(thrownDart.gameShot ? 'win' : 'thud')
+              resolve()
+            },
+          }),
+        )
       })
     },
     collect() {

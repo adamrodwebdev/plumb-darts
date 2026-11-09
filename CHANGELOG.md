@@ -33,8 +33,9 @@ All notable changes to this project are written here. The format follows
 ### Changed
 
 - The board slides in from the right with the finish and leaves by the left with it, receding,
-  and fades only on its way out of shot: it used to vanish in one frame. The darts thrown stay
-  pinned in it and leave with it, where they floated in the air.
+  and fades only on its way out of shot: it used to vanish in one frame. The darts thrown belong
+  to the board from the throw on, even mid-flight, and leave with it: they stayed in the air
+  behind the story once the reader scrolled on.
 - The dart and the board come from two model files instead of shapes built in code: 311 kB for
   the dart, 497 kB for the board (306 kB with a 1024 px face on phones and smaller GPUs), meshopt
   geometry and WebP maps, downloaded while the stage lights up; textures upload one per task.

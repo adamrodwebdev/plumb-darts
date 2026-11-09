@@ -5,7 +5,8 @@ const sha256 = (text: string): string =>
   `'sha256-${createHash('sha256').update(text, 'utf8').digest('base64')}'`
 
 /** Executable inline scripts: no src, and no data type (JSON blocks are never run). */
-const INLINE_SCRIPT = /<script(?![^>]*\bsrc=)(?![^>]*type="application\/(?:ld\+)?json")[^>]*>([\s\S]*?)<\/script>/g
+const INLINE_SCRIPT =
+  /<script(?![^>]*\bsrc=)(?![^>]*type="application\/(?:ld\+)?json")[^>]*>([\s\S]*?)<\/script>/g
 const INLINE_STYLE = /<style[^>]*>([\s\S]*?)<\/style>/g
 
 /** The policy of one page: its own inline blocks are allowed by hash, nothing else inline. */
@@ -14,12 +15,18 @@ export function policyFor(html: string): string {
   const styles = [...html.matchAll(INLINE_STYLE)].map((match) => sha256(match[1] ?? ''))
   return [
     "default-src 'self'",
-    `script-src 'self' ${scripts.join(' ')}`.trim(),
+    // 'wasm-unsafe-eval' lets the 3D scene compile the WebAssembly of three's meshopt decoder
+    // (the models' compressed geometry). It allows WebAssembly only: eval() and new Function()
+    // stay refused, and no script runs that the hashes and 'self' do not name.
+    ['script-src', "'self'", ...scripts, "'wasm-unsafe-eval'"].join(' '),
     `style-src 'self' ${styles.join(' ')}`.trim(),
     "img-src 'self' data: blob:",
     "font-src 'self' data:",
-    "connect-src 'self'",
-    "worker-src 'self' blob:",
+    // blob: the model files' embedded images are read back from blob: URLs the page itself made
+    // (three's GLTFLoader fetches them): they hold nothing but bytes already in the page
+    "connect-src 'self' blob:",
+    // No page starts a worker: the board's face, once drawn in one, comes from its model file
+    "worker-src 'none'",
     "media-src 'self'",
     "manifest-src 'self'",
     "object-src 'none'",

@@ -42,6 +42,20 @@ describe('content security policy', () => {
     expect(policy).toContain(`style-src 'self' ${sha('a{}')}`)
     expect(policy).not.toContain(sha('{"a":1}'))
     expect(policy).toContain("object-src 'none'")
+    expect(policy).toContain("worker-src 'none'")
+  })
+
+  test('lets the scene compile WebAssembly (the meshopt decoder), never evaluate text as code', () => {
+    const scriptSrc = policyFor('')
+      .split('; ')
+      .find((directive) => directive.startsWith('script-src'))
+
+    expect(scriptSrc).toBe("script-src 'self' 'wasm-unsafe-eval'")
+    expect(policyFor('')).not.toMatch(/'unsafe-(eval|inline)'/)
+  })
+
+  test('lets the model loader read back its own blob: images, and connect nowhere else', () => {
+    expect(policyFor('')).toContain("connect-src 'self' blob:;")
   })
 })
 
@@ -67,9 +81,9 @@ describe('deferred boot', () => {
 
 describe('inline styles', () => {
   test('makes font URLs absolute under the base path, with or without quotes', () => {
-    const css = "src:url(fonts/a.woff2);src:url('fonts/b.woff2');src:url(\"fonts/c.woff2\")"
+    const css = 'src:url(fonts/a.woff2);src:url(\'fonts/b.woff2\');src:url("fonts/c.woff2")'
     expect(absoluteFontUrls(css, '/plumb-darts/')).toBe(
-      "src:url(/plumb-darts/fonts/a.woff2);src:url('/plumb-darts/fonts/b.woff2');src:url(\"/plumb-darts/fonts/c.woff2\")",
+      'src:url(/plumb-darts/fonts/a.woff2);src:url(\'/plumb-darts/fonts/b.woff2\');src:url("/plumb-darts/fonts/c.woff2")',
     )
   })
 })

@@ -14,7 +14,8 @@ function themeScript(): Plugin {
   const source = readFileSync(path('./build/inline/theme.js'), 'utf8').trim()
   return {
     name: 'theme-script',
-    transformIndexHtml: (html) => html.replace('<!-- theme-script -->', `<script>${source}</script>`),
+    transformIndexHtml: (html) =>
+      html.replace('<!-- theme-script -->', `<script>${source}</script>`),
   }
 }
 
@@ -54,8 +55,5 @@ export default defineConfig(({ command, isPreview }) => ({
         notFound: path('./404.html'),
       },
     },
-  },
-  worker: {
-    format: 'es',
   },
 }))

@@ -6,15 +6,15 @@ import type { QualitySettings } from '../../rules/quality'
 import type { BoardPoint } from '../../rules/scoring'
 import type { Clock } from '../../time/clock'
 import { nextTask } from '../../time/nextTask'
-import { type RandomSource, SeededRandom } from '../../time/random'
+import type { RandomSource } from '../../time/random'
 import type { SoundEngine } from '../audio/SoundEngine'
 import type { MarkerLayer } from '../dom/MarkerLayer'
 import type { ThrowStage } from '../dom/ThrowPanel'
 import { BoardModel } from './BoardModel'
-import { drawBoardFace } from './boardFace'
 import { DartFlight } from './DartFlight'
-import { DartModel, buildDartGeometries, createDartMaterials, drawFlightTexture } from './DartModel'
+import { DartModel, drawFlightTexture, printFlight } from './DartModel'
 import { SceneDirector, type ScreenCircle } from './SceneDirector'
+import { SceneModels } from './SceneModels'
 import { Stage } from './Stage'
 
 export interface SceneOptions {
@@ -44,55 +44,44 @@ export interface SceneHandle extends ThrowStage {
 /** Where the throwing hand is, in the camera's own space (right of and below the eye) */
 const HAND = new Vector3(11, -13, -12)
 
-function drawFaceHere(size: number, seed: number): HTMLCanvasElement {
-  const canvas = document.createElement('canvas')
-  canvas.width = size
-  canvas.height = size
-  const context = canvas.getContext('2d')
-  if (context) drawBoardFace(context, size, new SeededRandom(seed))
-  return canvas
-}
-
-/** The board face, drawn in a worker when the browser can (no long task on the page) */
-function drawFace(size: number, seed: number): Promise<ImageBitmap | HTMLCanvasElement | null> {
-  if (typeof OffscreenCanvas === 'undefined') return Promise.resolve(drawFaceHere(size, seed))
-  return new Promise((resolve) => {
-    const worker = new Worker(new URL('./boardFace.worker.ts', import.meta.url), { type: 'module' })
-    worker.onmessage = (event: MessageEvent<unknown>) => {
-      worker.terminate()
-      resolve(event.data instanceof ImageBitmap ? event.data : null)
-    }
-    worker.onerror = () => {
-      worker.terminate()
-      resolve(drawFaceHere(size, seed))
-    }
-    worker.postMessage({ size, seed })
-  })
-}
-
 /**
- * Builds the 3D scene step by step, one task per step (renderer, light, models, shaders), so
- * no long task blocks the page.
+ * Builds the 3D scene step by step, one task per step (renderer, light, models, textures,
+ * shaders), so no long task blocks the page. The model files download while the stage lights
+ * up; a file that fails or is refused rejects the scene, and the page keeps its art without 3D.
  */
 export async function createScene(options: SceneOptions): Promise<SceneHandle> {
   const { context, quality, clock, sound, markers, motion, onProgress } = options
+  const loading = SceneModels.load(import.meta.env.BASE_URL, quality)
+  // Awaited below; until then a failure must not count as unhandled
+  loading.catch(() => undefined)
   const stage = new Stage(context, quality, clock)
   onProgress(0.45)
   await stage.light()
   onProgress(0.6)
 
+  const models = await loading
   await nextTask()
-  const geometries = buildDartGeometries(quality.radialSegments)
-  const materials = createDartMaterials(await drawFlightTexture())
-  const hero = new DartModel(geometries, materials)
+  printFlight(models.dart.flight, await drawFlightTexture())
+  const hero = new DartModel(models.dart)
   const set = [hero.clone(), hero.clone()]
   const thrown = [hero.clone(), hero.clone(), hero.clone()]
   for (const dart of thrown) dart.root.visible = false
-  const board = new BoardModel()
+  const board = new BoardModel(models.board)
+  board.light(stage.scene.environment)
   board.root.position.set(...BOARD_POSITION)
-  stage.scene.add(hero.root, board.root, ...set.map((dart) => dart.root), ...thrown.map((d) => d.root))
+  stage.scene.add(
+    hero.root,
+    board.root,
+    ...set.map((dart) => dart.root),
+    ...thrown.map((d) => d.root),
+  )
   onProgress(0.75)
 
+  // Each texture goes to the GPU in its own task, not all inside the first frame
+  for (const texture of models.textures()) {
+    await nextTask()
+    stage.upload(texture)
+  }
   await nextTask()
   await stage.compile()
   onProgress(0.9)
@@ -107,16 +96,6 @@ export async function createScene(options: SceneOptions): Promise<SceneHandle> {
     layout: options.layout,
     motion,
   })
-
-  void drawFace(quality.boardTexture, Math.floor(options.random.next() * 2 ** 31)).then(
-    async (image) => {
-      if (!image) return
-      const texture = board.setFace(image)
-      await nextTask()
-      stage.upload(texture)
-      stage.requestRender()
-    },
-  )
 
   return {
     director,

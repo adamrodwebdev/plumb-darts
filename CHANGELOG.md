@@ -44,6 +44,8 @@ All notable changes to this project are written here. The format follows
 
 ### Fixed
 
+- On wide screens the board's rim covered the first letters of the finish's text (17 to 39 px from
+  1024 to 1920 px wide): the camera now keeps it clear of the words.
 - Playing the finish with the keyboard: the Throw button kept the focus only by chance. It was
   disabled while the dart flew, and a disabled button loses the focus (Chrome hands it to the
   page), so the next Enter went nowhere. It now waits as `aria-disabled`; after the last dart the

@@ -6,6 +6,10 @@ All notable changes to this project are written here. The format follows
 
 ## [Unreleased]
 
+## [0.3.1] - 2026-11-09
+
+Phones: short-screen landings, the anatomy's labels and the press ring.
+
 ### Fixed
 
 - On a short screen (under 40rem tall, the chapters stacked and pinned), a link to a chapter
@@ -231,6 +235,7 @@ First published version, on GitHub Pages. Lighthouse 100 in the four categories 
 - Reduced-motion and no-3D versions, an 8-second watchdog, light and dark themes.
 - Content Security Policy by hash in each page; unit tests (70).
 
-[Unreleased]: https://github.com/adamrodwebdev/plumb-darts/compare/v0.3.0...dev
+[Unreleased]: https://github.com/adamrodwebdev/plumb-darts/compare/v0.3.1...dev
+[0.3.1]: https://github.com/adamrodwebdev/plumb-darts/releases/tag/v0.3.1
 [0.3.0]: https://github.com/adamrodwebdev/plumb-darts/releases/tag/v0.3.0
 [0.2.0]: https://github.com/adamrodwebdev/plumb-darts/releases/tag/v0.2.0

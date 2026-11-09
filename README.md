@@ -8,7 +8,7 @@ It is a design and engineering demo: nothing is for sale. The name comes from th
 lead-weighted throwing dart of Roman soldiers.
 
 - Live: https://adamrodwebdev.github.io/plumb-darts/
-- Status: **v0.3**, published on 2026-11-09 (see [ROADMAP.md](ROADMAP.md) and [CHANGELOG.md](CHANGELOG.md))
+- Status: **v0.3.1**, published on 2026-11-09 (see [ROADMAP.md](ROADMAP.md) and [CHANGELOG.md](CHANGELOG.md))
 
 ## What it shows
 

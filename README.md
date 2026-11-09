@@ -7,8 +7,8 @@ built to keep **Lighthouse at 100** in all four categories and to meet **WCAG 2.
 It is a design and engineering demo: nothing is for sale. The name comes from the *plumbata*, the
 lead-weighted throwing dart of Roman soldiers.
 
-- Live (once published): https://adamrodwebdev.github.io/plumb-darts/
-- Status: **v0.1 prototype**, in review (see [ROADMAP.md](ROADMAP.md))
+- Live: https://adamrodwebdev.github.io/plumb-darts/
+- Status: **v0.2**, published on 2026-11-09 (see [ROADMAP.md](ROADMAP.md) and [CHANGELOG.md](CHANGELOG.md))
 
 ## What it shows
 

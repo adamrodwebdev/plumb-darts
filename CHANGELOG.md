@@ -6,6 +6,11 @@ All notable changes to this project are written here. The format follows
 
 ## [Unreleased]
 
+## [0.2.0] - 2026-11-09
+
+First published version, on GitHub Pages. Lighthouse 100 in the four categories on mobile
+(worst of three runs, locally and in CI) and on desktop.
+
 ### Added
 
 - "Trusted on the oche": six sample press clippings orbiting their headline in CSS 3D, turned by
@@ -74,3 +79,6 @@ All notable changes to this project are written here. The format follows
   code requested after the first paint, 3D booted in short tasks, render on demand.
 - Reduced-motion and no-3D versions, an 8-second watchdog, light and dark themes.
 - Content Security Policy by hash in each page; unit tests (70).
+
+[Unreleased]: https://github.com/adamrodwebdev/plumb-darts/compare/v0.2.0...dev
+[0.2.0]: https://github.com/adamrodwebdev/plumb-darts/releases/tag/v0.2.0

@@ -10,7 +10,7 @@ Prove that an award-level immersive page (live 3D, scroll story, interaction, so
 on a real phone. Patterns come from the playbook in
 `Desktop/Code/claude/.helpers/immersive-web-design/immersive-3d-web.md`.
 
-## v0.1 — Prototype (in review)
+## v0.1 — Prototype (done)
 
 - ✅ Six chapters: hero, grip (pinned camera move), weight (gauge, centre-of-gravity label),
   anatomy (exploded view with labels), the finish (three darts at double 20), checkout
@@ -19,27 +19,30 @@ on a real phone. Patterns come from the playbook in
 - ✅ Deferred boot, inline CSS, embedded hero font subset, CSP by hash, compile hints
 - ✅ Reduced motion, no-3D fallback, watchdog, light and dark themes, optional sound
 - ✅ Unit tests (70): scoring, chapters, choreography, quality, throw simulation, plugins
-- ⬜ Visual review by the user: phone and desktop, light and dark
+- ✅ Visual review by the user: phone and desktop, light and dark (changes taken into v0.2)
 
 **Done when** the user has reviewed the screenshots and listed the changes for v0.2.
 
-## v0.2 — Polish and proof
+## v0.2 — Polish and proof (published on 2026-11-09)
 
-- Changes from the review; choreography tuned on real screens
+- ✅ Changes from the review
+- ⬜ Choreography tuned on real phones
 - ✅ End-to-end tests (Playwright, Chromium + Firefox + WebKit, phone and desktop): no console
   errors, keyboard game, no-3D fallback (software WebGL), no zoom-out on phones, 404
 - ⬜ End-to-end journeys still to write: chapter menu, theme memory, reduced motion
 - ✅ Accessibility scans (axe) in both themes; overflow sweep 320 → 2560 px; reflow at 320 × 256
-- ✅ Lighthouse in CI (worst of three, calibrated CPU, three warm-up runs): 100 × 4 locally
-- Static posters of the 3D poses for the no-3D fallback
+- ✅ Lighthouse in CI (worst of three, calibrated CPU, three warm-up runs): 100 × 4 locally and
+  in CI
+- ⬜ Static posters of the 3D poses for the no-3D fallback (for now, one drawn dart in the hero)
 
 **Done when** the full gate is green and Lighthouse shows 100 × 4 on the worst run.
 
 ## v1.0 — Published
 
-- Merge `dev` into `main` with the user's go: GitHub Pages deploys after a green CI
-- Test on the user's iPhone and Android phone
-- Open Graph image; link from the portfolio (the user's call)
+- ✅ Merge `dev` into `main` with the user's go: GitHub Pages deploys after a green CI (v0.2.0)
+- ⬜ Test on the user's iPhone and Android phone
+- ⬜ Open Graph image
+- ✅ Link from the portfolio (adamrodwebdev.com, v1.13.0)
 
 ## Test plan (v0.1 → v0.2)
 

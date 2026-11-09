@@ -29,8 +29,8 @@
 .chapter__title {
   font-family: var(--font-display);
   font-size: clamp(2.75rem, 1.2rem + 6.4vw, 6.875rem);
-  font-weight: 800;
-  line-height: 0.88;
+  font-weight: var(--display-heavy);
+  line-height: var(--leading-title);
   letter-spacing: 0.005em;
   text-transform: uppercase;
   text-wrap: balance;
@@ -83,12 +83,12 @@
   color: var(--muted);
 }
 
+/* Figures with their unit symbols, which keep their case (mm, never MM) */
 .specs dd {
-  font-family: var(--font-display);
+  font-family: var(--font-figures);
   font-size: clamp(1.5rem, 1.2rem + 0.9vw, 2.25rem);
-  font-weight: 700;
+  font-weight: var(--display-bold);
   line-height: 1.1;
-  text-transform: uppercase;
 }
 
 /* ---------- Buttons: a tilted panel wipes up, the label rolls ---------- */
@@ -292,6 +292,99 @@
   }
 }
 
+/* ---------- Language menu: a native <details>, usable without the script ---------- */
+.lang-menu {
+  position: relative;
+}
+
+.lang-menu__toggle {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.25rem;
+  min-width: 2.75rem;
+  min-height: 2.75rem;
+  padding: 0 0.625rem 0 0.75rem;
+  border: 1px solid color-mix(in oklab, var(--chrome-ink) 22%, transparent);
+  border-radius: 999px;
+  background: color-mix(in oklab, var(--chrome-bg) 70%, transparent);
+  color: var(--chrome-ink);
+  font-family: var(--font-mono);
+  font-size: 0.6875rem;
+  letter-spacing: 0.14em;
+  list-style: none;
+  user-select: none;
+  transition:
+    color 0.6s var(--ease-in-out),
+    background-color 0.6s var(--ease-in-out),
+    border-color 0.3s;
+}
+
+.lang-menu__toggle::-webkit-details-marker {
+  display: none;
+}
+
+.lang-menu[open] .lang-menu__toggle {
+  border-color: var(--chrome-ink);
+}
+
+.lang-menu__chevron {
+  width: 0.875rem;
+  height: 0.875rem;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 2;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  transition: transform 0.3s var(--ease-out);
+}
+
+.lang-menu[open] .lang-menu__chevron {
+  transform: rotate(180deg);
+}
+
+.lang-menu__list {
+  position: absolute;
+  inset-block-start: calc(100% + 0.5rem);
+  inset-inline-end: 0;
+  z-index: 1;
+  display: grid;
+  min-width: 12rem;
+  padding: 0.5rem;
+  border: 1px solid color-mix(in oklab, var(--chrome-ink) 18%, transparent);
+  border-radius: 1rem;
+  background: var(--chrome-bg);
+  color: var(--chrome-ink);
+  box-shadow: 0 1.5rem 3rem rgb(0 0 0 / 0.35);
+  list-style: none;
+}
+
+.lang-menu__list a {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.75rem;
+  min-height: 2.75rem;
+  padding-inline: 0.75rem;
+  border-radius: 0.5rem;
+  text-decoration: none;
+}
+
+.lang-menu__list a:hover,
+.lang-menu__list a[aria-current='page'] {
+  background: color-mix(in oklab, var(--chrome-ink) 10%, transparent);
+}
+
+/* The current language: marked by a dot as well as by its background, never by colour alone */
+.lang-menu__list a[aria-current='page']::after {
+  content: '';
+  flex: none;
+  width: 0.5rem;
+  height: 0.5rem;
+  border-radius: 50%;
+  background: var(--accent);
+}
+
 /* ---------- Score counter (HUD) ---------- */
 .hud {
   position: fixed;
@@ -324,7 +417,7 @@
   overflow: hidden;
   font-family: var(--font-display);
   font-size: 2.25rem;
-  font-weight: 800;
+  font-weight: var(--display-heavy);
   line-height: 1;
   color: var(--accent);
 }
@@ -437,7 +530,7 @@
 .hud__list b {
   font-family: var(--font-display);
   font-size: 1.375rem;
-  font-weight: 800;
+  font-weight: var(--display-heavy);
   color: var(--accent);
 }
 
@@ -446,7 +539,7 @@
   inset: auto 0 calc(100% + 0.5rem) auto;
   font-family: var(--font-display);
   font-size: 4.5rem;
-  font-weight: 800;
+  font-weight: var(--display-heavy);
   line-height: 1;
   color: var(--accent);
   opacity: 0;
@@ -593,7 +686,7 @@
 .gauge__figure {
   font-family: var(--font-display);
   font-size: clamp(3.5rem, 2.2rem + 3.6vw, 6.5rem);
-  font-weight: 800;
+  font-weight: var(--display-heavy);
   line-height: 1;
 }
 

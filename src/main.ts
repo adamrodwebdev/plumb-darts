@@ -1,20 +1,22 @@
 import { SoundEngine } from './design/audio/SoundEngine'
 import { Announcer, SoundToggle, ThemeToggle, revealOnScroll } from './design/dom/controls'
 import { Hud } from './design/dom/Hud'
+import { LanguageMenu } from './design/dom/LanguageMenu'
 import { MarkerLayer } from './design/dom/MarkerLayer'
 import { OrbitCarousel } from './design/dom/OrbitCarousel'
 import type { JourneyElements, ScrollEffects } from './design/dom/ScrollEffects'
 import { ThrowPanel } from './design/dom/ThrowPanel'
 import type { SceneHandle } from './design/scene/createScene'
 import { openStageContext } from './design/scene/stageContext'
-import messages from './i18n/en.json'
+import { languageOf } from './i18n/languages'
+import { loadMessages } from './i18n/loadMessages'
 import { Translator } from './i18n/Translator'
 import { ChapterTracker } from './logic/ChapterTracker'
 import { probeDevice } from './logic/deviceProbe'
 import { BrowserStore, MotionPreference, ThemePreference } from './logic/preferences'
 import { ThrowSession } from './logic/ThrowSession'
 import type { Layout } from './rules/choreography'
-import { chapterById } from './rules/chapters'
+import { CHAPTERS, chapterById } from './rules/chapters'
 import { JOURNEY_MEDIA } from './rules/journey'
 import { turnFor } from './rules/orbit'
 import { QUALITY, chooseTier } from './rules/quality'
@@ -40,7 +42,10 @@ async function start(view: Window): Promise<void> {
   const root = page.documentElement
   root.classList.add('js')
 
-  const translator = new Translator(messages, 'en')
+  // The page's language, read through the allow-list: its messages are their own chunk, which the
+  // boot script preloads with the code
+  const language = languageOf(root.lang)
+  const translator = new Translator(await loadMessages(language.code), language.intl)
   const clock = performanceClock
   const random = new SeededRandom(view.crypto.getRandomValues(new Uint32Array(1))[0] ?? 1)
   const motion = new MotionPreference(view.matchMedia('(prefers-reduced-motion: reduce)'))
@@ -65,6 +70,11 @@ async function start(view: Window): Promise<void> {
   tracker.onChange((chapter, previous) => {
     root.dataset['currentTone'] = chapter.tone
     hud.show(chapter, previous)
+  })
+  // Another language opens on the chapter on screen (the first one needs no fragment)
+  new LanguageMenu(required(page, '[data-lang-menu]'), () => {
+    const id = tracker.chapter().id
+    return id === CHAPTERS[0]?.id ? null : id
   })
   await nextTask()
 

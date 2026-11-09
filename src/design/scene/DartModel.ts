@@ -13,13 +13,16 @@ import { toRadians } from './Stage'
 
 /**
  * The flight print: brand orange, the wordmark along the wing, a fine edge. Drawn by the page in
- * its own display face. Laid out for the model's flight UVs: u across the wing from the root, v
- * along it with the front at the top of the canvas (glTF puts v = 0 at the top: no flip). The
- * wordmark runs from the front of the wing to its back, letters standing towards the wing's tip:
- * it reads left to right when the dart points left, as on the hero.
+ * the brand's face, the same in every language: "Plumb Brand" where the page sets its headlines in
+ * another face (Russian), "Plumb Hero" otherwise. Laid out for the model's flight UVs: u across the
+ * wing from the root, v along it with the front at the top of the canvas (glTF puts v = 0 at the
+ * top: no flip). The wordmark runs from the front of the wing to its back, letters standing towards
+ * the wing's tip: it reads left to right when the dart points left, as on the hero.
  */
+const BRAND_FACES = '"Plumb Brand", "Plumb Hero"'
+
 export async function drawFlightTexture(): Promise<CanvasTexture> {
-  await document.fonts.load('800 96px "Plumb Hero"').catch(() => [])
+  await document.fonts.load(`800 96px ${BRAND_FACES}`, 'PLUMB').catch(() => [])
   const canvas = document.createElement('canvas')
   canvas.width = 256
   canvas.height = 512
@@ -34,7 +37,7 @@ export async function drawFlightTexture(): Promise<CanvasTexture> {
     context.translate(150, 300)
     context.rotate(Math.PI / 2)
     context.fillStyle = '#16100d'
-    context.font = '800 104px "Plumb Hero", "Arial Narrow", sans-serif'
+    context.font = `800 104px ${BRAND_FACES}, "Arial Narrow", sans-serif`
     context.textAlign = 'center'
     context.textBaseline = 'middle'
     context.fillText('PLUMB', 0, 0)

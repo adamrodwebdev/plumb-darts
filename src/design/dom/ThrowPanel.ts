@@ -84,10 +84,12 @@ export class ThrowPanel {
     item.append(name, points)
     if (thrown.gameShot) item.classList.add('is-win')
     this.log.append(item)
+    // "Single 1, 1 point.", "Treble 20, 60 points.": the points agree with their count, in Russian
+    // too (очко, очка, очков)
     this.announcer.say(
       thrown.gameShot
         ? this.translator.t('throw.win')
-        : this.translator.t('throw.hit', { label, points: thrown.score.points }),
+        : this.translator.plural('throw.hit', thrown.score.points, { label }),
     )
   }
 

@@ -1,0 +1,160 @@
+{
+  "meta": {
+    "title": "Plumb, fléchettes en tungstène · démo de design",
+    "description": "Plumb est une fléchette en tungstène fictive, racontée comme une page produit immersive en 3D : une démo de design et d’ingénierie conçue pour garder Lighthouse à 100 et respecter les WCAG 2.2 AA.",
+    "notFoundTitle": "Hors cible · Plumb"
+  },
+  "a11y": {
+    "skip": "Aller au contenu",
+    "home": "Plumb, retour en haut"
+  },
+  "header": {
+    "tag": "Marque fictive · démo de design",
+    "themeToLight": "Passer au thème clair",
+    "themeToDark": "Passer au thème sombre",
+    "sound": "Son",
+    "language": "Langue"
+  },
+  "hud": {
+    "label": "Points restants",
+    "chapters": "Chapitres",
+    "current": "Chapitres. En cours : {chapter}, il reste {remaining}."
+  },
+  "chapters": {
+    "hero": "C’est parti",
+    "press": "Sur la ligne",
+    "grip": "Le grip",
+    "weight": "Le poids",
+    "anatomy": "Anatomie",
+    "throw": "Le finish",
+    "checkout": "La sortie"
+  },
+  "hero": {
+    "eyebrow": "{tungsten} tungstène · {weight} · pointe acier",
+    "title1": "Le poids,",
+    "title2": "bien",
+    "title3": "placé.",
+    "lede": "Les fléchettes Plumb portent leur tungstène vers l’avant, usinées pour un grip qu’on finit par oublier. Leur nom vient de la plumbata, le dard lesté de plomb des soldats romains.",
+    "ctaThrow": "Lancer une fléchette",
+    "ctaMeet": "Découvrir la fléchette",
+    "scroll": "Défiler"
+  },
+  "press": {
+    "kicker": "01 · Sur la ligne",
+    "title": "Le choix des joueurs.",
+    "body": "Des coupures fictives, présentées comme le site du club présentera les vraies : le journal, la date, le titre, une courte citation créditée et un lien vers l’article.",
+    "sample": "Exemple · coupure fictive",
+    "previous": "Coupure précédente",
+    "next": "Coupure suivante",
+    "status": "Coupure {index} sur {count} : {outlet}",
+    "card1Outlet": "The Oche Gazette",
+    "card1Headline": "Le grip annelé met fin à la saison des doigts moites",
+    "card1Quote": "Dix-huit anneaux peu profonds, et la fléchette se cale au même endroit à chaque fois.",
+    "card2Outlet": "Sisal Review",
+    "card2Headline": "Vingt-cinq grammes qui volent pointe en avant",
+    "card2Quote": "Si bien lestée à l’avant qu’on cesse de la guider.",
+    "card3Outlet": "Checkout Weekly",
+    "card3Headline": "Trois cents manches, pas une glissade",
+    "card3Quote": "Nous l’avons lancée pendant un mois. Le grip n’a jamais lâché.",
+    "card4Outlet": "Flight Path Monthly",
+    "card4Headline": "La fléchette la plus silencieuse de la cible",
+    "card4Quote": "Elle se plante dans un bruit sourd, sans un cliquetis.",
+    "card5Outlet": "The Bullseye Bulletin",
+    "card5Headline": "La nouvelle favorite des joueurs de club",
+    "card5Quote": "À chaque soirée du club, quelqu’un demande à l’essayer.",
+    "card6Outlet": "Leg & Set",
+    "card6Headline": "Du tungstène tourné sur un seul axe",
+    "card6Quote": "Pointe, fût, tige et ailette partagent un axe parfait."
+  },
+  "grip": {
+    "kicker": "02 · Le grip",
+    "title": "Un grip qu’on oublie.",
+    "body": "Dix-huit anneaux, chacun profond de {ringDepth} et espacé de {ringPitch}. Vos doigts retrouvent la même place, lancer après lancer, sans la chercher.",
+    "spec1Label": "Profondeur",
+    "spec2Label": "Espacement",
+    "spec3Label": "Anneaux"
+  },
+  "weight": {
+    "kicker": "03 · Le poids",
+    "title": "Le poids là où il compte.",
+    "body": "Soixante pour cent de la masse se trouve devant vos doigts. La fléchette veut voler pointe en avant : vous n’avez plus à la guider.",
+    "cog": "Centre de gravité",
+    "cogValue": "À {cog} de la pointe",
+    "spec1Label": "Tungstène",
+    "spec2Label": "Fût",
+    "spec3Label": "Longueur"
+  },
+  "anatomy": {
+    "kicker": "04 · Anatomie",
+    "title1": "Quatre pièces,",
+    "title2": "un seul axe.",
+    "body": "Chaque pièce est usinée sur le même axe : la fléchette quitte votre main comme vous l’avez visée.",
+    "tipName": "Pointe",
+    "tipSpec": "Acier trempé, {tipLength}",
+    "barrelName": "Fût",
+    "barrelSpec": "Tungstène à {tungsten}, grip annelé",
+    "shaftName": "Tige",
+    "shaftSpec": "Aluminium, moyenne",
+    "flightName": "Ailette",
+    "flightSpec": "Standard, {flightThickness} microns"
+  },
+  "throw": {
+    "kicker": "05 · Le finish",
+    "title": "Finissez la manche.",
+    "body": "Il reste quarante. Touchez le double 20, tout en haut de la cible, pour gagner la manche. Vous avez trois fléchettes.",
+    "pointerHint": "Touchez ou cliquez sur la cible pour lancer là où vous visez, ou choisissez une zone ci-dessous.",
+    "aimLabel": "Viser",
+    "aimD20": "Double 20 (en haut)",
+    "aimT20": "Triple 20",
+    "aimBull": "Bull (centre)",
+    "aimT19": "Triple 19",
+    "aimAny": "N’importe où",
+    "throwButton": "Lancer",
+    "collect": "Récupérer les fléchettes",
+    "visit": "Cette volée",
+    "dartsLeftInitial": "3 fléchettes restantes",
+    "dartsLeft": {
+      "one": "{count} fléchette restante",
+      "many": "{count} de fléchettes restantes",
+      "other": "{count} fléchettes restantes"
+    },
+    "hit": {
+      "one": "{label}, {count} point.",
+      "many": "{label}, {count} de points.",
+      "other": "{label}, {count} points."
+    },
+    "win": "Double 20. Manche gagnée !",
+    "noDarts": "Plus de fléchettes. Récupérez-les pour relancer.",
+    "collected": "Fléchettes récupérées. Il vous en reste trois."
+  },
+  "score": {
+    "single": "Simple {segment}",
+    "double": "Double {segment}",
+    "treble": "Triple {segment}",
+    "outer-bull": "Simple bull",
+    "bull": "Bull",
+    "miss": "Hors cible"
+  },
+  "checkout": {
+    "kicker": "06 · La sortie",
+    "title": "Manche gagnée.",
+    "body": "Plumb n’existe pas. Cette page montre qu’un récit produit immersif peut rester rapide et accessible à tous : au clavier, avec un lecteur d’écran, avec moins d’animations ou sans 3D du tout.",
+    "ctaSource": "Voir comment c’est fait",
+    "ctaAgain": "Relancer"
+  },
+  "footer": {
+    "wordmark": "Plumb",
+    "disclaimer": "Plumb est une marque fictive, créée pour une démo de design et d’ingénierie. Rien n’est à vendre.",
+    "source": "Code source sur GitHub",
+    "credit": "Design et code : AdamRodWebDev",
+    "fonts": "Typographie : Big Shoulders Display et Geist Mono, SIL Open Font License.",
+    "top": "Retour en haut"
+  },
+  "notFound": {
+    "kicker": "Erreur 404",
+    "title": "Hors cible.",
+    "body": "Cette page n’existe pas. Même les meilleurs ratent parfois.",
+    "back": "Retour à la ligne",
+    "languages": "La ligne dans votre langue"
+  }
+}

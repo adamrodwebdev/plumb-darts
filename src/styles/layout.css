@@ -132,7 +132,7 @@
 }
 
 .brand__name {
-  font-family: var(--font-display);
+  font-family: var(--font-brand);
   font-size: 1.625rem;
   font-weight: 800;
   line-height: 1;
@@ -305,8 +305,8 @@
   z-index: 1;
   font-family: var(--font-display);
   font-size: clamp(3.5rem, 1.25rem + 11.5vw, 8.75rem);
-  font-weight: 800;
-  line-height: 0.84;
+  font-weight: var(--display-heavy);
+  line-height: var(--leading-hero);
   letter-spacing: 0.01em;
   text-transform: uppercase;
 }
@@ -478,7 +478,7 @@
 }
 
 .footer__wordmark {
-  font-family: var(--font-display);
+  font-family: var(--font-brand);
   font-size: clamp(7rem, 26vw, 17.5rem);
   font-weight: 800;
   line-height: 0.8;
@@ -538,10 +538,30 @@
 .missed__title {
   font-family: var(--font-display);
   font-size: clamp(3.5rem, 1.25rem + 9vw, 8.75rem);
-  font-weight: 800;
+  font-weight: var(--display-heavy);
   line-height: 0.86;
   text-transform: uppercase;
   text-wrap: balance;
+}
+
+.missed__homes {
+  display: grid;
+  gap: 0.5rem;
+  margin-block-start: 0.5rem;
+}
+
+.missed__languages {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0 1.5rem;
+  padding: 0;
+  list-style: none;
+}
+
+.missed__languages a {
+  display: inline-flex;
+  align-items: center;
+  min-height: 2.75rem;
 }
 
 .missed__board {

@@ -1,0 +1,156 @@
+{
+  "meta": {
+    "title": "Plumb, dart tungsten · demo desain",
+    "description": "Plumb adalah dart tungsten fiktif yang diceritakan lewat halaman produk 3D imersif: demo desain dan rekayasa yang dibuat agar Lighthouse tetap 100 dan memenuhi WCAG 2.2 AA.",
+    "notFoundTitle": "Meleset dari papan · Plumb"
+  },
+  "a11y": {
+    "skip": "Langsung ke konten",
+    "home": "Plumb, kembali ke atas"
+  },
+  "header": {
+    "tag": "Merek fiktif · demo desain",
+    "themeToLight": "Ganti ke tema terang",
+    "themeToDark": "Ganti ke tema gelap",
+    "sound": "Suara",
+    "language": "Bahasa"
+  },
+  "hud": {
+    "label": "Sisa skor",
+    "chapters": "Bab",
+    "current": "Bab. Sekarang: {chapter}, sisa {remaining}."
+  },
+  "chapters": {
+    "hero": "Ayo main",
+    "press": "Di garis lempar",
+    "grip": "Grip",
+    "weight": "Bobot",
+    "anatomy": "Anatomi",
+    "throw": "Lemparan akhir",
+    "checkout": "Checkout"
+  },
+  "hero": {
+    "eyebrow": "{tungsten} tungsten · {weight} · ujung baja",
+    "title1": "Bobot,",
+    "title2": "di posisi",
+    "title3": "tepat.",
+    "lede": "Dart Plumb memakai tungsten dengan bobot di depan, dibentuk untuk grip yang tak lagi kamu sadari. Namanya berasal dari plumbata, anak panah lempar berpemberat timah milik prajurit Romawi.",
+    "ctaThrow": "Lempar dart",
+    "ctaMeet": "Kenali dartnya",
+    "scroll": "Gulir"
+  },
+  "press": {
+    "kicker": "01 · Di garis lempar",
+    "title": "Pilihan para pemain.",
+    "body": "Contoh kliping, ditampilkan seperti situs klub nanti menampilkan yang asli: media, tanggal, judul, kutipan singkat beserta sumbernya, dan tautan ke artikelnya.",
+    "sample": "Contoh kliping · fiktif",
+    "previous": "Kliping sebelumnya",
+    "next": "Kliping berikutnya",
+    "status": "Kliping {index} dari {count}: {outlet}",
+    "card1Outlet": "The Oche Gazette",
+    "card1Headline": "Grip bercincin mengakhiri musim jari berkeringat",
+    "card1Quote": "Delapan belas cincin dangkal, dan dart selalu berada di posisi yang sama.",
+    "card2Outlet": "Sisal Review",
+    "card2Headline": "Dua puluh lima gram yang melesat dengan ujung lebih dulu",
+    "card2Quote": "Bobotnya begitu pas di depan sampai kamu tak perlu lagi mengarahkannya.",
+    "card3Outlet": "Checkout Weekly",
+    "card3Headline": "Tiga ratus leg, tak sekali pun licin",
+    "card3Quote": "Kami melemparnya selama sebulan. Gripnya tak pernah mengendur.",
+    "card4Outlet": "Flight Path Monthly",
+    "card4Headline": "Dart paling senyap di papan",
+    "card4Quote": "Menancap dengan bunyi tumpul, tanpa bergetar.",
+    "card5Outlet": "The Bullseye Bulletin",
+    "card5Headline": "Favorit baru para pemain klub",
+    "card5Quote": "Setiap malam klub, selalu ada yang minta mencobanya.",
+    "card6Outlet": "Leg & Set",
+    "card6Headline": "Tungsten, dibubut pada satu sumbu",
+    "card6Quote": "Ujung, barrel, shaft, dan flight berbagi satu sumbu sempurna."
+  },
+  "grip": {
+    "kicker": "02 · Grip",
+    "title": "Grip yang tak terasa.",
+    "body": "Delapan belas cincin, masing-masing sedalam {ringDepth} dan berjarak {ringPitch}. Jarimu menemukan titik yang sama, lemparan demi lemparan, tanpa mencarinya.",
+    "spec1Label": "Kedalaman",
+    "spec2Label": "Jarak cincin",
+    "spec3Label": "Cincin"
+  },
+  "weight": {
+    "kicker": "03 · Bobot",
+    "title": "Bobot di titik penting.",
+    "body": "Enam puluh persen massanya ada di depan jarimu. Dart ingin melesat dengan ujung lebih dulu, jadi kamu tak perlu lagi mengarahkannya.",
+    "cog": "Titik berat",
+    "cogValue": "{cog} dari ujung",
+    "spec1Label": "Tungsten",
+    "spec2Label": "Barrel",
+    "spec3Label": "Panjang"
+  },
+  "anatomy": {
+    "kicker": "04 · Anatomi",
+    "title1": "Empat bagian,",
+    "title2": "satu sumbu.",
+    "body": "Setiap bagian dibubut pada sumbu yang sama, jadi dart meninggalkan tanganmu persis seperti yang kamu bidik.",
+    "tipName": "Ujung",
+    "tipSpec": "Baja keras, {tipLength}",
+    "barrelName": "Barrel",
+    "barrelSpec": "Tungsten {tungsten}, beralur cincin",
+    "shaftName": "Shaft",
+    "shaftSpec": "Aluminium, medium",
+    "flightName": "Flight",
+    "flightSpec": "Standar, {flightThickness} mikron"
+  },
+  "throw": {
+    "kicker": "05 · Lemparan akhir",
+    "title": "Tuntaskan leg ini.",
+    "body": "Sisa empat puluh. Kenai double 20, bagian paling atas papan, untuk memenangi leg. Kamu punya tiga dart.",
+    "pointerHint": "Ketuk atau klik papan untuk melempar ke titik yang kamu tunjuk, atau pilih sasaran di bawah.",
+    "aimLabel": "Bidik",
+    "aimD20": "Double 20 (paling atas)",
+    "aimT20": "Treble 20",
+    "aimBull": "Bullseye",
+    "aimT19": "Treble 19",
+    "aimAny": "Di mana saja",
+    "throwButton": "Lempar",
+    "collect": "Ambil dart",
+    "visit": "Giliran ini",
+    "dartsLeftInitial": "Sisa 3 dart",
+    "dartsLeft": {
+      "other": "Sisa {count} dart"
+    },
+    "hit": {
+      "other": "{label}, {count} poin."
+    },
+    "win": "Double 20. Game shot!",
+    "noDarts": "Dart habis. Ambil dulu untuk melempar lagi.",
+    "collected": "Dart sudah diambil. Tiga dart siap lagi."
+  },
+  "score": {
+    "single": "Single {segment}",
+    "double": "Double {segment}",
+    "treble": "Treble {segment}",
+    "outer-bull": "Outer bull",
+    "bull": "Bullseye",
+    "miss": "Meleset dari papan"
+  },
+  "checkout": {
+    "kicker": "06 · Checkout",
+    "title": "Game shot.",
+    "body": "Plumb tidak benar-benar ada. Halaman ini menunjukkan bahwa kisah produk yang imersif tetap bisa dimuat cepat dan berfungsi bagi semua orang: dengan keyboard, pembaca layar, gerakan yang dikurangi, atau tanpa 3D sama sekali.",
+    "ctaSource": "Lihat cara pembuatannya",
+    "ctaAgain": "Lempar lagi"
+  },
+  "footer": {
+    "wordmark": "Plumb",
+    "disclaimer": "Plumb adalah merek fiktif yang dibuat untuk demo desain dan rekayasa. Tidak ada yang dijual.",
+    "source": "Kode sumber di GitHub",
+    "credit": "Desain dan kode oleh AdamRodWebDev",
+    "fonts": "Huruf: Big Shoulders Display dan Geist Mono, SIL Open Font License.",
+    "top": "Kembali ke atas"
+  },
+  "notFound": {
+    "kicker": "Galat 404",
+    "title": "Meleset dari papan.",
+    "body": "Halaman ini tidak ada. Pemain terbaik pun kadang meleset.",
+    "back": "Kembali ke garis lempar",
+    "languages": "Garis lempar dalam bahasamu"
+  }
+}

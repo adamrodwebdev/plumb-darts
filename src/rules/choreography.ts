@@ -27,6 +27,7 @@ interface PoseParts {
   readonly dart: Partial<DartPose>
   readonly camera?: CameraPose
   readonly board?: number
+  readonly boardSide?: number
   readonly set?: number
   readonly cog?: number
   readonly parts?: number
@@ -36,6 +37,7 @@ const pose = (parts: PoseParts): ScenePose => ({
   dart: { ...DART_DEFAULTS, ...parts.dart },
   camera: parts.camera ?? CAMERA_HOME,
   board: parts.board ?? 0,
+  boardSide: parts.boardSide ?? 0,
   set: parts.set ?? 0,
   cog: parts.cog ?? 0,
   parts: parts.parts ?? 0,
@@ -84,6 +86,8 @@ const WIDE: Readonly<Record<ChapterId, ChapterMotion>> = {
       dart: { position: [1.5, 0.3, 0], rotation: [8, 0, -58], spin: 270, explode: 1 },
       camera: { position: [0, 0, 66], target: [0, 0, 0] },
       parts: 1,
+      // The board waits off to the right: it slides in with the finish
+      boardSide: 1,
     }),
   },
   // The board on the left, the panel on the right
@@ -94,8 +98,8 @@ const WIDE: Readonly<Record<ChapterId, ChapterMotion>> = {
       board: 1,
     }),
   ),
-  // The set of three, centred above the words
-  checkout: hold(pose({ dart: { position: [0, 7.4, 0], scale: 0.8 }, set: 1 })),
+  // The set of three, centred above the words; the board has left by the left, with the finish
+  checkout: hold(pose({ dart: { position: [0, 7.4, 0], scale: 0.8 }, set: 1, boardSide: -1 })),
 }
 
 const NARROW: Readonly<Record<ChapterId, ChapterMotion>> = {
@@ -129,6 +133,7 @@ const NARROW: Readonly<Record<ChapterId, ChapterMotion>> = {
     to: pose({
       dart: { position: [-3, -5.5, 0], rotation: [0, 18, 0], scale: 0.72, spin: 50, explode: 1 },
       parts: 1,
+      boardSide: 1,
     }),
   },
   throw: hold(
@@ -138,7 +143,7 @@ const NARROW: Readonly<Record<ChapterId, ChapterMotion>> = {
       board: 1,
     }),
   ),
-  checkout: hold(pose({ dart: { position: [0, 8.2, 0], scale: 0.8 }, set: 1 })),
+  checkout: hold(pose({ dart: { position: [0, 8.2, 0], scale: 0.8 }, set: 1, boardSide: -1 })),
 }
 
 export const CHOREOGRAPHY: Readonly<Record<Layout, Readonly<Record<ChapterId, ChapterMotion>>>> = {

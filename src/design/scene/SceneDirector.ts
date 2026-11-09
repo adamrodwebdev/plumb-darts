@@ -15,6 +15,7 @@ import type { ScenePose } from '../../rules/pose'
 import type { Clock } from '../../time/clock'
 import type { MarkerLayer, ScreenPoint } from '../dom/MarkerLayer'
 import type { BoardModel } from './BoardModel'
+import { fade } from './fade'
 import type { DartModel } from './DartModel'
 import { type Animation, type Stage, toRadians } from './Stage'
 
@@ -23,6 +24,10 @@ const PARTS: readonly DartPart[] = ['tip', 'barrel', 'shaft', 'flight']
 const IDLE_CHAPTERS: ReadonlySet<ChapterId> = new Set(['game-on', 'checkout'])
 const IDLE_DEGREES_PER_MS = 0.014
 const ARRIVAL_MS = 1500
+/** How far sideways the board travels on its way in or out of the finish (centimetres) */
+const BOARD_TRAVEL = 160
+/** The board fades over the last part of its way out (its presence below this) */
+const BOARD_FADE = 0.3
 
 export interface DirectorParts {
   readonly stage: Stage
@@ -174,11 +179,15 @@ export class SceneDirector {
     stage.camera.position.set(...camera.position)
     stage.camera.lookAt(...camera.target)
 
-    board.root.visible = this.pose.board > 0.002
+    // The board travels with the story: in from the right before the finish, out by the left after
+    // it, receding as it goes; it fades only on its way out of shot, so it never vanishes in one
+    // frame (a semi-transparent board shows its own parts through each other)
+    const gone = 1 - this.pose.board
+    fade(board.root, clamp01(this.pose.board / BOARD_FADE))
     board.root.position.set(
-      BOARD_POSITION[0],
+      BOARD_POSITION[0] + this.pose.boardSide * BOARD_TRAVEL * gone,
       BOARD_POSITION[1],
-      BOARD_POSITION[2] - (1 - this.pose.board) * 90,
+      BOARD_POSITION[2] - gone * 90,
     )
 
     set.forEach((other, index) => {

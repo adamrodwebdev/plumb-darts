@@ -167,16 +167,23 @@ test('the finish is played with the keyboard alone: three darts, then collected'
   await expect(log).toHaveCount(1)
   await expect(page.getByText('2 darts left')).toBeVisible()
 
+  // The focus stays on Throw while the dart flies (a disabled button once lost it, 2026-11-09)
+  await expect(throwButton).toBeFocused()
   await expect(throwButton).toBeEnabled()
   await page.keyboard.press('Enter')
   await expect(log).toHaveCount(2)
+  await expect(throwButton).toBeFocused()
   await expect(throwButton).toBeEnabled()
   await page.keyboard.press('Enter')
   await expect(log).toHaveCount(3)
 
-  await page.getByRole('button', { name: 'Collect the darts' }).click()
+  // No dart left: the focus has moved on to collecting them, then back to throwing
+  const collect = page.getByRole('button', { name: 'Collect the darts' })
+  await expect(collect).toBeFocused()
+  await page.keyboard.press('Enter')
   await expect(log).toHaveCount(0)
   await expect(page.getByText('3 darts left')).toBeVisible()
+  await expect(throwButton).toBeFocused()
 })
 
 test('the cursor shows only what can be clicked', async ({ page }) => {

@@ -9,13 +9,18 @@ import { inlineStyles } from './build/inlineStyles.ts'
 
 const path = (relative: string): string => fileURLToPath(new URL(relative, import.meta.url))
 
-/** The theme script runs inline in <head>, before the first paint (allowed by its CSP hash). */
+/**
+ * The head scripts run inline before the first paint (each allowed by its CSP hash): the theme,
+ * then the arrival on a journey chapter.
+ */
 function themeScript(): Plugin {
-  const source = readFileSync(path('./build/inline/theme.js'), 'utf8').trim()
+  const sources = ['./build/inline/theme.js', './build/inline/arrival.js'].map((file) =>
+    readFileSync(path(file), 'utf8').trim(),
+  )
+  const scripts = sources.map((source) => `<script>${source}</script>`).join('\n    ')
   return {
     name: 'theme-script',
-    transformIndexHtml: (html) =>
-      html.replace('<!-- theme-script -->', `<script>${source}</script>`),
+    transformIndexHtml: (html) => html.replace('<!-- theme-script -->', scripts),
   }
 }
 

@@ -3,8 +3,9 @@ import { type Chapter, CHAPTERS, chapterById } from '../rules/chapters'
 export type ChapterListener = (chapter: Chapter, previous: Chapter) => void
 
 /**
- * The chapter on screen: the one crossing the middle of the viewport. Works the same whether a
- * chapter is pinned (it stays across the middle line) or scrolls through.
+ * The chapter on screen: the one under the centre of the viewport. Works the same whether a
+ * chapter is pinned, scrolls through, or slides sideways in the journey (half-way across, the
+ * next chapter takes over).
  */
 export class ChapterTracker {
   private current: Chapter = CHAPTERS[0] as Chapter
@@ -13,7 +14,9 @@ export class ChapterTracker {
 
   constructor(sections: readonly HTMLElement[]) {
     this.observer = new IntersectionObserver((entries) => this.update(entries), {
-      rootMargin: '-50% 0px -50% 0px',
+      // A single point at the centre: a line across the middle would meet every chapter of the
+      // sideways strip at once
+      rootMargin: '-50% -50% -50% -50%',
     })
     for (const section of sections) this.observer.observe(section)
   }

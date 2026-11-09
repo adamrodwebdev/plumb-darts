@@ -63,8 +63,8 @@ export class ThrowPanel {
       return
     }
     this.busy = true
-    this.throwButton.disabled = true
     this.session.throwAt(aim)
+    this.render()
     const thrown = this.session.lastThrow()
     if (!thrown) return
     await this.stage?.throwDart(thrown, ThrowSession.DARTS - this.session.dartsLeft() - 1)
@@ -92,6 +92,7 @@ export class ThrowPanel {
   }
 
   private collect(): void {
+    if (this.busy) return
     this.session.collect()
     this.stage?.collect()
     this.log.replaceChildren()
@@ -101,8 +102,33 @@ export class ThrowPanel {
 
   private render(): void {
     this.dartsLeft.textContent = this.translator.plural('throw.dartsLeft', this.session.dartsLeft())
-    this.throwButton.disabled = this.busy || !this.session.canThrow()
-    this.collectButton.disabled = this.session.visit().length === 0
+    const canThrow = this.session.canThrow()
+    const canCollect = this.session.visit().length > 0
+    if (!this.busy) this.handOn(canThrow, canCollect)
+    this.setUsable(this.throwButton, canThrow)
+    this.setUsable(this.collectButton, canCollect)
+  }
+
+  /**
+   * While a dart flies both buttons wait, still focusable (aria-disabled): a disabled button loses
+   * the keyboard focus (Chrome hands it to the page), and the next Enter went nowhere (2026-11-09)
+   */
+  private setUsable(button: HTMLButtonElement, usable: boolean): void {
+    button.disabled = !this.busy && !usable
+    if (this.busy) button.setAttribute('aria-disabled', 'true')
+    else button.removeAttribute('aria-disabled')
+  }
+
+  /** The focus moves on to the next thing to do before its own button switches off */
+  private handOn(canThrow: boolean, canCollect: boolean): void {
+    const focused = this.throwButton.ownerDocument.activeElement
+    if (focused === this.throwButton && !canThrow && canCollect) {
+      this.collectButton.disabled = false
+      this.collectButton.focus()
+    } else if (focused === this.collectButton && !canCollect && canThrow) {
+      this.throwButton.disabled = false
+      this.throwButton.focus()
+    }
   }
 
   private label(score: Score): string {

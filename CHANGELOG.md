@@ -8,6 +8,16 @@ All notable changes to this project are written here. The format follows
 
 ### Added
 
+- The journey: chapters 3 to 7 (the grip to the checkout) travel sideways where the screen is at
+  least 40rem tall and motion is welcome. Their frame sticks to the screen (CSS sticky) while a
+  strip of five screens slides left as the page scrolls down, each chapter holding the screen for
+  a while; the 3D dart and the board follow. The chapter menu, in-page links, an address such as
+  `#weight` and keyboard focus bring each chapter on; a chapter taller than its screen (the
+  finish on a phone) scrolls its text during its hold, and a focused control always shows above
+  the counter. Short screens and reduced motion keep the stacked story, and turning a phone to
+  landscape keeps the reader in the same chapter.
+- End-to-end checks of the journey: the chapter menu, a link on arrival, focus above the counter,
+  reduced motion, a screen that gets short.
 - Realistic models made in Blender by our own generators (`public/models/`). The dart: a 90%
   tungsten barrel in gunmetal PVD with 18 shark-fin rings and a knurled zone cut to bright
   tungsten and an orange band; a polished, grooved steel point; an anodised aluminium shaft with
@@ -22,12 +32,22 @@ All notable changes to this project are written here. The format follows
 
 ### Changed
 
+- The board slides in from the right with the finish and leaves by the left with it, receding,
+  and fades only on its way out of shot: it used to vanish in one frame. The darts thrown stay
+  pinned in it and leave with it, where they floated in the air.
 - The dart and the board come from two model files instead of shapes built in code: 311 kB for
   the dart, 497 kB for the board (306 kB with a 1024 px face on phones and smaller GPUs), meshopt
   geometry and WebP maps, downloaded while the stage lights up; textures upload one per task.
 - The board's face takes a third of the room's reflected light: under the full light its colours
   went pastel.
 - The flight's wordmark reads left to right on the hero.
+
+### Fixed
+
+- Playing the finish with the keyboard: the Throw button kept the focus only by chance. It was
+  disabled while the dart flew, and a disabled button loses the focus (Chrome hands it to the
+  page), so the next Enter went nowhere. It now waits as `aria-disabled`; after the last dart the
+  focus moves on to Collect the darts, then back to Throw.
 
 ### Removed
 

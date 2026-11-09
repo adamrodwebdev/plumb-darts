@@ -21,6 +21,11 @@ lead-weighted throwing dart of Roman soldiers.
 | The finish | Throw three darts at the board (click, tap, or keyboard); double 20 wins | interactive proof |
 | Checkout | The set of three, the honest call to action | finale |
 
+From the grip to the checkout, the chapters travel **sideways** on any screen at least 40rem
+tall: their frame sticks to the screen while the story slides left as you scroll down, each chapter
+holding the screen before the next one slides in. Short screens and reduced motion keep the
+stacked story.
+
 A **501 counter** plays a leg of darts down to the checkout as the chapters go by (60, 120, then
 a 180) and doubles as the chapter menu. The page's tones shift from a dark bar to a bright studio
 and back through a dusk gradient. Sound is optional and made in code.

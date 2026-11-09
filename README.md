@@ -100,9 +100,13 @@ zooms out. Headless browsers draw WebGL with the processor, which the page refus
 stand for a device with a GPU (`e2e/fixtures.ts`), and name a software renderer to check the page
 without 3D.
 
-Lighthouse, production build, 2026-11-09: 100 in all four categories on mobile (worst of three
-runs) and on desktop. Its lab machine has no GPU, so it scores the page without 3D; the 3D boot
-was measured on a GPU instead (longest frame 65 ms, 14 ms of it blocking, on a fast laptop).
+Lighthouse runs in CI on every pull request (`lighthouserc.json`): three warm-up runs that are
+not counted, then three mobile runs that must all score 100 in the four categories, with the CPU
+slowdown fitted to the runner's speed so that every run simulates the same phone
+(`lighthouse/calibrate.mjs`). On 2026-11-09 the production build scored 100 × 4 on mobile (blocking
+time 10 to 20 ms at that slowdown) and on desktop. The lab machine has no GPU, so Lighthouse scores
+the page without 3D; the 3D boot was measured on a GPU instead (longest frame 65 ms, 14 ms of it
+blocking, on a fast laptop).
 
 ## Branches and deployment
 

@@ -25,6 +25,11 @@ export default defineConfig(
     languageOptions: { globals: browser, sourceType: 'script' },
   },
   {
+    name: 'app/lighthouse-scripts',
+    files: ['lighthouse/*.mjs'],
+    languageOptions: { globals: { console: 'readonly', process: 'readonly' } },
+  },
+  {
     ...vitest.configs.recommended,
     name: 'app/unit-tests',
     files: ['src/**/*.test.ts', 'build/**/*.test.ts'],

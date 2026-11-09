@@ -26,11 +26,11 @@ on a real phone. Patterns come from the playbook in
 ## v0.2 — Polish and proof
 
 - Changes from the review; choreography tuned on real screens
-- End-to-end tests (Playwright, Chromium + Firefox + WebKit, phone and desktop): no console
-  errors, keyboard game with announcements, chapter menu, theme memory, reduced motion, no-3D
-  fallback, 404
-- Accessibility scans (axe) in both themes; overflow sweep 320 → 2560 px; reflow at 320 × 256
-- Lighthouse in CI (worst of three, calibrated CPU, a warm-up run per page)
+- ✅ End-to-end tests (Playwright, Chromium + Firefox + WebKit, phone and desktop): no console
+  errors, keyboard game, no-3D fallback (software WebGL), no zoom-out on phones, 404
+- ⬜ End-to-end journeys still to write: chapter menu, theme memory, reduced motion
+- ✅ Accessibility scans (axe) in both themes; overflow sweep 320 → 2560 px; reflow at 320 × 256
+- ✅ Lighthouse in CI (worst of three, calibrated CPU, three warm-up runs): 100 × 4 locally
 - Static posters of the 3D poses for the no-3D fallback
 
 **Done when** the full gate is green and Lighthouse shows 100 × 4 on the worst run.

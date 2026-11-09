@@ -17,6 +17,8 @@ All notable changes to this project are written here. The format follows
   320 to 2,560 px and at 320 × 256; a stable page length; a phone that never zooms the page out.
   They run in CI on every pull request, standing for a device with a GPU, and check the page
   without 3D by naming a software renderer.
+- Lighthouse in CI on every pull request: 100 in the four categories on the worst of three mobile
+  runs, after three warm-up runs, with the CPU slowdown fitted to the runner's speed.
 
 ### Changed
 
@@ -31,6 +33,8 @@ All notable changes to this project are written here. The format follows
   Lighthouse's), the page keeps its art: one software frame blocked the page for 0.8 s.
 - Without 3D, the drawn dart takes the 3D one's place across the headline and flies in; it stays
   out of the flow, so showing it never moves the page.
+- The scroll effects start one task per chapter: their eight triggers in one task blocked a phone
+  for 99 ms.
 
 ### Fixed
 

@@ -1,5 +1,5 @@
 // Swept on the desktop engines; the phone projects keep their own device sizes (playwright.config.ts)
-import { expect, test, type Page } from '@playwright/test'
+import { expect, test, type Page } from './fixtures'
 
 /** From the smallest phone to a large desktop screen */
 const WIDTHS = [320, 360, 390, 412, 768, 1024, 1280, 1440, 1920, 2560]

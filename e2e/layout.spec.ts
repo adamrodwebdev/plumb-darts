@@ -1,4 +1,4 @@
-import { expect, test, type Page } from '@playwright/test'
+import { expect, test, type Page } from './fixtures'
 import { pageHeight, settled } from './boot'
 
 /** Where a reader may stop: before, inside and after the chapters whose labels follow the 3D dart */

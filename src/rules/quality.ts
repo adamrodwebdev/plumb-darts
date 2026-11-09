@@ -38,6 +38,18 @@ export function chooseTier(hints: DeviceHints): Tier | null {
   return 'high'
 }
 
+/**
+ * WebGL drawn by the processor instead of a GPU: SwiftShader (Chrome without a usable GPU, lab
+ * machines such as Lighthouse's), llvmpipe and lavapipe (Linux), Windows' basic render driver,
+ * Apple's software renderer. One frame of the scene there blocked the page for 0.8 s (2026-11-09).
+ */
+const SOFTWARE_RENDERER = /swiftshader|llvmpipe|lavapipe|softpipe|software|basic render driver/i
+
+/** Whether a WebGL renderer name is drawn by the processor; an unknown name ('') is not */
+export function drawnBySoftware(renderer: string): boolean {
+  return SOFTWARE_RENDERER.test(renderer)
+}
+
 /** Median of measured frame times (ignores the outliers a single long frame brings) */
 export function median(values: readonly number[]): number {
   if (values.length === 0) return Number.POSITIVE_INFINITY

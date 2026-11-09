@@ -18,7 +18,8 @@ import { SceneDirector, type ScreenCircle } from './SceneDirector'
 import { Stage } from './Stage'
 
 export interface SceneOptions {
-  readonly canvas: HTMLCanvasElement
+  /** The WebGL 2 context openStageContext gave, on the stage's canvas */
+  readonly context: WebGL2RenderingContext
   readonly quality: QualitySettings
   readonly layout: Layout
   readonly clock: Clock
@@ -71,11 +72,11 @@ function drawFace(size: number, seed: number): Promise<ImageBitmap | HTMLCanvasE
 
 /**
  * Builds the 3D scene step by step, one task per step (renderer, light, models, shaders), so
- * no long task blocks the page. Throws when WebGL is unavailable.
+ * no long task blocks the page.
  */
 export async function createScene(options: SceneOptions): Promise<SceneHandle> {
-  const { canvas, quality, clock, sound, markers, motion, onProgress } = options
-  const stage = new Stage(canvas, quality, clock)
+  const { context, quality, clock, sound, markers, motion, onProgress } = options
+  const stage = new Stage(context, quality, clock)
   onProgress(0.45)
   await stage.light()
   onProgress(0.6)
@@ -120,7 +121,7 @@ export async function createScene(options: SceneOptions): Promise<SceneHandle> {
   return {
     director,
     reveal() {
-      canvas.classList.add('is-live')
+      stage.show()
       director.arrive()
     },
     throwDart(thrownDart: Throw, index: number): Promise<void> {

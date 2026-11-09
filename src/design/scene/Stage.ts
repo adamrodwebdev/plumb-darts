@@ -31,6 +31,7 @@ export interface Animation {
 export class Stage {
   readonly scene = new Scene()
   readonly camera = new PerspectiveCamera(30, 1, 1, 800)
+  private readonly canvas: HTMLCanvasElement
   private readonly renderer: WebGLRenderer
   private readonly raycaster = new Raycaster()
   private readonly animations = new Set<Animation>()
@@ -39,25 +40,19 @@ export class Stage {
   private width = 0
   private height = 0
 
+  /**
+   * Draws with a context the page opened already (openStageContext): without WebGL 2 drawn by a
+   * GPU, the page went on without 3D before loading three.js, which would have logged two console
+   * errors before throwing.
+   */
   constructor(
-    private readonly canvas: HTMLCanvasElement,
+    context: WebGL2RenderingContext,
     private readonly quality: QualitySettings,
     private readonly clock: Clock,
   ) {
-    // The one context the scene uses, created here with three.js's own attributes: without WebGL 2
-    // (no GPU, a blocked one, Firefox on a CI runner) the page quietly goes on without 3D, where
-    // three.js would have logged two console errors before throwing
-    const context = canvas.getContext('webgl2', {
-      alpha: true,
-      depth: true,
-      stencil: false,
-      antialias: quality.antialias,
-      premultipliedAlpha: true,
-      preserveDrawingBuffer: false,
-      powerPreference: 'high-performance',
-      failIfMajorPerformanceCaveat: false,
-    })
-    if (!context) throw new Error('WebGL 2 is not available: the page goes on without 3D')
+    const canvas = context.canvas
+    if (!(canvas instanceof HTMLCanvasElement)) throw new Error('The stage draws on a canvas of the page')
+    this.canvas = canvas
     this.renderer = new WebGLRenderer({ canvas, context, antialias: quality.antialias })
     this.renderer.outputColorSpace = SRGBColorSpace
     this.renderer.toneMapping = ACESFilmicToneMapping
@@ -104,6 +99,11 @@ export class Stage {
 
   onContextLost(listener: () => void): void {
     this.canvas.addEventListener('webglcontextlost', listener)
+  }
+
+  /** Fades the canvas in (styles: .is-live) */
+  show(): void {
+    this.canvas.classList.add('is-live')
   }
 
   requestRender(): void {

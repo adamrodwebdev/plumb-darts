@@ -1,4 +1,4 @@
-import { expect, test, type Page } from '@playwright/test'
+import { SOFTWARE, expect, test, type Page } from './fixtures'
 import { settled } from './boot'
 
 interface Watch {
@@ -55,6 +55,84 @@ test('the page opens and scrolls to its end with no error, no CSP violation and 
 
   expect(seen.errors).toEqual([])
   expect(seen.outside).toEqual([])
+})
+
+/**
+ * Opens the page and gives the widest its layout got until every entrance has played, sampled on
+ * each frame from the first: a phone zooms the whole page out to show anything past its edge.
+ */
+async function widestWhileBooting(page: Page): Promise<number> {
+  await page.addInitScript(() => {
+    const sample = (): void => {
+      window.widest = Math.max(window.widest ?? 0, window.innerWidth)
+      requestAnimationFrame(sample)
+    }
+    requestAnimationFrame(sample)
+  })
+  await page.goto('')
+  await settled(page)
+  await expect
+    .poll(() =>
+      page.evaluate(
+        () =>
+          document
+            .getAnimations()
+            .filter((animation) => animation.effect?.getTiming().iterations !== Infinity)
+            .filter((animation) => animation.playState === 'running').length,
+      ),
+    )
+    .toBe(0)
+  return page.evaluate(() => window.widest ?? 0)
+}
+
+test('the page never grows wider than the screen while it boots, so a phone never zooms out', async ({
+  page,
+}) => {
+  const widest = await widestWhileBooting(page)
+
+  expect(widest).toBe(page.viewportSize()?.width)
+})
+
+/** Whether this browser opens WebGL 2 at all (Firefox on a CI runner does not) */
+async function hasWebgl2(page: Page): Promise<boolean> {
+  return page.evaluate(() => document.createElement('canvas').getContext('webgl2') !== null)
+}
+
+test('a device whose WebGL a GPU draws gets the 3D scene', async ({ page }) => {
+  await page.goto('')
+  // eslint-disable-next-line playwright/no-skipped-test -- a precondition, not a parked test: Firefox on a CI runner opens no WebGL 2, so it has no scene to offer
+  test.skip(!(await hasWebgl2(page)), 'this browser has no WebGL 2')
+
+  await expect(page.locator('html')).toHaveClass(/\bhas-3d\b/)
+})
+
+test.describe('on a device whose WebGL the processor draws', () => {
+  test.use({ renderer: SOFTWARE })
+
+  test('the page keeps its art without 3D, never loads the scene and logs no error', async ({
+    page,
+    baseURL,
+  }) => {
+    const seen = await watch(page, new URL(baseURL ?? '').origin)
+    const scripts: string[] = []
+    page.on('request', (request) => {
+      if (request.resourceType() === 'script') scripts.push(new URL(request.url()).pathname)
+    })
+    await page.goto('')
+
+    await settled(page)
+    await expect(page.locator('html')).toHaveClass(/\bno-3d\b/)
+    await page.locator('.dusk').scrollIntoViewIfNeeded()
+    expect(scripts.filter((path) => path.includes('/createScene'))).toEqual([])
+    expect(seen.errors).toEqual([])
+  })
+
+  // The drawn dart flying in from the right once zoomed phones out, then back in (2026-11-09)
+  test('the drawn dart never makes the page wider than the screen', async ({ page }) => {
+    const widest = await widestWhileBooting(page)
+
+    expect(widest).toBe(page.viewportSize()?.width)
+  })
 })
 
 test('the finish is played with the keyboard alone: three darts, then collected', async ({

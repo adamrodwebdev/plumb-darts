@@ -6,6 +6,7 @@ import { OrbitCarousel } from './design/dom/OrbitCarousel'
 import type { ScrollEffects } from './design/dom/ScrollEffects'
 import { ThrowPanel } from './design/dom/ThrowPanel'
 import type { SceneHandle } from './design/scene/createScene'
+import { openStageContext } from './design/scene/stageContext'
 import messages from './i18n/en.json'
 import { Translator } from './i18n/Translator'
 import { ChapterTracker } from './logic/ChapterTracker'
@@ -72,8 +73,11 @@ async function start(view: Window): Promise<void> {
   })
   await nextTask()
 
-  // 3. 3D or not, decided before any layout depends on it
-  const tier = chooseTier(await probeDevice(view))
+  // 3. 3D or not, decided before any layout depends on it: a capable device whose WebGL 2 a GPU
+  // draws (the context is the scene's own, opened before three.js is requested)
+  const wanted = chooseTier(await probeDevice(view))
+  const context = wanted ? openStageContext(required(page, '[data-stage]'), QUALITY[wanted]) : null
+  const tier = context ? wanted : null
   const markers = new MarkerLayer(page)
   root.classList.add(tier ? 'has-3d' : 'no-3d')
 
@@ -92,7 +96,7 @@ async function start(view: Window): Promise<void> {
     effects.init()
     if (orbit) effects.onOrbitTurn(turnFor(orbit.count() - 1, orbit.count()), (turn) => orbit.setTurn(turn))
   }
-  if (!tier) return
+  if (!tier || !context) return
 
   // 5. The 3D scene
   const progress = required<HTMLElement>(page, '[data-boot-progress]')
@@ -119,7 +123,7 @@ async function start(view: Window): Promise<void> {
     const wide = view.matchMedia('(width >= 64rem)')
     const layout = (): Layout => (wide.matches ? 'wide' : 'narrow')
     const scene = await createScene({
-      canvas: required(page, '[data-stage]'),
+      context,
       quality: QUALITY[tier],
       layout: layout(),
       clock,
@@ -164,7 +168,7 @@ async function start(view: Window): Promise<void> {
     progress.classList.add('is-done')
     scene.reveal()
   } catch {
-    // No WebGL, or it failed: the page keeps its content and fallback art
+    // The scene failed to build: the page keeps its content and fallback art
     clearTimeout(watchdog)
     if (!settled) fallBack()
   }

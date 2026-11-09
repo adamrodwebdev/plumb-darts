@@ -26,8 +26,9 @@ export function measureFrameTime(frames = 12): Promise<number> {
 }
 
 /**
- * WebGL 2 in the browser. Creating a context only to test it would cost a main-thread task: the
- * stage creates the real one and falls back to the page without 3D if that fails.
+ * WebGL 2 in the browser. Creating a context only to test it would cost a main-thread task: once
+ * the tier is known, main.ts opens the scene's own (openStageContext), which also refuses WebGL
+ * drawn by the processor.
  */
 function supportsWebgl2(view: Window): boolean {
   return 'WebGL2RenderingContext' in view

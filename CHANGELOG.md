@@ -6,6 +6,21 @@ All notable changes to this project are written here. The format follows
 
 ## [Unreleased]
 
+### Added
+
+- "Trusted on the oche": six sample press clippings orbiting their headline in CSS 3D, turned by
+  the scroll, with Previous and Next buttons. It prototypes the Halloween press ring planned for
+  Skull Darts 71. Flat grid without script or with reduced motion; a cover flow on phones.
+
+### Changed
+
+- Each chapter has its own composition instead of one left column: diagonal hero, centred
+  press, grip on the right, a centred band for the weight, a split title for the anatomy, the
+  finish on the right, a centred checkout.
+- The 3D dart follows each composition, and leaves the stage during the press orbit.
+- The page no longer stretches (labels clipped to their chapter); thrown darts land tail up; the
+  counter is compact on phones.
+
 ## [0.1.0] - 2026-11-09
 
 ### Added

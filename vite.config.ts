@@ -4,7 +4,7 @@ import { defineConfig, type Plugin } from 'vite'
 import { compileHints } from './build/compileHints.ts'
 import { contentSecurityPolicy } from './build/csp.ts'
 import { deferredBoot } from './build/deferredBoot.ts'
-import { EMBEDDED_FACES } from './build/faces.ts'
+import { COPY_FACES, EMBEDDED_FACES } from './build/faces.ts'
 import { htmlI18n, pageInputs } from './build/htmlI18n.ts'
 import { inlineStyles } from './build/inlineStyles.ts'
 
@@ -38,6 +38,7 @@ export default defineConfig(({ command, isPreview }) => ({
     inlineStyles({
       entry: path('./src/styles/index.css'),
       faces: EMBEDDED_FACES,
+      copyFaces: COPY_FACES,
       localesDir: LOCALES,
     }),
     deferredBoot({ bootScript: path('./build/inline/boot.js') }),

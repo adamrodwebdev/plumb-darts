@@ -85,16 +85,19 @@ by their browser's language: the menu in the masthead offers the others.
 1. The first paint comes from each language's page alone: inline CSS, and the hero headline,
    wordmark and score digits set in an embedded subset of that page's display face, cut from its
    own headline's glyphs at build (about 5 kB; no request, no swap).
-2. Code is requested only once the browser reports that first paint (`build/deferredBoot.ts`).
-3. The 3D scene (Three.js, about 150 kB gzip) loads only on devices that get 3D: the WebGL 2
+2. The faces below the headline (titles, figures, small print) are cut at build to the characters
+   of each page's language and the weights its styles use (`build/pageFonts.ts`): about 20 kB of
+   fonts per page, 30 kB in Russian, instead of 59 and 80 kB for the packages' files.
+3. Code is requested only once the browser reports that first paint (`build/deferredBoot.ts`).
+4. The 3D scene (Three.js, about 150 kB gzip) loads only on devices that get 3D: the WebGL 2
    context is opened, and its renderer checked, before Three.js is requested, so a device whose
    processor would draw it (one frame blocked the page for 0.8 s) never downloads it, nor its
    models. The scene boots one short task at a time: renderer, light, models, textures (one task
    each), shaders compiled asynchronously.
-4. The two model files download while the stage lights up: the dart (311 kB) and the board
+5. The two model files download while the stage lights up: the dart (311 kB) and the board
    (497 kB, or 306 kB with a 1024 px face on phones and smaller GPUs), with meshopt geometry and
    WebP maps. Their loader (GLTFLoader and the meshopt decoder, 21 kB gzip) loads with them.
-5. Render scale is capped (DPR 1.5 / 1.25 / 1 by quality tier); the scene renders only when
+6. Render scale is capped (DPR 1.5 / 1.25 / 1 by quality tier); the scene renders only when
    something moves, and pauses in a hidden tab.
 
 ## The 3D models
@@ -159,8 +162,9 @@ src/
   i18n/         locales/*.json (every visible string, six languages), the language list, the
                 messages loader (one chunk per language) and the Translator (Intl plurals)
   styles/       tokens (light-dark), layout, components, motion — inlined at build
-build/          Vite plugins: html i18n (a page per language), inline styles + embedded font subsets,
-                deferred boot, CSP, compile hints; the WOFF2 coverage reader
+build/          Vite plugins: html i18n (a page per language), inline styles with each page's fonts
+                (embedded headline subsets, faces cut to its language), deferred boot, CSP, compile
+                hints; the WOFF2 coverage reader
 public/models/  the dart and the board (GLB: meshopt geometry, WebP maps)
 ```
 

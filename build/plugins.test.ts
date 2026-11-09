@@ -18,7 +18,6 @@ import {
   SITE,
   valuesFor,
 } from './htmlI18n.ts'
-import { absoluteFontUrls } from './inlineStyles.ts'
 
 const sha = (text: string) => `'sha256-${createHash('sha256').update(text).digest('base64')}'`
 
@@ -259,14 +258,5 @@ describe('deferred boot', () => {
     expect(messagesChunk(bundle, 'fr')).toBe('assets/fr-2.js')
     expect(messagesChunk(bundle, 'ru')).toBe('assets/ru-3.js')
     expect(messagesChunk(bundle, 'de')).toBeUndefined()
-  })
-})
-
-describe('inline styles', () => {
-  test('makes font URLs absolute under the base path, with or without quotes', () => {
-    const css = 'src:url(fonts/a.woff2);src:url(\'fonts/b.woff2\');src:url("fonts/c.woff2")'
-    expect(absoluteFontUrls(css, '/plumb-darts/')).toBe(
-      'src:url(/plumb-darts/fonts/a.woff2);src:url(\'/plumb-darts/fonts/b.woff2\');src:url("/plumb-darts/fonts/c.woff2")',
-    )
   })
 })

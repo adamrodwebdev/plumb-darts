@@ -1,11 +1,11 @@
 import { readFileSync } from 'node:fs'
 import { describe, expect, test } from 'vitest'
 import { LANGUAGES, type Language } from '../src/i18n/languages.ts'
-import type { MessageTree } from '../src/i18n/Translator.ts'
 import { COPY_FACES, EMBEDDED_FACES, FONT_FILES } from './faces.ts'
 import { fontCharacters, missingCharacters, unicodeRange } from './fontCoverage.ts'
-import { valuesFor } from './htmlI18n.ts'
+import type { Messages } from './htmlI18n.ts'
 import { embeddedFace, faceText } from './inlineStyles.ts'
+import { cutFace, fontFaceRules, shownText } from './pageFonts.ts'
 
 /**
  * Every character a language shows must be in the faces that set it: a missing one is drawn from
@@ -13,30 +13,21 @@ import { embeddedFace, faceText } from './inlineStyles.ts'
  * Read from the fonts' own cmap tables, with no browser (bug lessons: a soft hyphen that fetched
  * Fredoka, a thousands separator no font could draw).
  */
-const fontAt = (path: string): Buffer => readFileSync(path)
-const charactersOf = (files: readonly string[]): ReadonlySet<number> =>
-  new Set(files.flatMap((file) => [...fontCharacters(fontAt(file))]))
-
-const messagesOf = (language: Language): MessageTree =>
+const messagesOf = (language: Language): Messages =>
   JSON.parse(
     readFileSync(new URL(`../src/i18n/locales/${language.code}.json`, import.meta.url), 'utf8'),
-  ) as MessageTree
+  ) as Messages
 
-const textsOf = (tree: MessageTree): string[] =>
-  Object.values(tree).flatMap((node) => (typeof node === 'string' ? [node] : textsOf(node)))
+const tokens = readFileSync(new URL('../src/styles/tokens.css', import.meta.url), 'utf8')
 
-/** What a language's pages show: its copy without the placeholders, its facts and its dates */
-function shownText(language: Language): string {
-  const { facts } = valuesFor(language)
-  const copy = textsOf(messagesOf(language)).map((text) => text.replace(/\{\w+\}/g, ''))
-  const dates = new Intl.DateTimeFormat(language.intl, { month: 'short' })
-  const months = Array.from({ length: 12 }, (_, month) => dates.format(new Date(2026, month, 1)))
-  const shown = [...copy, ...Object.values(facts), ...months, '0123456789'].join(' ')
-  return `${shown}${shown.toLocaleUpperCase(language.intl)}`
+/** A custom property's value on the root, or on the Russian page */
+function token(name: string, script: Language['script']): string | undefined {
+  const rule = script === 'cyrillic' ? /:root:lang\(ru\)\s*\{([^}]*)\}/ : /:root\s*\{([^}]*)\}/
+  return new RegExp(`--${name}:\\s*(\\d+);`).exec(rule.exec(tokens)?.[1] ?? '')?.[1]
 }
 
 describe('the WOFF2 reader', () => {
-  const bigShoulders = fontCharacters(fontAt(FONT_FILES.bigShoulders))
+  const bigShoulders = fontCharacters(readFileSync(FONT_FILES.bigShoulders))
 
   test('reads the characters a font draws', () => {
     expect(missingCharacters('Aé0«»’…×', bigShoulders)).toEqual([])
@@ -55,46 +46,50 @@ describe('the WOFF2 reader', () => {
   })
 })
 
-describe.each(LANGUAGES)('the faces of the $name page', (language) => {
-  const text = shownText(language)
-  const faces = COPY_FACES[language.script]
+describe.each(LANGUAGES)('the fonts of the $name page', (language) => {
+  const messages = messagesOf(language)
+  const text = shownText(language, messages)
 
-  test('the display face draws every character of the copy', () => {
-    expect(missingCharacters(text, charactersOf(faces.display))).toEqual([])
+  test.each(COPY_FACES[language.script].map((face) => [face.family, face] as const))(
+    'its cut of %s draws every character the page can show, in the weights it asks for',
+    async (_, face) => {
+      const files = await cutFace(face, text, language.code)
+      const drawn = new Set(files.flatMap((file) => [...fontCharacters(file.source)]))
+      expect(missingCharacters(text, drawn)).toEqual([])
+      expect(fontFaceRules(files, '/plumb-darts/')).toContain(
+        `font-weight:${face.weight.min} ${face.weight.max}`,
+      )
+    },
+  )
+
+  test('its display face is cut at the weights the styles ask for', () => {
+    const display = COPY_FACES[language.script][0]
+    expect(String(display?.weight.max)).toBe(token('display-heavy', language.script))
+    expect(String(display?.weight.min)).toBe(token('display-bold', language.script))
   })
 
-  test('the mono face draws every character of the copy', () => {
-    expect(missingCharacters(text, charactersOf(faces.mono))).toEqual([])
-  })
-
-  test('the embedded faces draw the whole headline, at the weight the page asks for', async () => {
-    const tokens = readFileSync(new URL('../src/styles/tokens.css', import.meta.url), 'utf8')
-    const rule =
-      language.script === 'cyrillic' ? /:root:lang\(ru\)\s*\{([^}]*)\}/ : /:root\s*\{([^}]*)\}/
-    const heavy = /--display-heavy:\s*(\d+);/.exec(rule.exec(tokens)?.[1] ?? '')?.[1]
+  test('its embedded faces draw the whole headline, at the weight the page asks for', async () => {
     const [hero] = EMBEDDED_FACES[language.script]
     expect(hero?.family).toBe('Plumb Hero')
-    expect(String(hero?.weight)).toBe(heavy)
+    expect(String(hero?.weight)).toBe(token('display-heavy', language.script))
     for (const face of EMBEDDED_FACES[language.script]) {
-      const css = await embeddedFace(
-        face,
-        faceText(face, messagesOf(language), language),
-        language.code,
-      )
+      const css = await embeddedFace(face, faceText(face, messages, language), language.code)
       expect(css).toContain(`font-family:"${face.family}"`)
     }
   })
 })
 
-describe('the self-hosted fonts', () => {
-  test.each([
-    ['big-shoulders-display.woff2', FONT_FILES.bigShoulders],
-    ['geist-mono.woff2', FONT_FILES.geistMonoLatin],
-    ['geist-mono-cyrillic.woff2', FONT_FILES.geistMonoCyrillic],
-    ['oswald.woff2', FONT_FILES.oswaldLatin],
-    ['oswald-cyrillic.woff2', FONT_FILES.oswaldCyrillic],
-  ])('public/fonts/%s is the package’s file, byte for byte', (name, source) => {
-    const shipped = readFileSync(new URL(`../public/fonts/${name}`, import.meta.url))
-    expect(shipped.equals(fontAt(source))).toBe(true)
+describe('a cut face', () => {
+  test('fails the build on a character none of its files draws', async () => {
+    const [display] = COPY_FACES.latin
+    if (!display) throw new Error('no Latin display face')
+    await expect(cutFace(display, 'Жук', 'test')).rejects.toThrow('U+0416')
+  })
+
+  test('takes each character from the first file that draws it, and declares only those', async () => {
+    const [oswald] = COPY_FACES.cyrillic
+    if (!oswald) throw new Error('no Cyrillic display face')
+    const files = await cutFace(oswald, 'Вес 25', 'test')
+    expect(files.map((file) => file.unicodeRange)).toEqual(['U+20,U+32,U+35', 'U+412,U+435,U+441'])
   })
 })

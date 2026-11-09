@@ -1,11 +1,13 @@
 import { fileURLToPath, URL } from 'node:url'
+import type { Language } from '../src/i18n/languages.ts'
 import type { EmbeddedFaces } from './inlineStyles.ts'
+import type { CopyFace } from './pageFonts.ts'
 
 const path = (relative: string): string => fileURLToPath(new URL(relative, import.meta.url))
 
 const FONTSOURCE = '../node_modules/@fontsource-variable'
 
-/** The source files of the page's faces (fontsource packages, also copied in public/fonts) */
+/** The source files of the page's faces (fontsource packages), cut for each page at build */
 export const FONT_FILES = {
   bigShoulders: path(
     `${FONTSOURCE}/big-shoulders-display/files/big-shoulders-display-latin-wght-normal.woff2`,
@@ -53,14 +55,30 @@ export const EMBEDDED_FACES: EmbeddedFaces = {
   ],
 }
 
-/** The full faces that set each script's copy: its display face and its mono face, by file */
-export const COPY_FACES = {
-  latin: {
-    display: [FONT_FILES.bigShoulders],
-    mono: [FONT_FILES.geistMonoLatin],
-  },
-  cyrillic: {
-    display: [FONT_FILES.oswaldLatin, FONT_FILES.oswaldCyrillic],
-    mono: [FONT_FILES.geistMonoLatin, FONT_FILES.geistMonoCyrillic],
-  },
-} as const
+/**
+ * The faces that set each script's copy below the headline, cut to each page's language at build
+ * (build/pageFonts.ts), with the weights the styles ask for: --display-heavy and --display-bold in
+ * tokens.css for the display face, 400 to 700 for the mono small print
+ */
+export const COPY_FACES: Readonly<Record<Language['script'], readonly CopyFace[]>> = {
+  latin: [
+    {
+      family: 'Big Shoulders Display',
+      files: [FONT_FILES.bigShoulders],
+      weight: { min: 700, max: 800 },
+    },
+    { family: 'Geist Mono', files: [FONT_FILES.geistMonoLatin], weight: { min: 400, max: 700 } },
+  ],
+  cyrillic: [
+    {
+      family: 'Oswald',
+      files: [FONT_FILES.oswaldLatin, FONT_FILES.oswaldCyrillic],
+      weight: { min: 400, max: 500 },
+    },
+    {
+      family: 'Geist Mono',
+      files: [FONT_FILES.geistMonoLatin, FONT_FILES.geistMonoCyrillic],
+      weight: { min: 400, max: 700 },
+    },
+  ],
+}

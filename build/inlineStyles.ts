@@ -6,6 +6,7 @@ import type { Plugin, ResolvedConfig } from 'vite'
 import { languageOf, type Language } from '../src/i18n/languages.ts'
 import { fontCharacters, missingCharacters, unicodeRange } from './fontCoverage.ts'
 import { lookup, type Messages, valuesFor, withFacts } from './htmlI18n.ts'
+import { type CopyFace, cutFace, type FontFile, fontFaceRules, shownText } from './pageFonts.ts'
 
 /** lightningcss version encoding: major << 16 | minor << 8 */
 const version = (major: number, minor = 0): number => (major << 16) | (minor << 8)
@@ -87,40 +88,55 @@ export async function embeddedFace(
   return rules.join('')
 }
 
-/** Font URLs written `url(fonts/…)` become absolute under the base path (404.html is served anywhere). */
-export function absoluteFontUrls(css: string, base: string): string {
-  return css.replace(/url\((["']?)fonts\//g, (_, quote: string) => `url(${quote}${base}fonts/`)
-}
-
 const LANG_ATTRIBUTE = /<html\s+lang="([^"]*)"/
+
+/** A page's fonts: the embedded headline faces' rules, and its copy faces' files and rules */
+interface PageFonts {
+  readonly embedded: string
+  readonly files: readonly FontFile[]
+}
 
 /**
  * The whole stylesheet (src/styles/index.css and its @imports) is inlined in every page: no
- * render-blocking request, and the first paint is complete. Minified in builds. Each page embeds
- * the faces of its own language's headline (read from its <html lang>).
+ * render-blocking request, and the first paint is complete. Minified in builds. Each page (read
+ * from its <html lang>) embeds the faces of its own headline, and declares its copy faces cut to
+ * its own language: written under fonts/ by the build, served from memory by the dev server.
  */
 export function inlineStyles(options: {
   entry: string
   faces: EmbeddedFaces
+  copyFaces: Readonly<Record<Language['script'], readonly CopyFace[]>>
   localesDir: string
 }): Plugin {
   let config: ResolvedConfig
-  const fontFaces = new Map<string, Promise<string>>()
+  const pageFonts = new Map<string, Promise<PageFonts>>()
   const stylesDir = dirname(resolve(options.entry))
 
-  const facesFor = (language: Language): Promise<string> => {
-    const cached = fontFaces.get(language.code)
+  const fontsFor = (language: Language): Promise<PageFonts> => {
+    const cached = pageFonts.get(language.code)
     if (cached) return cached
     const messages = JSON.parse(
       readFileSync(resolve(options.localesDir, `${language.code}.json`), 'utf8'),
     ) as Messages
-    const css = Promise.all(
-      options.faces[language.script].map((face) =>
-        embeddedFace(face, faceText(face, messages, language), language.code),
+    const text = shownText(language, messages)
+    const fonts = Promise.all([
+      Promise.all(
+        options.faces[language.script].map((face) =>
+          embeddedFace(face, faceText(face, messages, language), language.code),
+        ),
       ),
-    ).then((rules) => rules.join(''))
-    fontFaces.set(language.code, css)
-    return css
+      Promise.all(
+        options.copyFaces[language.script].map((face) => cutFace(face, text, language.code)),
+      ),
+    ]).then(([embedded, files]) => ({ embedded: embedded.join(''), files: files.flat() }))
+    pageFonts.set(language.code, fonts)
+    return fonts
+  }
+
+  /** Every file the pages made so far, by name (a file shared by two languages appears once) */
+  const fontFiles = async (): Promise<Map<string, FontFile>> => {
+    const all = await Promise.all(pageFonts.values())
+    return new Map(all.flatMap((fonts) => fonts.files.map((file) => [file.fileName, file])))
   }
 
   return {
@@ -132,10 +148,33 @@ export function inlineStyles(options: {
       server.watcher.add(stylesDir)
       server.watcher.on('change', (changed) => {
         if (changed.endsWith('.css') || changed.endsWith('.json')) {
-          fontFaces.clear()
+          pageFonts.clear()
           server.ws.send({ type: 'full-reload' })
         }
       })
+      // The cut faces have no file in development: served from memory, under the same names
+      server.middlewares.use((request, response, next) => {
+        const path = (request.url ?? '').split('?')[0] ?? ''
+        if (!path.startsWith(`${config.base}fonts/`)) return next()
+        void fontFiles().then((files) => {
+          const file = files.get(path.slice(config.base.length))
+          if (!file) return next()
+          response.setHeader('Content-Type', 'font/woff2')
+          response.end(file.source)
+        }, next)
+      })
+    },
+    // Last: Vite transforms the pages (and so cuts their faces) in its own generateBundle
+    generateBundle: {
+      order: 'post',
+      async handler() {
+        if (config.command !== 'build') return
+        const files = await fontFiles()
+        if (files.size === 0) return this.error('no page cut its fonts before the bundle closed')
+        for (const file of files.values()) {
+          this.emitFile({ type: 'asset', fileName: file.fileName, source: file.source })
+        }
+      },
     },
     transformIndexHtml: {
       order: 'post',
@@ -146,9 +185,12 @@ export function inlineStyles(options: {
           minify: config.command === 'build',
           targets: TARGETS,
         })
-        const css = absoluteFontUrls(code.toString(), config.base)
-        const faces = await facesFor(language)
-        return html.replace('<!-- inline-styles -->', () => `<style>${faces}${css}</style>`)
+        const fonts = await fontsFor(language)
+        const faces = fonts.embedded + fontFaceRules(fonts.files, config.base)
+        return html.replace(
+          '<!-- inline-styles -->',
+          () => `<style>${faces}${code.toString()}</style>`,
+        )
       },
     },
   }

@@ -54,6 +54,9 @@ All notable changes to this project are written here. The format follows
 
 - The page loads only its own language's messages, a chunk preloaded with the code; English is no
   longer bundled in the entry.
+- Each page's fonts are cut at build to its language's characters and the weights its styles use:
+  about 20 kB per page (30 kB in Russian) instead of 59 kB (80 kB) for the packages' files, which
+  Lighthouse counted in the Russian page's first paint (99 before, see the pull request).
 - The dart's numbers (ring depth and pitch, weight, tungsten, sizes, centre of gravity) and the
   clipping dates are written once and formatted by `Intl` in each language; the dart weighs 25 g,
   as the model does.

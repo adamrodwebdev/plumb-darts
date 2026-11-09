@@ -16,14 +16,3 @@ export const SEGMENTS: readonly number[] = [
 ]
 
 export const SEGMENT_DEGREES = 360 / SEGMENTS.length
-
-/** Board colours: singles alternate black and cream, doubles and trebles red and green */
-export const BOARD_COLOURS = {
-  black: '#1c1c1c',
-  cream: '#eee0bf',
-  red: '#b81d2a',
-  green: '#0f7a3d',
-  wire: '#c9cdd2',
-  surround: '#141414',
-  number: '#efe6d3',
-} as const

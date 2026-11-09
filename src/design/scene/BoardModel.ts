@@ -1,51 +1,57 @@
 import {
-  CircleGeometry,
-  CylinderGeometry,
   Group,
   Mesh,
   MeshStandardMaterial,
+  type Object3D,
   Plane,
   Quaternion,
-  SRGBColorSpace,
-  Texture,
+  type Texture,
   Vector3,
 } from 'three'
 import { BOARD } from '../../rules/board'
+import { METRES_TO_SCENE } from '../../rules/models'
 import type { BoardPoint } from '../../rules/scoring'
 
 /** Board units: the scene is in centimetres, the rules in millimetres */
 const MM = 0.1
 const RADIUS = BOARD.edge * MM
-const DEPTH = 3.8
 
-/** The dartboard: a sisal face on a black body, facing +Z. Its face is drawn in a worker. */
+/**
+ * How much of the studio's reflected light the sisal takes. The room that gives the metal its
+ * reflections lit the matt fibre at nearly four times its colour: the cream glowed white and the
+ * red and green went pastel. At this share the key light models it, its colours stay deep and
+ * its fibre shows, as under a board light.
+ */
+const FACE_AMBIENT = 0.3
+
+/**
+ * The dartboard from its model file: a bristle face with the wire spider and number ring, facing
+ * +Z, the 20 up, the bull at the origin. The file is in metres, at the scoring rules' radii (it is
+ * checked on loading), so a board point in millimetres lands in the bed its score names.
+ */
 export class BoardModel {
   readonly root = new Group()
-  private readonly faceMaterial = new MeshStandardMaterial({ color: 0x1a1a1a, roughness: 0.92 })
   private readonly plane = new Plane()
 
-  constructor() {
-    const body = new Mesh(
-      new CylinderGeometry(RADIUS, RADIUS, DEPTH, 96, 1, true),
-      new MeshStandardMaterial({ color: 0x0e0e0f, roughness: 0.7, metalness: 0.2 }),
-    )
-    body.rotation.x = Math.PI / 2
-    body.position.z = -DEPTH / 2
-    const face = new Mesh(new CircleGeometry(RADIUS, 160), this.faceMaterial)
-    this.root.add(body, face)
+  constructor(private readonly board: Object3D) {
+    const metres = new Group()
+    metres.scale.setScalar(METRES_TO_SCENE)
+    metres.add(board)
+    this.root.add(metres)
   }
 
-  /** Puts the drawn face on the board (the bitmap reads upside down: uploaded unflipped) */
-  setFace(image: ImageBitmap | HTMLCanvasElement): Texture {
-    const texture = new Texture(image)
-    texture.flipY = false
-    texture.colorSpace = SRGBColorSpace
-    texture.anisotropy = 8
-    texture.needsUpdate = true
-    this.faceMaterial.map = texture
-    this.faceMaterial.color.set(0xffffff)
-    this.faceMaterial.needsUpdate = true
-    return texture
+  /**
+   * Lights the face with its share of the studio's environment (wires and numbers keep it all).
+   * The face holds the map itself: three gives a material without one the scene's intensity.
+   */
+  light(environment: Texture | null): void {
+    const face = this.board.getObjectByName('face')
+    if (!(face instanceof Mesh) || !(face.material instanceof MeshStandardMaterial)) return
+    face.material.envMap = environment
+    face.material.envMapIntensity = FACE_AMBIENT
+    face.material.needsUpdate = true
+    // Thrown darts drop their shadow on the sisal (where the quality tier keeps shadows)
+    face.receiveShadow = true
   }
 
   /** The face's plane in world space (for aiming with a pointer) */

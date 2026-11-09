@@ -48,11 +48,38 @@ and back through a dusk gradient. Sound is optional and made in code.
 2. Code is requested only once the browser reports that first paint (`build/deferredBoot.ts`).
 3. The 3D scene (Three.js, about 150 kB gzip) loads only on devices that get 3D: the WebGL 2
    context is opened, and its renderer checked, before Three.js is requested, so a device whose
-   processor would draw it (one frame blocked the page for 0.8 s) never downloads it. The scene
-   boots one short task at a time: renderer, light, models, shaders compiled asynchronously.
-4. The board's face is drawn in a Web Worker; textures upload in their own task.
+   processor would draw it (one frame blocked the page for 0.8 s) never downloads it, nor its
+   models. The scene boots one short task at a time: renderer, light, models, textures (one task
+   each), shaders compiled asynchronously.
+4. The two model files download while the stage lights up: the dart (311 kB) and the board
+   (497 kB, or 306 kB with a 1024 px face on phones and smaller GPUs), with meshopt geometry and
+   WebP maps. Their loader (GLTFLoader and the meshopt decoder, 21 kB gzip) loads with them.
 5. Render scale is capped (DPR 1.5 / 1.25 / 1 by quality tier); the scene renders only when
    something moves, and pauses in a hidden tab.
+
+## The 3D models
+
+The dart and the board are modelled in Blender 5.2 LTS by the author's own parametric
+generators (no paid service, no third-party asset), baked onto light meshes and packed for the
+web with glTF Transform and meshoptimizer (`public/models/`).
+
+- **The dart** (`models/dart.glb`, 12,096 triangles): four nodes, `tip`, `barrel`, `shaft` and
+  `flight`, around +Y with the point first and the origin at the centre of gravity, in metres.
+  The 90% tungsten barrel has a gunmetal PVD coating, its 18 shark-fin rings (0.3 mm deep,
+  1.2 mm apart) and a diamond-knurled zone cut through it to bright tungsten, and an orange band
+  between two cut lines; the steel point is polished and grooved, with its knurled shank hidden
+  in the barrel; the anodised shaft has diamond-cut rings, the threaded stud and its O-ring; the
+  standard flight is folded and slightly bowed. Hidden parts show once the dart is exploded. The
+  flight's print is drawn by the page in its display face.
+- **The board** (`models/board.glb`, 15,142 triangles): a sisal face at the radii of the scoring
+  rules (fibre, segment colours, the shadows of every wire and a few dart holes baked into one
+  map, the fibre relief in a small repeated normal map), a real wire spider (round rings, blade
+  wires), a number ring bent from wire and a steel rim. Thrown darts cast their shadow on it.
+- **Checked on loading** (`src/design/scene/SceneModels.ts`): each file is refused above its size
+  limit while it streams, then its GLB container is read before the parser sees it; the nodes
+  the scene uses, their maps, a vertex and texture budget, the point's position and the board's
+  radius (the scoring rules') must all be there. A refused file sends the page to its art
+  without 3D, as any other failure of the scene does.
 
 ## Run it
 
@@ -81,29 +108,34 @@ hands it what it needs — no singleton, clock and randomness injected.
 
 ```
 src/
-  rules/        board geometry, scoring, chapters, choreography poses, quality tiers, dart profile
+  rules/        board geometry, scoring, chapters, choreography poses, quality tiers, dart layout,
+                the model files' contract and their GLB reader
   logic/        ThrowSession, ChapterTracker, preferences, device probe
   design/dom/   score counter, controls, throw panel, markers, scroll effects (GSAP)
-  design/scene/ Stage, DartModel, BoardModel (+ worker), DartFlight, SceneDirector, createScene
+  design/scene/ Stage, SceneModels (model files, loaded and checked), DartModel, BoardModel,
+                DartFlight, SceneDirector, createScene
   design/audio/ SoundEngine (Web Audio, no files)
   i18n/         en.json — every visible string — and the Translator
   styles/       tokens (light-dark), layout, components, motion — inlined at build
 build/          Vite plugins: html i18n, inline styles + hero font subset, deferred boot, CSP, compile hints
+public/models/  the dart and the board (GLB: meshopt geometry, WebP maps)
 ```
 
 ## Tests
 
 `npm test` runs the unit suite (scoring rings and segments, the 501 digits, the choreography's
 pose maths, quality tiers and software renderers, a seeded 3000-dart simulation of the throw, the
-translator, the input readers, the build plugins).
+translator, the input readers and the GLB reader against hostile files, the build plugins, and the
+shipped model files: within their limits, with the nodes the scene uses and only extensions the
+page decodes).
 
 `npm run test:e2e` builds nothing: run `npm run build` first. Playwright then serves the build and
 checks it on Chromium, Firefox, WebKit, a Pixel 7 and an iPhone 14: no console error, CSP violation
 or outside request; the finish played with the keyboard alone; the cursors; axe (WCAG 2.2 AA) in
 both themes; no sideways scroll from 320 to 2,560 px; a stable page length; a phone that never
 zooms out. Headless browsers draw WebGL with the processor, which the page refuses: the tests
-stand for a device with a GPU (`e2e/fixtures.ts`), and name a software renderer to check the page
-without 3D.
+stand for a device with a GPU (`e2e/fixtures.ts`), where the scene must go live from its two model
+files, and name a software renderer to check the page without 3D, which must request none.
 
 Lighthouse runs in CI on every pull request (`lighthouserc.json`): three warm-up runs that are
 not counted, then three mobile runs that must all score 100 in the four categories, with the CPU
@@ -125,6 +157,8 @@ blocking, on a fast laptop).
   [Geist Mono](https://github.com/vercel/geist-font), SIL Open Font License (texts in
   `public/fonts/`).
 - 3D: [Three.js](https://threejs.org). Scroll effects: [GSAP](https://gsap.com).
+- Models: made with [Blender](https://www.blender.org) by the author's own generators, packed with
+  [glTF Transform](https://gltf-transform.dev) and [meshoptimizer](https://github.com/zeux/meshoptimizer).
 - Design and code: [AdamRodWebDev](https://github.com/adamrodwebdev).
 
 ## Licence

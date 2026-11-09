@@ -93,18 +93,39 @@ test('the page never grows wider than the screen while it boots, so a phone neve
   expect(widest).toBe(page.viewportSize()?.width)
 })
 
-test('a device whose WebGL a GPU draws gets the 3D scene', async ({ page, browserName }) => {
+/** The model files a page asks for, by path */
+function modelRequests(page: Page): string[] {
+  const paths: string[] = []
+  page.on('request', (request) => {
+    const path = new URL(request.url()).pathname
+    if (path.includes('/models/')) paths.push(path)
+  })
+  return paths
+}
+
+test('a device whose WebGL a GPU draws gets the 3D scene, built from its two model files', async ({
+  page,
+  browserName,
+}) => {
   // eslint-disable-next-line playwright/no-skipped-test -- a precondition, not a parked test: on a CI runner Firefox opens no WebGL 2 and WebKit draws it too slowly for the frame-time probe (2026-11-09), so only Chromium can show the scene
   test.skip(browserName !== 'chromium', 'only Chromium draws WebGL fast enough on a CI runner')
+  const models = modelRequests(page)
   await page.goto('')
 
   await expect(page.locator('html')).toHaveClass(/\bhas-3d\b/)
+  // The canvas goes live once the dart and the board are loaded, checked and on the GPU; a file
+  // refused or failed would send the page to its art without 3D instead
+  await expect(page.locator('[data-stage]')).toHaveClass(/\bis-live\b/, { timeout: 15_000 })
+  await expect(page.locator('html')).toHaveClass(/\bhas-3d\b/)
+  expect(models).toHaveLength(2)
+  expect(models).toContain('/plumb-darts/models/dart.glb')
+  expect(models.some((path) => /\/models\/board(-1k)?\.glb$/.test(path))).toBe(true)
 })
 
 test.describe('on a device whose WebGL the processor draws', () => {
   test.use({ renderer: SOFTWARE })
 
-  test('the page keeps its art without 3D, never loads the scene and logs no error', async ({
+  test('the page keeps its art without 3D, never loads the scene or its models, and logs no error', async ({
     page,
     baseURL,
   }) => {
@@ -113,12 +134,15 @@ test.describe('on a device whose WebGL the processor draws', () => {
     page.on('request', (request) => {
       if (request.resourceType() === 'script') scripts.push(new URL(request.url()).pathname)
     })
+    const models = modelRequests(page)
     await page.goto('')
 
     await settled(page)
     await expect(page.locator('html')).toHaveClass(/\bno-3d\b/)
     await page.locator('.dusk').scrollIntoViewIfNeeded()
-    expect(scripts.filter((path) => path.includes('/createScene'))).toEqual([])
+    expect(scripts.filter((path) => /\/(createScene|GLTFLoader|meshopt)/.test(path))).toEqual([])
+    // Nor a byte of the models: Lighthouse's lab machine draws with the processor, as here
+    expect(models).toEqual([])
     expect(seen.errors).toEqual([])
   })
 

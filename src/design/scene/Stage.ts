@@ -2,6 +2,7 @@ import {
   ACESFilmicToneMapping,
   AmbientLight,
   DirectionalLight,
+  PCFShadowMap,
   PMREMGenerator,
   PerspectiveCamera,
   type Plane,
@@ -14,10 +15,21 @@ import {
   WebGLRenderer,
 } from 'three'
 import { RoomEnvironment } from 'three/addons/environments/RoomEnvironment.js'
+import { BOARD_POSITION } from '../../rules/choreography'
 import type { QualitySettings } from '../../rules/quality'
 import type { Clock } from '../../time/clock'
 import { nextTask } from '../../time/nextTask'
 import type { ScreenPoint } from '../dom/MarkerLayer'
+
+/** Anisotropic filtering of the model textures, at most (what the GPU allows, if less) */
+const MAX_ANISOTROPY = 8
+
+/** Where the key light comes from, from whatever it lights (centimetres) */
+const KEY_DIRECTION = [-20, 30, 40] as const
+/** Half the side of the square its shadow covers: the board and the darts standing in it */
+const SHADOW_HALF_SIDE = 27
+/** How much of the key light a dart's shadow takes away */
+const SHADOW_STRENGTH = 0.7
 
 /** Something that moves over time; returns false once finished */
 export interface Animation {
@@ -51,7 +63,8 @@ export class Stage {
     private readonly clock: Clock,
   ) {
     const canvas = context.canvas
-    if (!(canvas instanceof HTMLCanvasElement)) throw new Error('The stage draws on a canvas of the page')
+    if (!(canvas instanceof HTMLCanvasElement))
+      throw new Error('The stage draws on a canvas of the page')
     this.canvas = canvas
     this.renderer = new WebGLRenderer({ canvas, context, antialias: quality.antialias })
     this.renderer.outputColorSpace = SRGBColorSpace
@@ -72,11 +85,33 @@ export class Stage {
     generator.dispose()
     this.scene.environmentIntensity = 0.85
     await nextTask()
+    // The key light keeps its direction; it stands off the board, so its shadow camera frames the
+    // face and thrown darts drop their shadow on the sisal (nothing else takes shadows)
     const key = new DirectionalLight(0xfff0dc, 2.4)
-    key.position.set(-20, 30, 40)
+    const [bx, by, bz] = BOARD_POSITION
+    key.target.position.set(bx, by, bz)
+    key.position.set(bx + KEY_DIRECTION[0], by + KEY_DIRECTION[1], bz + KEY_DIRECTION[2])
+    if (this.quality.shadows) {
+      this.renderer.shadowMap.enabled = true
+      this.renderer.shadowMap.type = PCFShadowMap
+      key.castShadow = true
+      key.shadow.mapSize.set(1024, 1024)
+      const box = key.shadow.camera
+      box.left = -SHADOW_HALF_SIDE
+      box.right = SHADOW_HALF_SIDE
+      box.top = SHADOW_HALF_SIDE
+      box.bottom = -SHADOW_HALF_SIDE
+      box.near = 10
+      box.far = 110
+      key.shadow.bias = -0.0004
+      key.shadow.normalBias = 0.02
+      key.shadow.radius = 3
+      // A room's fill light still reaches the shade: a shadow is never black
+      key.shadow.intensity = SHADOW_STRENGTH
+    }
     const rim = new DirectionalLight(0xffcfa8, 1.6)
     rim.position.set(30, -12, -24)
-    this.scene.add(key, rim, new AmbientLight(0xffffff, 0.12))
+    this.scene.add(key, key.target, rim, new AmbientLight(0xffffff, 0.12))
 
     new ResizeObserver(() => {
       this.resize()
@@ -92,8 +127,12 @@ export class Stage {
     await this.renderer.compileAsync(this.scene, this.camera)
   }
 
-  /** Uploads a texture to the GPU now, in its own task, rather than inside the next frame */
+  /**
+   * Uploads a texture to the GPU now, in its own task, rather than inside the next frame, with
+   * anisotropic filtering: the barrel's rings and the board's fibres stay sharp at a slant
+   */
   upload(texture: Texture): void {
+    texture.anisotropy = Math.min(MAX_ANISOTROPY, this.renderer.capabilities.getMaxAnisotropy())
     this.renderer.initTexture(texture)
   }
 
@@ -136,10 +175,7 @@ export class Stage {
 
   /** Where a screen point meets a plane of the scene (the board's face), or null */
   pointOnPlane(clientX: number, clientY: number, plane: Plane, target: Vector3): Vector3 | null {
-    const pointer = new Vector2(
-      (clientX / this.width) * 2 - 1,
-      -(clientY / this.height) * 2 + 1,
-    )
+    const pointer = new Vector2((clientX / this.width) * 2 - 1, -(clientY / this.height) * 2 + 1)
     this.raycaster.setFromCamera(pointer, this.camera)
     return this.raycaster.ray.intersectPlane(plane, target)
   }

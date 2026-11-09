@@ -90,11 +90,12 @@ const WIDE: Readonly<Record<ChapterId, ChapterMotion>> = {
       boardSide: 1,
     }),
   },
-  // The board on the left, the panel on the right
+  // The board on the left, the panel on the right, its rim clear of the words (it covered the
+  // first letters of the text by 17 to 39 px from 1024 to 1920 px wide, 2026-11-09)
   throw: hold(
     pose({
       dart: DART_AWAY,
-      camera: { position: [15, 0, -24], target: [15, 0, -120] },
+      camera: { position: [17.5, 0, -20], target: [17.5, 0, -120] },
       board: 1,
     }),
   ),

@@ -61,7 +61,4 @@ export default defineConfig(({ command, isPreview }) => ({
       },
     },
   },
-  worker: {
-    format: 'es',
-  },
 }))

@@ -165,6 +165,11 @@ function isRecord(value: unknown): value is Readonly<Record<string, unknown>> {
   return typeof value === 'object' && value !== null && !Array.isArray(value)
 }
 
+/** An own field, never an inherited one (Object.hasOwn needs Safari 15.4: this works everywhere) */
+function owns(fields: object, key: string): boolean {
+  return Object.prototype.hasOwnProperty.call(fields, key)
+}
+
 /**
  * An object from outside (parsed JSON, a message, a save), read field by field. Only its own
  * fields are seen, never `__proto__`, `constructor` or anything inherited, and each read checks
@@ -199,7 +204,7 @@ export class InputRecord {
   }
 
   has(key: string): boolean {
-    return Object.hasOwn(this.fields, key)
+    return owns(this.fields, key)
   }
 
   number(key: string, rule: NumberRule): number {
@@ -232,7 +237,7 @@ export class InputRecord {
   }
 
   private value(key: string): unknown {
-    return Object.hasOwn(this.fields, key) ? this.fields[key] : undefined
+    return owns(this.fields, key) ? this.fields[key] : undefined
   }
 
   private path(key: string): string {

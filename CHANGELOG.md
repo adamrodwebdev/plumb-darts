@@ -8,6 +8,26 @@ All notable changes to this project are written here. The format follows
 
 ### Added
 
+- The page in French, Russian, Spanish, Italian and Indonesian, beside English: one static page
+  per language (`/plumb-darts/fr/`, `ru/`, `es/`, `it/`, `id/`), built from the same template
+  with its own embedded headline font, its own boot manifest and its own CSP hashes. Each has its
+  `lang`, a translated title and description, a self canonical, `og:locale` and its alternates,
+  and `hreflang` links to all six languages plus the x-default (English). Nothing redirects by
+  browser language. The 404 page stays English and leads home in every language.
+- A language menu in the masthead: a native `<details>` that works without JavaScript, each
+  language named in itself with `lang` and `hreflang`, the current one marked `aria-current`,
+  44 px targets, both themes. With JavaScript it closes on Escape or a click elsewhere, and its
+  links carry the chapter on screen.
+- Russian display type in Oswald (Big Shoulders Display has no Cyrillic) and Geist Mono's Cyrillic
+  subset, self-hosted from their fontsource packages; the wordmark keeps the brand's face.
+- Tests: every locale has exactly the English keys, placeholders and the plural forms
+  `Intl.PluralRules` asks for; no orphan key; typography per language; every character a page
+  shows is in its fonts' cmap; every page has its lang, canonical and hreflang. End to end, in
+  every language: no console error, the language menu (pointer, keyboard, no JavaScript, chapter
+  kept), no sideways scroll from 320 to 2,560 px, a masthead on one line from 320 px, and each
+  journey chapter's last line above the counter by the end of its hold; axe in English, French
+  and Russian, the open menu included. Lighthouse CI measures the French and Russian pages too.
+- `E2E_PORT` chooses the end-to-end server's port (4186 by default), read as a whole port number.
 - The journey: chapters 3 to 7 (the grip to the checkout) travel sideways where the screen is at
   least 40rem tall and motion is welcome. Their frame sticks to the screen (CSS sticky) while a
   strip of five screens slides left as the page scrolls down, each chapter holding the screen for
@@ -32,6 +52,24 @@ All notable changes to this project are written here. The format follows
 
 ### Changed
 
+- The page loads only its own language's messages, a chunk preloaded with the code; English is no
+  longer bundled in the entry.
+- The dart's numbers (ring depth and pitch, weight, tungsten, sizes, centre of gravity) and the
+  clipping dates are written once and formatted by `Intl` in each language; the dart weighs 25 g,
+  as the model does.
+- A throw's points agree with their count ("Single 1, 1 point."), in Russian too (очко, очка,
+  очков).
+- Spec figures keep the case of their unit symbols (0.3 mm, not 0.3 MM), and are set in the full
+  display face only: their digits came from the embedded headline cut, a weight heavier than the
+  letters beside them.
+- Headlines get a looser leading where accented or Cyrillic capitals would cut into the line above
+  (French, Spanish, Italian, Russian).
+- Under 24rem the sound button shows its bars alone (its name stays for screen readers) and the
+  language button drops its arrow, so the masthead keeps one line from 320 px in every language.
+- On phones, the press headline sits above the ring in the flow, and the ring holds the tallest
+  clipping: the clippings, longer in other languages and magnified by the perspective, rose into
+  the headline.
+- English copy uses typographic apostrophes.
 - The board slides in from the right with the finish and leaves by the left with it, receding,
   and fades only on its way out of shot: it used to vanish in one frame. The darts thrown belong
   to the board from the throw on, even mid-flight, and leave with it: they stayed in the air
@@ -45,6 +83,7 @@ All notable changes to this project are written here. The format follows
 
 ### Fixed
 
+- The masthead's logo mark was squeezed to nothing when the row ran short of room.
 - On wide screens the board's rim covered the first letters of the finish's text (17 to 39 px from
   1024 to 1920 px wide): the camera now keeps it clear of the words.
 - Playing the finish with the keyboard: the Throw button kept the focus only by chance. It was
@@ -54,11 +93,14 @@ All notable changes to this project are written here. The format follows
 
 ### Removed
 
+- The unused message `hud.oneEighty`.
 - The board face drawn in a Web Worker, the turned profiles of the dart, and the quality and
   colour settings only they used.
 
 ### Security
 
+- The page's language is read from its `<html lang>` through an allow-list (an unknown code, or a
+  name such as `toString`, means English), and its messages load from a fixed table.
 - Model files are checked at the door: refused above their size limit while they stream, their
   GLB container read before the parser, then their nodes, maps, vertex and texture budget, the
   point's position and the board's radius checked; a refused file leaves the page without 3D.

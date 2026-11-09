@@ -41,10 +41,50 @@ and back through a dusk gradient. Sound is optional and made in code.
 - **Watchdog:** if the scene is not up within 8 s, the page falls back.
 - **Light and dark themes**, following the system, with a remembered toggle.
 
+## Languages
+
+Six static pages, one per language, built from the same `index.html`. Nothing redirects a visitor
+by their browser's language: the menu in the masthead offers the others.
+
+| Language | Address | Speaks to the reader with |
+|---|---|---|
+| English (the base, and the x-default) | [/plumb-darts/](https://adamrodwebdev.github.io/plumb-darts/) | you |
+| Français | [/plumb-darts/fr/](https://adamrodwebdev.github.io/plumb-darts/fr/) | vous |
+| Русский | [/plumb-darts/ru/](https://adamrodwebdev.github.io/plumb-darts/ru/) | вы |
+| Español | [/plumb-darts/es/](https://adamrodwebdev.github.io/plumb-darts/es/) | tú |
+| Italiano | [/plumb-darts/it/](https://adamrodwebdev.github.io/plumb-darts/it/) | tu |
+| Bahasa Indonesia | [/plumb-darts/id/](https://adamrodwebdev.github.io/plumb-darts/id/) | kamu |
+
+- **Each page stands alone:** its `lang`, a translated title and description, its own canonical
+  address, `og:locale` with the others as alternates, and `hreflang` links to all six languages
+  plus the x-default. It embeds its own headline font subset and carries its own CSP hashes.
+- **The language menu** is a native `<details>` that works without JavaScript; each language is
+  named in itself, with its `lang` and `hreflang`, and the current one is marked
+  `aria-current`. With JavaScript, the links carry the chapter on screen, so the reader lands on
+  the same chapter in the other language.
+- **Only the active language ships:** the page reads its `<html lang>` through an allow-list and
+  imports its own messages (`src/i18n/locales/<code>.json`), a chunk the boot script preloads
+  with the code.
+- **Numbers, units and dates go through `Intl`:** the dart's measures live once in
+  `src/rules/specs.ts` and each page writes them its own way (0.3 mm, 0,3 мм, 90 %), clipping dates
+  too; counts follow `Intl.PluralRules` (Russian one, few and many).
+- **Russian type:** Big Shoulders Display has no Cyrillic, so the Russian page sets its headlines in
+  Oswald (OFL): the same cap height, and Russian letterforms by default (a closer match, Sofia Sans
+  Extra Condensed, draws Bulgarian forms unless the browser applies `locl`, which Safari does not
+  reliably do). It is set at 500 to keep Big Shoulders' colour, with a looser leading for Ё, Й and
+  the descenders of Д, Ц and Щ. Geist Mono's Cyrillic subset sets the small print; the wordmark
+  keeps the brand's face in every language.
+- **The 404 page** stays in English (GitHub Pages serves one) and leads home in every language.
+- **Native review:** the Russian and Indonesian copy waits for a native speaker's review.
+- **Adding a language:** a line in `src/i18n/languages.ts`, its messages file and its line in
+  `src/i18n/loadMessages.ts`. The unit tests then ask for every key, placeholder and plural form,
+  every character in the page's fonts, and its typography; the build writes its page.
+
 ## Performance contract
 
-1. The first paint comes from `index.html` alone: inline CSS, and the hero headline, wordmark and
-   score digits set in an embedded 5 kB subset of the display face (no request, no swap).
+1. The first paint comes from each language's page alone: inline CSS, and the hero headline,
+   wordmark and score digits set in an embedded subset of that page's display face, cut from its
+   own headline's glyphs at build (about 5 kB; no request, no swap).
 2. Code is requested only once the browser reports that first paint (`build/deferredBoot.ts`).
 3. The 3D scene (Three.js, about 150 kB gzip) loads only on devices that get 3D: the WebGL 2
    context is opened, and its renderer checked, before Three.js is requested, so a device whose
@@ -109,15 +149,18 @@ hands it what it needs — no singleton, clock and randomness injected.
 ```
 src/
   rules/        board geometry, scoring, chapters, choreography poses, quality tiers, dart layout,
-                the model files' contract and their GLB reader
+                the dart's specs (formatted by Intl per language), the model files' contract and
+                their GLB reader
   logic/        ThrowSession, ChapterTracker, preferences, device probe
   design/dom/   score counter, controls, throw panel, markers, scroll effects (GSAP)
   design/scene/ Stage, SceneModels (model files, loaded and checked), DartModel, BoardModel,
                 DartFlight, SceneDirector, createScene
   design/audio/ SoundEngine (Web Audio, no files)
-  i18n/         en.json — every visible string — and the Translator
+  i18n/         locales/*.json (every visible string, six languages), the language list, the
+                messages loader (one chunk per language) and the Translator (Intl plurals)
   styles/       tokens (light-dark), layout, components, motion — inlined at build
-build/          Vite plugins: html i18n, inline styles + hero font subset, deferred boot, CSP, compile hints
+build/          Vite plugins: html i18n (a page per language), inline styles + embedded font subsets,
+                deferred boot, CSP, compile hints; the WOFF2 coverage reader
 public/models/  the dart and the board (GLB: meshopt geometry, WebP maps)
 ```
 
@@ -127,18 +170,27 @@ public/models/  the dart and the board (GLB: meshopt geometry, WebP maps)
 pose maths, quality tiers and software renderers, a seeded 3000-dart simulation of the throw, the
 translator, the input readers and the GLB reader against hostile files, the build plugins, and the
 shipped model files: within their limits, with the nodes the scene uses and only extensions the
-page decodes).
+page decodes). For the six languages it checks that every messages file has exactly the English
+keys, the same placeholders and the plural forms `Intl.PluralRules` asks for; that no key is
+orphaned; each language's typography (French no-break spaces, Russian dashes, Spanish opening
+marks); that every character a page shows is in the faces that set it, read from the WOFF2 files;
+and that every page has its `lang`, its canonical address and its `hreflang` links.
 
 `npm run test:e2e` builds nothing: run `npm run build` first. Playwright then serves the build and
 checks it on Chromium, Firefox, WebKit, a Pixel 7 and an iPhone 14: no console error, CSP violation
-or outside request; the finish played with the keyboard alone; the cursors; axe (WCAG 2.2 AA) in
-both themes; no sideways scroll from 320 to 2,560 px; a stable page length; a phone that never
-zooms out. Headless browsers draw WebGL with the processor, which the page refuses: the tests
+or outside request, in every language; the finish played with the keyboard alone; the cursors;
+axe (WCAG 2.2 AA) in both themes in English, French and Russian, the open language menu included;
+no sideways scroll from 320 to 2,560 px and a masthead on one line from 320 px, in every language;
+each journey chapter's last line above the counter by the end of its hold, in every language; the
+language menu by pointer, by keyboard, without JavaScript, and keeping the chapter; a stable page
+length; a phone that never zooms out. It serves the build on port 4186, or on the port
+`E2E_PORT` names (`E2E_PORT=4271 npm run test:e2e`). Headless browsers draw WebGL with the processor, which the page refuses: the tests
 stand for a device with a GPU (`e2e/fixtures.ts`), where the scene must go live from its two model
 files, and name a software renderer to check the page without 3D, which must request none.
 
 Lighthouse runs in CI on every pull request (`lighthouserc.json`): three warm-up runs that are
-not counted, then three mobile runs that must all score 100 in the four categories, with the CPU
+not counted, then three mobile runs of the English, French and Russian pages that must all score
+100 in the four categories, with the CPU
 slowdown fitted to the runner's speed so that every run simulates the same phone
 (`lighthouse/calibrate.mjs`). On 2026-11-09 the production build scored 100 × 4 on mobile (blocking
 time 10 to 20 ms at that slowdown) and on desktop. The lab machine has no GPU, so Lighthouse scores
@@ -153,8 +205,9 @@ blocking, on a fast laptop).
 
 ## Credits
 
-- Type: [Big Shoulders Display](https://github.com/xotypeco/big_shoulders) and
-  [Geist Mono](https://github.com/vercel/geist-font), SIL Open Font License (texts in
+- Type: [Big Shoulders Display](https://github.com/xotypeco/big_shoulders),
+  [Geist Mono](https://github.com/vercel/geist-font) and, for Russian,
+  [Oswald](https://github.com/googlefonts/OswaldFont), SIL Open Font License (texts in
   `public/fonts/`).
 - 3D: [Three.js](https://threejs.org). Scroll effects: [GSAP](https://gsap.com).
 - Models: made with [Blender](https://www.blender.org) by the author's own generators, packed with

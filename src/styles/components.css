@@ -561,6 +561,29 @@
   bottom: 50%;
 }
 
+/* Phones: the exploded dart stands upright at the left of its stage, so each part's label sits to
+   its right on a level leader. Above and below, the barrel's and the shaft's labels met in one spot
+   and the tip's went under the masthead (2026-11-09) */
+@media (width < 64rem) {
+  .has-3d .marker--part {
+    --leader: 2rem;
+    /* A longer translation wraps instead of running off the screen */
+    max-width: calc(100vw - var(--x, 0) * 1px - var(--leader) - 1rem);
+    white-space: normal;
+    transform: translate3d(
+      calc(var(--x, -500) * 1px + var(--leader)),
+      calc(var(--y, -500) * 1px - 50%),
+      0
+    );
+  }
+
+  .has-3d .marker--part::after {
+    inset: 50% auto auto calc(var(--leader) * -1);
+    width: var(--leader);
+    height: 1px;
+  }
+}
+
 /* ---------- Weight gauge ---------- */
 .gauge {
   position: relative;

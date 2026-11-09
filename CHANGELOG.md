@@ -42,9 +42,18 @@ All notable changes to this project are written here. The format follows
 - The board's face takes a third of the room's reflected light: under the full light its colours
   went pastel.
 - The flight's wordmark reads left to right on the hero.
+- The dart weighs 25 g, as modelled: the copy, the gauge (its needle at 25 of 30 g) and the press
+  clipping's headline say so in every language (they said 22 g).
+- Phones: the hero dart is sized and placed in the room the page leaves between the masthead and
+  the first line (from 12 % to 37 % of the screen, measured on the page), and flies in from the
+  right, level with it; the exploded view stands in the top of the screen kept for the object,
+  with every label to its right on a level leader; the board fills that same band.
 
 ### Fixed
 
+- Phones: the hero dart's flight rested under the Sound button, the exploded view crossed the
+  anatomy's title and text, the barrel's and the shaft's labels met in one spot and the tip's
+  went under the masthead, and the board ran under the masthead and over the finish's label.
 - On wide screens the board's rim covered the first letters of the finish's text (17 to 39 px from
   1024 to 1920 px wide): the camera now keeps it clear of the words.
 - Playing the finish with the keyboard: the Throw button kept the focus only by chance. It was

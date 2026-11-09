@@ -15,7 +15,7 @@ import {
   WebGLRenderer,
 } from 'three'
 import { RoomEnvironment } from 'three/addons/environments/RoomEnvironment.js'
-import { BOARD_POSITION } from '../../rules/choreography'
+import { BOARD_POSITION, CAMERA_FOV } from '../../rules/choreography'
 import type { QualitySettings } from '../../rules/quality'
 import type { Clock } from '../../time/clock'
 import { nextTask } from '../../time/nextTask'
@@ -42,7 +42,7 @@ export interface Animation {
  */
 export class Stage {
   readonly scene = new Scene()
-  readonly camera = new PerspectiveCamera(30, 1, 1, 800)
+  readonly camera = new PerspectiveCamera(CAMERA_FOV, 1, 1, 800)
   private readonly canvas: HTMLCanvasElement
   private readonly renderer: WebGLRenderer
   private readonly raycaster = new Raycaster()

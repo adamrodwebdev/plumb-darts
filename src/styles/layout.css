@@ -247,6 +247,9 @@
   z-index: auto;
   align-content: end;
   padding-block-end: 5.5rem;
+  /* Nothing drawn here widens the page, not even the drawn dart flying in from the right: a phone
+     would zoom the whole page out, then back in (a 0.32 layout shift, seen 2026-11-09) */
+  overflow-x: clip;
 }
 
 .hero {
@@ -352,18 +355,40 @@
   }
 }
 
+/* Without 3D, a drawn dart takes the 3D one's place, across the headline's top right. It stays out
+   of the flow: showing it once the device is known never moves the page (no layout shift). */
 .fallback-dart {
+  position: absolute;
+  z-index: 2;
   display: none;
-}
-
-.no-3d .fallback-dart {
-  display: block;
-  width: min(100%, 40rem);
-  margin-block-start: 2rem;
-  margin-inline: auto;
+  pointer-events: none;
   fill: none;
   stroke: var(--ink);
   stroke-width: 2;
+}
+
+/* On a phone, in the room above the headline, which only a tall screen has (a shorter one would
+   lay the dart over the small print: measured from 320 × 568 to 430 × 932 on 2026-11-09) */
+@media (height >= 50rem) {
+  .no-3d .fallback-dart {
+    inset-block-start: calc(var(--masthead-height) + 3rem);
+    /* Up to the screen's edge, never past it: a phone would zoom the whole page out to show it */
+    inset-inline-end: 0;
+    display: block;
+    width: min(80%, 24rem);
+    rotate: -22deg;
+  }
+}
+
+/* On a wide screen, across the headline, where the 3D dart flies */
+@media (width >= 64rem) {
+  .no-3d .fallback-dart {
+    inset-block-start: calc(var(--masthead-height) + 5rem);
+    inset-inline-end: 18%;
+    display: block;
+    width: min(48%, 40rem);
+    rotate: -20deg;
+  }
 }
 
 .fallback-dart__tip,

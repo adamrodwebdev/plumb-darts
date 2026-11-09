@@ -65,3 +65,33 @@ describe('the choreography', () => {
     },
   )
 })
+
+describe('the board on its way in and out of the finish', () => {
+  const story: ChapterRange[] = [
+    { id: 'anatomy', start: 0, end: 1000 },
+    { id: 'throw', start: 2000, end: 3000 },
+    { id: 'checkout', start: 4000, end: 5000 },
+  ]
+
+  test.each(['wide', 'narrow'] as const)(
+    'comes in from the right before the finish and leaves by the left after it, on %s screens',
+    (layout) => {
+      const arriving = poseAt(1500, story, CHOREOGRAPHY[layout])
+      const leaving = poseAt(3500, story, CHOREOGRAPHY[layout])
+
+      expect(arriving.board).toBeGreaterThan(0)
+      expect(arriving.board).toBeLessThan(1)
+      expect(arriving.boardSide).toBeGreaterThan(0)
+      expect(leaving.board).toBeGreaterThan(0)
+      expect(leaving.board).toBeLessThan(1)
+      expect(leaving.boardSide).toBeLessThan(0)
+    },
+  )
+
+  test('stands square in the middle while the finish holds the screen', () => {
+    const pose = poseAt(2500, story, CHOREOGRAPHY.wide)
+
+    expect(pose.board).toBe(1)
+    expect(pose.boardSide).toBe(0)
+  })
+})

@@ -6,6 +6,43 @@ All notable changes to this project are written here. The format follows
 
 ## [Unreleased]
 
+### Added
+
+- Realistic models made in Blender by our own generators (`public/models/`). The dart: a 90%
+  tungsten barrel in gunmetal PVD with 18 shark-fin rings and a knurled zone cut to bright
+  tungsten and an orange band; a polished, grooved steel point; an anodised aluminium shaft with
+  diamond-cut rings, its thread and O-ring; a folded standard flight. Hidden parts (the point's
+  shank, the shaft's thread) show in the exploded view. The board: a sisal face with fibre,
+  pressed seams and a few dart holes, a real wire spider, a number ring bent from wire and a
+  steel rim, at the scoring rules' radii.
+- Thrown darts cast their shadow on the board (high and medium quality tiers).
+- Tests: the GLB reader against hostile files; the shipped model files (size limits, nodes,
+  extensions); end to end, the scene goes live from its two model files, and the page without 3D
+  requests none.
+
+### Changed
+
+- The dart and the board come from two model files instead of shapes built in code: 311 kB for
+  the dart, 497 kB for the board (306 kB with a 1024 px face on phones and smaller GPUs), meshopt
+  geometry and WebP maps, downloaded while the stage lights up; textures upload one per task.
+- The board's face takes a third of the room's reflected light: under the full light its colours
+  went pastel.
+- The flight's wordmark reads left to right on the hero.
+
+### Removed
+
+- The board face drawn in a Web Worker, the turned profiles of the dart, and the quality and
+  colour settings only they used.
+
+### Security
+
+- Model files are checked at the door: refused above their size limit while they stream, their
+  GLB container read before the parser, then their nodes, maps, vertex and texture budget, the
+  point's position and the board's radius checked; a refused file leaves the page without 3D.
+- Content Security Policy: `'wasm-unsafe-eval'` lets three's meshopt decoder compile its
+  WebAssembly (eval stays refused), `connect-src` adds `blob:` for the images GLTFLoader reads back
+  from its own blob URLs, and `worker-src` is now `'none'` (no worker left).
+
 ## [0.2.0] - 2026-11-09
 
 First published version, on GitHub Pages. Lighthouse 100 in the four categories on mobile

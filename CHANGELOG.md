@@ -29,6 +29,8 @@ All notable changes to this project are written here. The format follows
 
 - `vite preview` served the build under `/` instead of `/plumb-darts/`: every local preview fell
   back to the home page without its scripts.
+- Without WebGL 2 (no GPU, a blocked one, Firefox on a CI runner) the page goes on without 3D
+  silently: the stage creates the context itself, where three.js logged two console errors first.
 
 ### Security
 

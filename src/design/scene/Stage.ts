@@ -44,13 +44,21 @@ export class Stage {
     private readonly quality: QualitySettings,
     private readonly clock: Clock,
   ) {
-    // Throws when WebGL is unavailable: the caller keeps the page without 3D
-    this.renderer = new WebGLRenderer({
-      canvas,
+    // The one context the scene uses, created here with three.js's own attributes: without WebGL 2
+    // (no GPU, a blocked one, Firefox on a CI runner) the page quietly goes on without 3D, where
+    // three.js would have logged two console errors before throwing
+    const context = canvas.getContext('webgl2', {
       alpha: true,
+      depth: true,
+      stencil: false,
       antialias: quality.antialias,
+      premultipliedAlpha: true,
+      preserveDrawingBuffer: false,
       powerPreference: 'high-performance',
+      failIfMajorPerformanceCaveat: false,
     })
+    if (!context) throw new Error('WebGL 2 is not available: the page goes on without 3D')
+    this.renderer = new WebGLRenderer({ canvas, context, antialias: quality.antialias })
     this.renderer.outputColorSpace = SRGBColorSpace
     this.renderer.toneMapping = ACESFilmicToneMapping
     this.renderer.toneMappingExposure = 1.05

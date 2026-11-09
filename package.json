@@ -1,0 +1,54 @@
+{
+  "name": "plumb-darts",
+  "version": "0.2.0",
+  "private": true,
+  "description": "Plumb, a fictional tungsten dart: an immersive 3D product page built to keep Lighthouse 100 and WCAG 2.2 AA.",
+  "license": "MIT",
+  "type": "module",
+  "engines": {
+    "node": ">=24"
+  },
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build",
+    "preview": "vite preview",
+    "typecheck": "tsc --noEmit -p tsconfig.json && tsc --noEmit -p tsconfig.node.json",
+    "lint": "oxlint . && eslint .",
+    "test": "vitest run",
+    "test:e2e": "playwright test",
+    "format": "prettier --write src build e2e scripts"
+  },
+  "dependencies": {
+    "gsap": "3.15.1",
+    "three": "0.187.0"
+  },
+  "devDependencies": {
+    "@axe-core/playwright": "^4.13.0",
+    "@eslint/js": "^10.0.0",
+    "@fontsource-variable/big-shoulders-display": "^5.3.0",
+    "@fontsource-variable/geist-mono": "^5.3.0",
+    "@playwright/test": "1.64.0",
+    "@tsconfig/node24": "^24.0.5",
+    "@types/node": "^24.13.4",
+    "@types/three": "0.187.0",
+    "@vitest/eslint-plugin": "^1.6.27",
+    "eslint": "^10.10.0",
+    "eslint-config-prettier": "^10.1.8",
+    "eslint-plugin-oxlint": "~1.89.0",
+    "eslint-plugin-playwright": "^2.12.0",
+    "jiti": "^2.7.0",
+    "jsdom": "^30.0.1",
+    "lightningcss": "^1.33.0",
+    "oxlint": "~1.89.0",
+    "prettier": "3.9.10",
+    "subset-font": "^2.9.0",
+    "typescript": "~6.0.0",
+    "typescript-eslint": "^8.50.0",
+    "vite": "^8.2.2",
+    "vitest": "^5.0.5"
+  },
+  "overrides": {
+    "minimatch": "^11.0.5",
+    "playwright-core": "1.64.0"
+  }
+}

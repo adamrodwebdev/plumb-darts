@@ -1,0 +1,71 @@
+/* Design tokens. Each chapter has a tone (night, steel, studio); every colour is
+   light-dark(light theme, dark theme). Contrast checked by e2e/contrast (WCAG AA). */
+:root {
+  color-scheme: dark light;
+
+  --night-bg: light-dark(#ebe7df, #0b0c0e);
+  --night-ink: light-dark(#141414, #ece8e1);
+  --night-muted: light-dark(#55524b, #a19d95);
+  --steel-bg: light-dark(#dfe5eb, #0f151c);
+  --steel-ink: light-dark(#0e141a, #e6ebf0);
+  --steel-muted: light-dark(#475260, #94a2b1);
+  --studio-bg: light-dark(#f8f6f1, #202125);
+  --studio-ink: light-dark(#141414, #efebe4);
+  --studio-muted: light-dark(#57534d, #aaa59c);
+
+  --accent: light-dark(#b33014, #ff5a36);
+  --on-accent: light-dark(#fffaf5, #160b07);
+
+  --font-display: 'Plumb Hero', 'Big Shoulders Display', 'Arial Narrow', 'Roboto Condensed', Impact,
+    sans-serif;
+  --font-mono: 'Geist Mono', ui-monospace, 'SF Mono', Menlo, Consolas, monospace;
+  --font-body: system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', sans-serif;
+
+  --ease-out: cubic-bezier(0.16, 1, 0.3, 1);
+  --ease-in-out: cubic-bezier(0.65, 0, 0.35, 1);
+  --gutter: clamp(1rem, 0.4rem + 2.6vw, 3rem);
+  --masthead-height: 4.25rem;
+
+  /* Chrome (masthead, score counter) follows the chapter on screen */
+  --chrome-bg: var(--night-bg);
+  --chrome-ink: var(--night-ink);
+  --chrome-muted: var(--night-muted);
+}
+
+:root[data-theme='light'] {
+  color-scheme: light;
+}
+
+:root[data-theme='dark'] {
+  color-scheme: dark;
+}
+
+:root[data-current-tone='steel'] {
+  --chrome-bg: var(--steel-bg);
+  --chrome-ink: var(--steel-ink);
+  --chrome-muted: var(--steel-muted);
+}
+
+:root[data-current-tone='studio'] {
+  --chrome-bg: var(--studio-bg);
+  --chrome-ink: var(--studio-ink);
+  --chrome-muted: var(--studio-muted);
+}
+
+[data-tone='night'] {
+  --bg: var(--night-bg);
+  --ink: var(--night-ink);
+  --muted: var(--night-muted);
+}
+
+[data-tone='steel'] {
+  --bg: var(--steel-bg);
+  --ink: var(--steel-ink);
+  --muted: var(--steel-muted);
+}
+
+[data-tone='studio'] {
+  --bg: var(--studio-bg);
+  --ink: var(--studio-ink);
+  --muted: var(--studio-muted);
+}

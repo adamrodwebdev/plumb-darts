@@ -1,0 +1,51 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>{{ meta.notFoundTitle }}</title>
+    <meta name="robots" content="noindex">
+    <meta name="color-scheme" content="dark light">
+    <link rel="icon" href="%BASE_URL%favicon.svg" type="image/svg+xml">
+    <!-- theme-script -->
+    <!-- inline-styles -->
+  </head>
+  <body class="page-404">
+    <header class="masthead">
+      <a class="brand" href="%BASE_URL%" aria-label="{{ a11y.home }}">
+        <svg class="brand__mark" viewBox="0 0 20 32" aria-hidden="true" focusable="false">
+          <path class="brand__string" d="M10 0v10" />
+          <path class="brand__bob" d="M10 10 3 19.5 10 32l7-12.5z" />
+        </svg>
+        <span class="brand__name" aria-hidden="true">{{ footer.wordmark }}</span>
+      </a>
+      <p class="masthead__tag">{{ header.tag }}</p>
+    </header>
+    <main class="missed" data-tone="night">
+      <div class="missed__text">
+        <p class="kicker">{{ notFound.kicker }}</p>
+        <h1 class="missed__title">{{ notFound.title }}</h1>
+        <p class="chapter__body">{{ notFound.body }}</p>
+        <div class="actions">
+          <a class="button button--primary" href="%BASE_URL%">
+            <span class="button__mask"><span class="button__label">{{ notFound.back }}</span></span>
+          </a>
+        </div>
+      </div>
+      <svg class="missed__board" viewBox="0 0 400 400" aria-hidden="true" focusable="false">
+        <circle class="missed__surround" cx="200" cy="200" r="150" />
+        <circle class="missed__double" cx="200" cy="200" r="113" />
+        <circle class="missed__single" cx="200" cy="200" r="105" />
+        <circle class="missed__treble" cx="200" cy="200" r="71" />
+        <circle class="missed__single" cx="200" cy="200" r="64" />
+        <circle class="missed__bull" cx="200" cy="200" r="11" />
+        <circle class="missed__eye" cx="200" cy="200" r="4.5" />
+        <g class="missed__dart">
+          <path d="M352 64 381 39" />
+          <path class="missed__dart-barrel" d="m381 39 22-19" />
+          <path class="missed__dart-flight" d="m401 22 17-24 6 10-10 14 12 4-17 11z" />
+        </g>
+      </svg>
+    </main>
+  </body>
+</html>

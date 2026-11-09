@@ -1,0 +1,143 @@
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+* {
+  margin: 0;
+}
+
+html {
+  -webkit-text-size-adjust: 100%;
+  text-size-adjust: 100%;
+  scroll-padding-block-start: calc(var(--masthead-height) + 1rem);
+  /* The score counter is fixed at the bottom: a focused control is never hidden behind it */
+  scroll-padding-block-end: 5.5rem;
+  background: var(--night-bg);
+  color: var(--night-ink);
+  /* The cursor tells what can be clicked: the arrow on all content (never the text I-beam), the
+     pointer only on what reacts to a click (the user's directive, 2026-11-09) */
+  cursor: default;
+}
+
+body {
+  min-height: 100svh;
+  font-family: var(--font-body);
+  font-size: clamp(1.0625rem, 1rem + 0.25vw, 1.1875rem);
+  line-height: 1.55;
+  -webkit-font-smoothing: antialiased;
+  overflow-x: clip;
+}
+
+img,
+svg,
+canvas {
+  display: block;
+  max-width: 100%;
+}
+
+a {
+  color: inherit;
+  text-underline-offset: 0.22em;
+  text-decoration-thickness: 1px;
+}
+
+button,
+input,
+select {
+  font: inherit;
+  color: inherit;
+}
+
+a[href],
+area[href],
+button:not(:disabled),
+select:not(:disabled),
+summary,
+label[for],
+[role='button'],
+[role='link'],
+[role='tab'],
+[role='menuitem'],
+[role='option'],
+[role='switch'],
+input:is(
+    [type='checkbox'],
+    [type='radio'],
+    [type='submit'],
+    [type='button'],
+    [type='reset'],
+    [type='file'],
+    [type='color'],
+    [type='range']
+  ):not(:disabled) {
+  cursor: pointer;
+}
+
+/* Its own rule: a browser without :has() drops only this one, not the list above */
+label:has(> input:not(:disabled)) {
+  cursor: pointer;
+}
+
+input:is(
+    :not([type]),
+    [type='text'],
+    [type='email'],
+    [type='search'],
+    [type='password'],
+    [type='number'],
+    [type='tel'],
+    [type='url']
+  ):not(:disabled),
+textarea:not(:disabled),
+[contenteditable='true'] {
+  cursor: text;
+}
+
+:disabled,
+[aria-disabled='true'] {
+  cursor: not-allowed;
+}
+
+:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 3px;
+}
+
+::selection {
+  background: var(--accent);
+  color: var(--on-accent);
+}
+
+.visually-hidden {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+}
+
+.skip-link {
+  position: fixed;
+  z-index: 100;
+  inset-block-start: 0.75rem;
+  inset-inline-start: 0.75rem;
+  padding: 0.75rem 1rem;
+  border-radius: 0.5rem;
+  background: var(--accent);
+  color: var(--on-accent);
+  font-weight: 700;
+  text-decoration: none;
+  transform: translateY(-200%);
+}
+
+.skip-link:focus-visible {
+  transform: none;
+}
+
+/* Controls that need the script stay invisible (their space kept) until it wires them */
+[data-enhance]:not(.is-ready) {
+  visibility: hidden;
+}

@@ -1,0 +1,357 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>{{ meta.title }}</title>
+    <meta name="description" content="{{ meta.description }}">
+    <meta name="color-scheme" content="dark light">
+    <meta name="theme-color" content="#0b0c0e" media="(prefers-color-scheme: dark)">
+    <meta name="theme-color" content="#ece8e1" media="(prefers-color-scheme: light)">
+    <link rel="canonical" href="https://adamrodwebdev.github.io/plumb-darts/">
+    <link rel="icon" href="%BASE_URL%favicon.svg" type="image/svg+xml">
+    <meta property="og:type" content="website">
+    <meta property="og:title" content="{{ meta.title }}">
+    <meta property="og:description" content="{{ meta.description }}">
+    <meta property="og:url" content="https://adamrodwebdev.github.io/plumb-darts/">
+    <!-- theme-script -->
+    <!-- inline-styles -->
+  </head>
+  <body>
+    <a class="skip-link" href="#main">{{ a11y.skip }}</a>
+
+    <div class="sky" aria-hidden="true">
+      <div class="sky__layer" data-sky="night"></div>
+      <div class="sky__layer" data-sky="steel"></div>
+      <div class="sky__layer" data-sky="studio"></div>
+      <div class="sky__spot"></div>
+      <div class="sky__grain"></div>
+    </div>
+    <canvas class="stage" data-stage aria-hidden="true"></canvas>
+    <div class="boot-progress" data-boot-progress aria-hidden="true"><i></i></div>
+
+    <header class="masthead">
+      <a class="brand" href="#game-on" aria-label="{{ a11y.home }}">
+        <svg class="brand__mark" viewBox="0 0 20 32" aria-hidden="true" focusable="false">
+          <path class="brand__string" d="M10 0v10" />
+          <path class="brand__bob" d="M10 10 3 19.5 10 32l7-12.5z" />
+        </svg>
+        <span class="brand__name" aria-hidden="true">{{ footer.wordmark }}</span>
+      </a>
+      <p class="masthead__tag">{{ header.tag }}</p>
+      <div class="masthead__actions">
+        <button
+          class="icon-button"
+          type="button"
+          data-theme-toggle
+          data-enhance
+          aria-label="{{ header.themeToLight }}"
+          data-label-light="{{ header.themeToLight }}"
+          data-label-dark="{{ header.themeToDark }}"
+        >
+          <svg class="icon-button__sun" viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+            <circle cx="12" cy="12" r="4.2" />
+            <path d="M12 2.5v2.6M12 18.9v2.6M2.5 12h2.6M18.9 12h2.6M5.3 5.3l1.8 1.8M16.9 16.9l1.8 1.8M5.3 18.7l1.8-1.8M16.9 7.1l1.8-1.8" />
+          </svg>
+          <svg class="icon-button__moon" viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+            <path d="M19.5 14.6A8 8 0 0 1 9.4 4.5a8 8 0 1 0 10.1 10.1Z" />
+          </svg>
+        </button>
+        <button class="sound-button" type="button" data-sound-toggle data-enhance aria-pressed="false">
+          <span class="sound-button__bars" aria-hidden="true"><i></i><i></i><i></i><i></i></span>
+          <span class="sound-button__label">{{ header.sound }}</span>
+        </button>
+      </div>
+    </header>
+
+    <main id="main">
+      <section id="game-on" class="chapter chapter--hero" data-chapter="game-on" data-tone="night" aria-labelledby="hero-title">
+        <div class="hero">
+          <p class="eyebrow eyebrow--demo">{{ header.tag }}</p>
+          <p class="eyebrow">{{ hero.eyebrow }}</p>
+          <h1 class="hero__title" id="hero-title">
+            <span class="hero__line">{{ hero.title1 }}</span>
+            <span class="hero__line hero__line--rest"><span>{{ hero.title2 }}</span> <span>{{ hero.title3 }}</span></span>
+            <span class="hero__sweep" aria-hidden="true"></span>
+          </h1>
+          <p class="hero__lede">{{ hero.lede }}</p>
+          <div class="actions">
+            <a class="button button--primary" href="#throw">
+              <span class="button__mask"><span class="button__label">{{ hero.ctaThrow }}</span></span>
+              <svg class="button__icon" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M4 12h13.2l-4.6-4.6L14 6l7 7-7 7-1.4-1.4 4.6-4.6H4z" /></svg>
+            </a>
+            <a class="button button--ghost" href="#grip">
+              <span class="button__mask"><span class="button__label">{{ hero.ctaMeet }}</span></span>
+            </a>
+          </div>
+        </div>
+        <p class="scroll-cue" aria-hidden="true"><span>{{ hero.scroll }}</span></p>
+        <svg class="fallback-dart" viewBox="0 0 640 120" aria-hidden="true" focusable="false">
+          <path class="fallback-dart__tip" d="M8 60 120 56v8z" />
+          <rect class="fallback-dart__barrel" x="120" y="44" width="200" height="32" rx="14" />
+          <path class="fallback-dart__rings" d="M170 46v28M182 46v28M194 46v28M206 46v28M218 46v28M230 46v28M242 46v28M254 46v28" />
+          <rect class="fallback-dart__band" x="292" y="44" width="10" height="32" />
+          <path class="fallback-dart__shaft" d="M320 52h150v16H320z" />
+          <path class="fallback-dart__flight" d="M440 60 520 12h112l-40 48 40 48H520z" />
+        </svg>
+      </section>
+
+      <section id="press" class="chapter chapter--press" data-chapter="press" data-tone="night" data-pin aria-labelledby="press-title">
+        <div class="chapter__inner">
+          <div class="press__intro">
+            <p class="kicker">{{ press.kicker }}</p>
+            <p class="chapter__body">{{ press.body }}</p>
+          </div>
+          <div class="orbit" data-orbit>
+            <div class="orbit__space">
+              <h2 class="orbit__title" id="press-title">{{ press.title }}</h2>
+              <ol class="orbit__ring" data-orbit-ring>
+                <li class="clipping" data-visual="board">
+                  <article class="clipping__paper">
+                    <p class="clipping__label">{{ press.sample }}</p>
+                    <div class="clipping__photo" aria-hidden="true"></div>
+                    <p class="clipping__source"><span class="clipping__outlet">{{ press.card1Outlet }}</span> <time datetime="2026-10-12">{{ press.card1Date }}</time></p>
+                    <h3 class="clipping__headline">{{ press.card1Headline }}</h3>
+                    <blockquote class="clipping__quote"><p>{{ press.card1Quote }}</p></blockquote>
+                  </article>
+                </li>
+                <li class="clipping" data-visual="rings">
+                  <article class="clipping__paper">
+                    <p class="clipping__label">{{ press.sample }}</p>
+                    <div class="clipping__photo" aria-hidden="true"></div>
+                    <p class="clipping__source"><span class="clipping__outlet">{{ press.card2Outlet }}</span> <time datetime="2026-10-19">{{ press.card2Date }}</time></p>
+                    <h3 class="clipping__headline">{{ press.card2Headline }}</h3>
+                    <blockquote class="clipping__quote"><p>{{ press.card2Quote }}</p></blockquote>
+                  </article>
+                </li>
+                <li class="clipping" data-visual="spot">
+                  <article class="clipping__paper">
+                    <p class="clipping__label">{{ press.sample }}</p>
+                    <div class="clipping__photo" aria-hidden="true"></div>
+                    <p class="clipping__source"><span class="clipping__outlet">{{ press.card3Outlet }}</span> <time datetime="2026-10-26">{{ press.card3Date }}</time></p>
+                    <h3 class="clipping__headline">{{ press.card3Headline }}</h3>
+                    <blockquote class="clipping__quote"><p>{{ press.card3Quote }}</p></blockquote>
+                  </article>
+                </li>
+                <li class="clipping" data-visual="flight">
+                  <article class="clipping__paper">
+                    <p class="clipping__label">{{ press.sample }}</p>
+                    <div class="clipping__photo" aria-hidden="true"></div>
+                    <p class="clipping__source"><span class="clipping__outlet">{{ press.card4Outlet }}</span> <time datetime="2026-11-02">{{ press.card4Date }}</time></p>
+                    <h3 class="clipping__headline">{{ press.card4Headline }}</h3>
+                    <blockquote class="clipping__quote"><p>{{ press.card4Quote }}</p></blockquote>
+                  </article>
+                </li>
+                <li class="clipping" data-visual="halftone">
+                  <article class="clipping__paper">
+                    <p class="clipping__label">{{ press.sample }}</p>
+                    <div class="clipping__photo" aria-hidden="true"></div>
+                    <p class="clipping__source"><span class="clipping__outlet">{{ press.card5Outlet }}</span> <time datetime="2026-11-05">{{ press.card5Date }}</time></p>
+                    <h3 class="clipping__headline">{{ press.card5Headline }}</h3>
+                    <blockquote class="clipping__quote"><p>{{ press.card5Quote }}</p></blockquote>
+                  </article>
+                </li>
+                <li class="clipping" data-visual="axis">
+                  <article class="clipping__paper">
+                    <p class="clipping__label">{{ press.sample }}</p>
+                    <div class="clipping__photo" aria-hidden="true"></div>
+                    <p class="clipping__source"><span class="clipping__outlet">{{ press.card6Outlet }}</span> <time datetime="2026-11-08">{{ press.card6Date }}</time></p>
+                    <h3 class="clipping__headline">{{ press.card6Headline }}</h3>
+                    <blockquote class="clipping__quote"><p>{{ press.card6Quote }}</p></blockquote>
+                  </article>
+                </li>
+              </ol>
+            </div>
+            <div class="orbit__controls" data-orbit-controls data-enhance>
+              <button class="icon-button" type="button" data-orbit-previous aria-label="{{ press.previous }}">
+                <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M15 5 8 12l7 7" /></svg>
+              </button>
+              <p class="orbit__status" data-orbit-status></p>
+              <button class="icon-button" type="button" data-orbit-next aria-label="{{ press.next }}">
+                <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="m9 5 7 7-7 7" /></svg>
+              </button>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section id="grip" class="chapter chapter--grip" data-chapter="grip" data-tone="night" data-pin aria-labelledby="grip-title">
+        <div class="chapter__inner">
+          <div class="chapter__text">
+            <p class="kicker">{{ grip.kicker }}</p>
+            <h2 class="chapter__title fill-title" id="grip-title">{{ grip.title }}</h2>
+            <p class="chapter__body">{{ grip.body }}</p>
+            <dl class="specs">
+              <div class="specs__item"><dt>{{ grip.spec1Label }}</dt><dd>{{ grip.spec1Value }}</dd></div>
+              <div class="specs__item"><dt>{{ grip.spec2Label }}</dt><dd>{{ grip.spec2Value }}</dd></div>
+              <div class="specs__item"><dt>{{ grip.spec3Label }}</dt><dd>{{ grip.spec3Value }}</dd></div>
+            </dl>
+          </div>
+        </div>
+      </section>
+
+      <section id="weight" class="chapter chapter--weight" data-chapter="weight" data-tone="steel" data-pin aria-labelledby="weight-title">
+        <div class="chapter__inner">
+          <div class="chapter__text">
+            <div class="weight__head">
+              <p class="kicker">{{ weight.kicker }}</p>
+              <h2 class="chapter__title fill-title" id="weight-title">{{ weight.title }}</h2>
+            </div>
+            <div class="weight__foot">
+              <div class="gauge" role="img" aria-label="{{ weight.figureLabel }}">
+                <svg class="gauge__dial" viewBox="0 0 200 200" aria-hidden="true" focusable="false">
+                  <circle class="gauge__track" cx="100" cy="100" r="92" />
+                  <circle class="gauge__value" cx="100" cy="100" r="92" pathLength="100" />
+                </svg>
+                <p class="gauge__figure" aria-hidden="true">{{ weight.figure }}<span class="gauge__unit">{{ weight.unit }}</span></p>
+              </div>
+              <p class="chapter__body">{{ weight.body }}</p>
+              <dl class="specs">
+                <div class="specs__item"><dt>{{ weight.spec1Label }}</dt><dd>{{ weight.spec1Value }}</dd></div>
+                <div class="specs__item"><dt>{{ weight.spec2Label }}</dt><dd>{{ weight.spec2Value }}</dd></div>
+                <div class="specs__item"><dt>{{ weight.spec3Label }}</dt><dd>{{ weight.spec3Value }}</dd></div>
+              </dl>
+            </div>
+          </div>
+          <p class="marker marker--cog" data-anchor="cog">
+            <span class="marker__dot" aria-hidden="true"></span>
+            <span class="marker__name">{{ weight.cog }}</span>
+            <span class="marker__value">{{ weight.cogValue }}</span>
+          </p>
+        </div>
+      </section>
+
+      <section id="anatomy" class="chapter chapter--anatomy" data-chapter="anatomy" data-tone="studio" data-pin aria-labelledby="anatomy-title">
+        <div class="chapter__inner">
+          <div class="chapter__text">
+            <p class="kicker">{{ anatomy.kicker }}</p>
+            <h2 class="chapter__title fill-title" id="anatomy-title" aria-label="{{ anatomy.title1 }} {{ anatomy.title2 }}">{{ anatomy.title1 }}</h2>
+            <p class="chapter__title fill-title split-end" aria-hidden="true">{{ anatomy.title2 }}</p>
+            <p class="chapter__body">{{ anatomy.body }}</p>
+          </div>
+          <ol class="parts">
+            <li class="marker marker--part" data-anchor="tip">
+              <span class="marker__dot" aria-hidden="true"></span>
+              <span class="marker__name">{{ anatomy.tipName }}</span>
+              <span class="marker__value">{{ anatomy.tipSpec }}</span>
+            </li>
+            <li class="marker marker--part" data-anchor="barrel">
+              <span class="marker__dot" aria-hidden="true"></span>
+              <span class="marker__name">{{ anatomy.barrelName }}</span>
+              <span class="marker__value">{{ anatomy.barrelSpec }}</span>
+            </li>
+            <li class="marker marker--part" data-anchor="shaft">
+              <span class="marker__dot" aria-hidden="true"></span>
+              <span class="marker__name">{{ anatomy.shaftName }}</span>
+              <span class="marker__value">{{ anatomy.shaftSpec }}</span>
+            </li>
+            <li class="marker marker--part" data-anchor="flight">
+              <span class="marker__dot" aria-hidden="true"></span>
+              <span class="marker__name">{{ anatomy.flightName }}</span>
+              <span class="marker__value">{{ anatomy.flightSpec }}</span>
+            </li>
+          </ol>
+        </div>
+      </section>
+
+      <section id="throw" class="chapter chapter--throw" data-chapter="throw" data-tone="night" aria-labelledby="throw-title">
+        <div class="chapter__inner">
+          <div class="chapter__text">
+            <p class="kicker">{{ throw.kicker }}</p>
+            <h2 class="chapter__title" id="throw-title">{{ throw.title }}</h2>
+            <p class="chapter__body">{{ throw.body }}</p>
+            <form class="throw-panel" data-throw-panel data-enhance>
+              <p class="throw-panel__hint" data-pointer-hint>{{ throw.pointerHint }}</p>
+              <div class="throw-panel__row">
+                <label class="throw-panel__label" for="aim">{{ throw.aimLabel }}</label>
+                <select class="throw-panel__select" id="aim" name="aim">
+                  <option value="D20">{{ throw.aimD20 }}</option>
+                  <option value="T20">{{ throw.aimT20 }}</option>
+                  <option value="BULL">{{ throw.aimBull }}</option>
+                  <option value="T19">{{ throw.aimT19 }}</option>
+                  <option value="ANY">{{ throw.aimAny }}</option>
+                </select>
+              </div>
+              <div class="actions">
+                <button class="button button--primary" type="submit" data-throw-button>
+                  <span class="button__mask"><span class="button__label">{{ throw.throwButton }}</span></span>
+                </button>
+                <button class="button button--ghost" type="button" data-collect>
+                  <span class="button__mask"><span class="button__label">{{ throw.collect }}</span></span>
+                </button>
+              </div>
+              <p class="throw-panel__darts" data-darts-left>{{ throw.dartsLeftInitial }}</p>
+              <h3 class="throw-panel__log-title">{{ throw.visit }}</h3>
+              <ol class="throw-panel__log" data-throw-log></ol>
+            </form>
+          </div>
+          <div class="aim-pad" data-aim-pad aria-hidden="true"><span class="aim-pad__reticle"></span></div>
+        </div>
+      </section>
+
+      <section id="checkout" class="chapter chapter--checkout" data-chapter="checkout" data-tone="studio" aria-labelledby="checkout-title">
+        <div class="chapter__inner">
+          <div class="chapter__text">
+            <p class="kicker">{{ checkout.kicker }}</p>
+            <h2 class="chapter__title" id="checkout-title">{{ checkout.title }}</h2>
+            <p class="chapter__body">{{ checkout.body }}</p>
+            <div class="actions">
+              <a class="button button--primary" href="https://github.com/adamrodwebdev/plumb-darts">
+                <span class="button__mask"><span class="button__label">{{ checkout.ctaSource }}</span></span>
+                <svg class="button__icon" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M4 12h13.2l-4.6-4.6L14 6l7 7-7 7-1.4-1.4 4.6-4.6H4z" /></svg>
+              </a>
+              <a class="button button--ghost" href="#throw">
+                <span class="button__mask"><span class="button__label">{{ checkout.ctaAgain }}</span></span>
+              </a>
+            </div>
+          </div>
+        </div>
+      </section>
+      <div class="dusk" aria-hidden="true"></div>
+    </main>
+
+    <footer class="footer" data-tone="night">
+      <p class="footer__wordmark" aria-hidden="true">{{ footer.wordmark }}</p>
+      <div class="footer__grid">
+        <p class="footer__disclaimer">{{ footer.disclaimer }}</p>
+        <ul class="footer__links">
+          <li><a href="https://github.com/adamrodwebdev/plumb-darts">{{ footer.source }}</a></li>
+          <li><a href="https://github.com/adamrodwebdev">{{ footer.credit }}</a></li>
+          <li><a href="#game-on">{{ footer.top }}</a></li>
+        </ul>
+        <p class="footer__fonts">{{ footer.fonts }}</p>
+      </div>
+    </footer>
+
+    <nav class="hud" aria-label="{{ hud.chapters }}">
+      <button class="hud__toggle" type="button" popovertarget="chapter-menu" data-hud-toggle>
+        <span class="visually-hidden" data-hud-name>{{ hud.chapters }}</span>
+        <span class="hud__score" aria-hidden="true" data-hud-score>
+          <span class="digit" data-digit="2"><span class="digit__strip"><i>0</i><i>1</i><i>2</i><i>3</i><i>4</i><i>5</i><i>6</i><i>7</i><i>8</i><i>9</i></span></span>
+          <span class="digit" data-digit="1"><span class="digit__strip"><i>0</i><i>1</i><i>2</i><i>3</i><i>4</i><i>5</i><i>6</i><i>7</i><i>8</i><i>9</i></span></span>
+          <span class="digit" data-digit="0"><span class="digit__strip"><i>0</i><i>1</i><i>2</i><i>3</i><i>4</i><i>5</i><i>6</i><i>7</i><i>8</i><i>9</i></span></span>
+        </span>
+        <span class="hud__meta" aria-hidden="true">
+          <span class="hud__label">{{ hud.label }}</span>
+          <span class="hud__chapter" data-hud-chapter>{{ chapters.hero }}</span>
+        </span>
+      </button>
+      <div class="hud__menu" id="chapter-menu" popover>
+        <p class="hud__menu-title">{{ hud.chapters }}</p>
+        <ol class="hud__list">
+          <li><a href="#game-on" data-chapter-link="game-on"><b>501</b><span>{{ chapters.hero }}</span></a></li>
+          <li><a href="#press" data-chapter-link="press"><b>441</b><span>{{ chapters.press }}</span></a></li>
+          <li><a href="#grip" data-chapter-link="grip"><b>381</b><span>{{ chapters.grip }}</span></a></li>
+          <li><a href="#weight" data-chapter-link="weight"><b>261</b><span>{{ chapters.weight }}</span></a></li>
+          <li><a href="#anatomy" data-chapter-link="anatomy"><b>81</b><span>{{ chapters.anatomy }}</span></a></li>
+          <li><a href="#throw" data-chapter-link="throw"><b>40</b><span>{{ chapters.throw }}</span></a></li>
+          <li><a href="#checkout" data-chapter-link="checkout"><b>0</b><span>{{ chapters.checkout }}</span></a></li>
+        </ol>
+      </div>
+      <p class="hud__flash" data-hud-flash aria-hidden="true">180</p>
+    </nav>
+
+    <p class="visually-hidden" data-announcer aria-live="polite"></p>
+    <script type="module" src="/src/main.ts"></script>
+  </body>
+</html>

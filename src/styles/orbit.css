@@ -1,0 +1,285 @@
+/* ---------- On the oche: press clippings orbiting the headline ----------
+   Flat by default (no script, reduced motion): the title, then a grid of clippings. With the
+   script and motion, the clippings and the title share one 3D space (preserve-3d), so the
+   browser sorts them by depth: cards behind pass behind the title, cards in front cover it. */
+
+.chapter--press .chapter__inner {
+  align-content: start;
+  justify-items: center;
+  gap: 1.5rem;
+  text-align: center;
+}
+
+.press__intro {
+  display: grid;
+  gap: 0.75rem;
+  max-width: 34rem;
+  justify-items: center;
+}
+
+.orbit {
+  width: 100%;
+}
+
+.orbit__title {
+  margin-block-end: 2rem;
+  font-family: var(--font-display);
+  font-size: clamp(2.75rem, 1.2rem + 6.4vw, 6.875rem);
+  font-weight: 800;
+  line-height: 0.88;
+  text-transform: uppercase;
+  text-wrap: balance;
+}
+
+.orbit__ring {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 16rem), 1fr));
+  gap: 1.25rem;
+  padding: 0;
+  list-style: none;
+  text-align: start;
+}
+
+.orbit__controls {
+  display: none;
+}
+
+/* ---------- A clipping: paper, a picture, the source, the headline, a short quote ---------- */
+.clipping__paper {
+  display: grid;
+  gap: 0.625rem;
+  padding: 0.875rem 1rem 1.125rem;
+  border-radius: 2px;
+  background: #efe8da;
+  color: #1b1815;
+  box-shadow:
+    0 1px 0 rgb(0 0 0 / 0.08),
+    0 1.25rem 2.5rem rgb(0 0 0 / 0.35);
+  font-family: Georgia, 'Times New Roman', Times, serif;
+}
+
+.clipping__label {
+  font-family: var(--font-mono);
+  font-size: 0.625rem;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: #5f574e;
+}
+
+.clipping__photo {
+  aspect-ratio: 16 / 10;
+  background-color: #1b1815;
+}
+
+.clipping__source {
+  display: flex;
+  justify-content: space-between;
+  gap: 0.75rem;
+  padding-block: 0.3rem;
+  border-block: 1px solid rgb(27 24 21 / 0.55);
+  font-family: var(--font-mono);
+  font-size: 0.6875rem;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+
+.clipping__outlet {
+  font-weight: 700;
+}
+
+.clipping__headline {
+  font-size: 1.25rem;
+  font-weight: 700;
+  line-height: 1.15;
+  text-wrap: balance;
+}
+
+.clipping__quote {
+  margin: 0;
+  font-size: 0.9375rem;
+  font-style: italic;
+  line-height: 1.4;
+  color: #3b342d;
+}
+
+.clipping__quote p::before {
+  content: '“';
+}
+
+.clipping__quote p::after {
+  content: '”';
+}
+
+/* Pictures drawn in CSS (no file): the club version uses the club's own photos */
+[data-visual='board'] .clipping__photo {
+  background:
+    radial-gradient(circle at 50% 62%, #b81d2a 0 4%, #0f7a3d 4% 8%, transparent 8%),
+    radial-gradient(circle at 50% 62%, transparent 0 38%, #b81d2a 38% 41%, transparent 41%),
+    repeating-conic-gradient(from -9deg at 50% 62%, #1f1d1a 0 18deg, #d9cdb0 18deg 36deg);
+}
+
+[data-visual='rings'] .clipping__photo {
+  background:
+    linear-gradient(180deg, rgb(255 255 255 / 0.35), transparent 45%, rgb(0 0 0 / 0.45)),
+    repeating-linear-gradient(90deg, #a5a9ae 0 7px, #50545a 7px 9px);
+}
+
+[data-visual='spot'] .clipping__photo {
+  background:
+    radial-gradient(ellipse 40% 75% at 50% 0%, rgb(255 222 182 / 0.85), transparent 72%),
+    linear-gradient(#17181b, #0b0c0e);
+}
+
+[data-visual='flight'] .clipping__photo {
+  background:
+    conic-gradient(from 135deg at 50% 78%, #ff5a36 0 90deg, transparent 90deg),
+    conic-gradient(from 135deg at 50% 52%, #e8411f 0 90deg, transparent 90deg),
+    #1b1815;
+}
+
+[data-visual='halftone'] .clipping__photo {
+  background:
+    radial-gradient(circle, #1b1815 1.3px, transparent 1.6px) 0 0 / 7px 7px,
+    radial-gradient(ellipse at 40% 45%, #c9bea8, #8a8170);
+}
+
+[data-visual='axis'] .clipping__photo {
+  background:
+    linear-gradient(90deg, transparent 49.6%, #ff5a36 49.6% 50.4%, transparent 50.4%),
+    repeating-linear-gradient(0deg, transparent 0 13px, rgb(27 24 21 / 0.45) 13px 14px),
+    #e3d9c4;
+}
+
+/* ---------- 3D: the ring, turned by the scroll ---------- */
+.orbit.is-3d {
+  position: relative;
+  height: clamp(27rem, 70svh, 50rem);
+  perspective: 1700px;
+  perspective-origin: 50% 40%;
+}
+
+/* The ring above, the controls in their own band below it: no card ever covers them */
+.orbit.is-3d .orbit__space {
+  position: absolute;
+  inset: 0 0 5.5rem;
+  transform-style: preserve-3d;
+  transform: translateY(-1.5rem) rotateX(-6deg);
+}
+
+.orbit.is-3d .orbit__title {
+  position: absolute;
+  inset: 50% 0 auto;
+  margin: 0;
+  font-size: clamp(3rem, 1rem + 7.5vw, 9.5rem);
+  text-align: center;
+  transform: translate3d(0, -50%, 0);
+  pointer-events: none;
+}
+
+.orbit.is-3d .orbit__ring {
+  position: absolute;
+  inset: 0;
+  display: block;
+  transform-style: preserve-3d;
+  transform: rotateY(var(--turn, 0deg));
+}
+
+.orbit.is-3d .clipping {
+  /* 1 facing the viewer, 0 at the back of the ring */
+  --facing: calc(0.5 + 0.5 * cos(calc(var(--a, 0deg) + var(--turn, 0deg))));
+  --radius: clamp(10rem, 4rem + 26vw, 30rem);
+  position: absolute;
+  inset: 50% auto auto 50%;
+  width: clamp(12rem, 7rem + 9vw, 16rem);
+  /* Centred on the ring, turned to its place, pushed out, lifted, then turned back towards the
+     viewer by 60 % so a card at the side still reads */
+  transform: translate(-50%, -50%) rotateY(var(--a, 0deg)) translateZ(var(--radius))
+    translateY(calc(var(--lift, 0rem) * var(--lift-scale, 1)))
+    rotateY(calc((var(--a, 0deg) + var(--turn, 0deg)) * -0.6)) rotate(var(--tilt, 0deg));
+  /* Whole and opaque over the front half of the ring; behind it, the paper fades to 0.28 so the
+     headline reads through */
+  opacity: clamp(0.28, 0.28 + (var(--facing) - 0.1) * 1.8, 1);
+}
+
+/* The print shows only where it can be read: it leaves a clipping turning away before its paper
+   fades, so no text is ever shown faint (WCAG 1.4.3: back cards read at 1.5 to 2.9 : 1 before,
+   2026-11-09), and comes back over a few degrees as the clipping comes round */
+.orbit.is-3d .clipping__paper > * {
+  opacity: clamp(0, (var(--facing) - 0.5) * 10, 1);
+}
+
+.orbit.is-3d .orbit__controls {
+  position: absolute;
+  inset: auto 0 0;
+  z-index: 2;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 1rem;
+}
+
+.orbit__controls svg {
+  fill: none;
+}
+
+.orbit__status {
+  min-width: 15rem;
+  font-family: var(--font-mono);
+  font-size: 0.75rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--muted);
+}
+
+/* Phones: a tighter ring of smaller clippings; the front one covers the middle and its
+   neighbours peek out on both sides */
+@media (width < 40rem) {
+  .orbit.is-3d {
+    height: 30.5rem;
+    perspective: 900px;
+  }
+
+  /* The headline sits above the ring on phones: behind it, the cards would hide it */
+  .orbit.is-3d .orbit__space {
+    inset: 3.5rem 0 4.75rem;
+    transform: rotateX(-4deg);
+  }
+
+  .orbit.is-3d .orbit__title {
+    inset: -3.5rem 0 auto;
+    font-size: 2.5rem;
+    transform: none;
+  }
+
+  .orbit.is-3d .clipping {
+    --radius: 8.5rem;
+    --lift-scale: 0.3;
+    width: 11.25rem;
+  }
+
+  .orbit.is-3d .clipping__paper {
+    gap: 0.375rem;
+    padding: 0.625rem 0.75rem 0.75rem;
+  }
+
+  .orbit.is-3d .clipping__label {
+    font-size: 0.5625rem;
+  }
+
+  .orbit.is-3d .clipping__source {
+    font-size: 0.5625rem;
+  }
+
+  .orbit.is-3d .clipping__headline {
+    font-size: 1rem;
+  }
+
+  .orbit.is-3d .clipping__quote {
+    font-size: 0.8125rem;
+  }
+
+  .orbit__status {
+    min-width: 0;
+    flex: 1;
+  }
+}

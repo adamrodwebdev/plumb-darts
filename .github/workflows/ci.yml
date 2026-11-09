@@ -1,0 +1,89 @@
+name: CI
+
+on:
+  pull_request:
+  push:
+    branches: [main]
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  checks:
+    name: Lint, types, unit tests, build
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+      - uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7.1.0
+        with:
+          node-version: 24
+          cache: npm
+      - run: npm ci
+      - run: npm run lint
+      - run: npm run typecheck
+      - run: npm test
+      - run: npm run build
+      # Every visible string comes from the messages: a placeholder left in a page means a missing key
+      - name: No placeholder left in the pages
+        run: "! grep -n '{{' dist/index.html dist/404.html"
+
+  e2e:
+    # Chromium, Firefox and WebKit on desktop, and two phones: Firefox does not start on the
+    # developer's Windows machine, so this job is where it runs
+    name: E2E (three engines and two phones)
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+      - uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7.1.0
+        with:
+          node-version: 24
+          cache: npm
+      - run: npm ci
+      - run: npx playwright install --with-deps chromium firefox webkit
+      - run: npm run build
+      - run: npx playwright test
+
+  lighthouse:
+    # Lighthouse 100 in the four categories, on the worst of three mobile runs (the project's
+    # promise). The runner has no GPU: Chrome would draw WebGL with the processor, so the page
+    # measured is the one without 3D, as on any such device.
+    name: Lighthouse (100, worst of three)
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+      - uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7.1.0
+        with:
+          node-version: 24
+          cache: npm
+      - run: npm ci
+      - run: npm run build
+      - name: Preview server
+        run: |
+          npm run preview -- --port 4173 --strictPort &
+          timeout 60 bash -c 'until curl -sf -o /dev/null http://localhost:4173/plumb-darts/; do sleep 1; done'
+      # A fresh runner's first runs are far slower than the next ones (Chrome, Node and disk
+      # cold): they prepare the machine and are not counted. They also measure its speed, which
+      # the CPU slowdown is fitted to (lighthouse/calibrate.mjs).
+      - name: Warm-up (not counted)
+        run: |
+          npx --yes @lhci/cli@0.15.x collect --url=http://localhost:4173/plumb-darts/ --numberOfRuns=3
+          node lighthouse/summary.mjs
+          node lighthouse/calibrate.mjs >> "$GITHUB_ENV"
+          rm -rf .lighthouseci
+      # Always the same simulated phone, whichever machine GitHub draws
+      - run: npx --yes @lhci/cli@0.15.x autorun --collect.settings.throttling.cpuSlowdownMultiplier="$LIGHTHOUSE_CPU_SLOWDOWN"
+      - name: Every run
+        if: always()
+        run: node lighthouse/summary.mjs
+      - uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
+        if: failure()
+        with:
+          name: lighthouse-runs
+          path: .lighthouseci/lhr-*.json
+          # A hidden folder, skipped without this option
+          include-hidden-files: true
+          retention-days: 7

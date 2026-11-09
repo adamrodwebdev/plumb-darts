@@ -136,7 +136,8 @@ async function restingText(page: Page, id: string): Promise<{ bottom: number; co
         previous = now
         return resting
       },
-      { intervals: [200] },
+      // The scrub eases for 0.6 s, and longer while a phone draws the 3D scene in software
+      { intervals: [200], timeout: 15_000 },
     )
     .toBe(true)
   return page.evaluate((chapter) => {
@@ -154,6 +155,10 @@ for (const language of LANGUAGES) {
   test(`in ${language.name}, each chapter’s last line is read above the counter by the end of its hold`, async ({
     page,
   }) => {
+    // Five landings, each waiting for the strip and the text to rest: one landing never took more
+    // than a few seconds, but five of them ran past the default 30 s on Mobile Chrome while the
+    // whole suite ran (2026-11-09)
+    test.slow()
     await page.goto(language.path)
     await settled(page)
     expect(await isSideways(page)).toBe(true)

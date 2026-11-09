@@ -1,3 +1,5 @@
+import { LANGUAGES } from '../src/i18n/languages.ts'
+import { JOURNEY_CHAPTERS, JOURNEY_HOLDS, JOURNEY_MOVE, planJourney } from '../src/rules/journey.ts'
 import { settled } from './boot'
 import { expect, test, type Page } from './fixtures'
 
@@ -108,3 +110,72 @@ test.describe('the journey of chapters 3 to 7', () => {
       .toBe(true)
   })
 })
+
+/** The journey's holds, as the page plans them: one unit is one screen of scrolling */
+const PLAN = planJourney(JOURNEY_CHAPTERS, JOURNEY_HOLDS, JOURNEY_MOVE)
+
+/** Just before a chapter's hold ends: its text has scrolled all it ever scrolls (it stops at 0.9) */
+const HOLD_END = 0.98
+
+/**
+ * Where a chapter's text block ends and where the score counter begins, once the scrubbed strip
+ * and the text's own scrolling have come to rest (two reads apart give the same transform)
+ */
+async function restingText(page: Page, id: string): Promise<{ bottom: number; counter: number }> {
+  let previous = ''
+  await expect
+    .poll(
+      async () => {
+        const now = await page.evaluate((chapter) => {
+          const panel = document.getElementById(chapter)
+          const text = panel?.querySelector('.chapter__text')
+          if (!panel || !text) return 'missing'
+          return `${getComputedStyle(text).transform} ${panel.getBoundingClientRect().left}`
+        }, id)
+        const resting = now === previous
+        previous = now
+        return resting
+      },
+      { intervals: [200] },
+    )
+    .toBe(true)
+  return page.evaluate((chapter) => {
+    const text = document.getElementById(chapter)?.querySelector('.chapter__text')
+    const counter = document.querySelector('.hud__toggle')
+    return {
+      bottom: text?.getBoundingClientRect().bottom ?? Number.NaN,
+      counter: counter?.getBoundingClientRect().top ?? Number.NaN,
+    }
+  }, id)
+}
+
+// Longer copy (Russian and Indonesian run a fifth past the English) must still fit each hold
+for (const language of LANGUAGES) {
+  test(`in ${language.name}, each chapter’s last line is read above the counter by the end of its hold`, async ({
+    page,
+  }) => {
+    await page.goto(language.path)
+    await settled(page)
+    expect(await isSideways(page)).toBe(true)
+
+    for (const stop of PLAN.stops) {
+      // In screens of scrolling from the journey's start, as ScrollEffects maps them
+      const at = stop.start + (stop.end - stop.start) * HOLD_END
+      await page.evaluate((screens) => {
+        const journey = document.querySelector('[data-journey]')
+        const start = (journey?.getBoundingClientRect().top ?? 0) + window.scrollY
+        window.scrollTo({
+          top: Math.round(start + screens * window.innerHeight),
+          behavior: 'instant',
+        })
+      }, at)
+      await expect.poll(() => leftOf(page, stop.id)).toBe(0)
+
+      const { bottom, counter } = await restingText(page, stop.id)
+      expect(
+        bottom,
+        `${stop.id}: its text ends at ${bottom}, the counter starts at ${counter}`,
+      ).toBeLessThanOrEqual(counter)
+    }
+  })
+}

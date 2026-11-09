@@ -1,6 +1,8 @@
 import { defineConfig, devices } from '@playwright/test'
+import { e2ePort } from './build/e2ePort.ts'
 
-const PORT = 4186
+/** 4186 unless E2E_PORT names another (the developer's own preview may hold 4186) */
+const PORT = e2ePort(process.env['E2E_PORT'])
 /** The production build, served under the GitHub Pages path */
 const BASE = `http://localhost:${PORT}/plumb-darts/`
 const DESKTOP = { width: 1280, height: 800 }

@@ -2,6 +2,7 @@ import { SoundEngine } from './design/audio/SoundEngine'
 import { Announcer, SoundToggle, ThemeToggle, revealOnScroll } from './design/dom/controls'
 import { Hud } from './design/dom/Hud'
 import { MarkerLayer } from './design/dom/MarkerLayer'
+import { OrbitCarousel } from './design/dom/OrbitCarousel'
 import type { ScrollEffects } from './design/dom/ScrollEffects'
 import { ThrowPanel } from './design/dom/ThrowPanel'
 import type { SceneHandle } from './design/scene/createScene'
@@ -12,6 +13,7 @@ import { probeDevice } from './logic/deviceProbe'
 import { BrowserStore, MotionPreference, ThemePreference } from './logic/preferences'
 import { ThrowSession } from './logic/ThrowSession'
 import type { Layout } from './rules/choreography'
+import { turnFor } from './rules/orbit'
 import { QUALITY, chooseTier } from './rules/quality'
 import { performanceClock } from './time/clock'
 import { nextTask } from './time/nextTask'
@@ -80,10 +82,15 @@ async function start(view: Window): Promise<void> {
   if (motionAllowed()) {
     root.classList.add('motion-ok')
     revealOnScroll(page)
+    // The orbit takes its 3D height before the pins are measured
+    const orbitRoot = page.querySelector<HTMLElement>('[data-orbit]')
+    const orbit = orbitRoot ? new OrbitCarousel(orbitRoot, translator, announcer) : null
+    orbit?.enable((index) => effects?.scrollToOrbit(index, orbit.count()))
     await nextTask()
     const { ScrollEffects } = await import('./design/dom/ScrollEffects')
     effects = new ScrollEffects(sections)
     effects.init()
+    if (orbit) effects.onOrbitTurn(turnFor(orbit.count() - 1, orbit.count()), (turn) => orbit.setTurn(turn))
   }
   if (!tier) return
 

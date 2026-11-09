@@ -44,55 +44,64 @@ const pose = (parts: PoseParts): ScenePose => ({
 /** Out of shot during the finish: the visitor's own darts take over */
 const DART_AWAY: Partial<DartPose> = { position: [0, -40, 20], rotation: [0, 0, -90], visible: 0 }
 
+/** Flown off above the stage while the press clippings orbit their headline */
+const DART_ABOVE: Partial<DartPose> = { position: [6, 24, -10], rotation: [14, 20, 150], visible: 0 }
+
 const WIDE: Readonly<Record<ChapterId, ChapterMotion>> = {
   // The dart crosses the end of the headline: the words sit behind it
-  'game-on': hold(pose({ dart: { position: [0, 2.5, 8], rotation: [14, 20, 105], scale: 1.45 } })),
-  // Tip towards the text (thin), flights off to the right; the camera looks left of the dart
+  'game-on': hold(pose({ dart: { position: [0.5, 5, 8], rotation: [14, 20, 105], scale: 1.45 } })),
+  press: hold(pose({ dart: DART_ABOVE })),
+  // Words on the right: the barrel close-up fills the left, its point towards the text
   grip: {
     from: pose({
-      dart: { position: [9, 0.4, 0], rotation: [10, 14, 90] },
-      camera: { position: [6, 1.6, 34], target: [4.5, 0.3, 0] },
+      dart: { position: [-9, 0.4, 0], rotation: [10, -14, -90] },
+      camera: { position: [-6, 1.6, 34], target: [-4.5, 0.3, 0] },
     }),
     to: pose({
-      dart: { position: [9, 0.4, 0], rotation: [10, 14, 90], spin: 160 },
-      camera: { position: [6, 0.8, 16], target: [3.6, 0.3, 0] },
+      dart: { position: [-9, 0.4, 0], rotation: [10, -14, -90], spin: 160 },
+      camera: { position: [-6, 0.8, 16], target: [-3.6, 0.3, 0] },
     }),
   },
+  // Centred: the dart crosses the band between the title and the facts
   weight: {
     from: pose({
-      dart: { position: [8.5, -0.6, 0], rotation: [8, -6, -90], spin: 160 },
-      camera: { position: [0, 0, 46], target: [3, 0, 0] },
+      dart: { position: [0, 0.6, 0], rotation: [8, -6, -90], scale: 1.2, spin: 160 },
+      camera: { position: [0, 0, 50], target: [0, 0, 0] },
     }),
     to: pose({
-      dart: { position: [8.5, -0.6, 0], rotation: [8, -6, -90], spin: 220 },
-      camera: { position: [0, 0, 46], target: [3, 0, 0] },
+      dart: { position: [0, 0.6, 0], rotation: [8, -6, -90], scale: 1.2, spin: 220 },
+      camera: { position: [0, 0, 50], target: [0, 0, 0] },
       cog: 1,
     }),
   },
+  // The diagonal between the split title's corners, point to the top right
   anatomy: {
     from: pose({
-      dart: { position: [2, -4.5, 0], rotation: [12, 0, -90], spin: 220 },
-      camera: { position: [0, 0, 62], target: [0, -1.5, 0] },
+      dart: { position: [1.5, 0.3, 0], rotation: [8, 0, -58], spin: 220 },
+      camera: { position: [0, 0, 66], target: [0, 0, 0] },
     }),
     to: pose({
-      dart: { position: [2, -4.5, 0], rotation: [12, 0, -90], spin: 270, explode: 1 },
-      camera: { position: [0, 0, 62], target: [0, -1.5, 0] },
+      dart: { position: [1.5, 0.3, 0], rotation: [8, 0, -58], spin: 270, explode: 1 },
+      camera: { position: [0, 0, 66], target: [0, 0, 0] },
       parts: 1,
     }),
   },
+  // The board on the left, the panel on the right
   throw: hold(
     pose({
       dart: DART_AWAY,
-      camera: { position: [-15, 0, -24], target: [-15, 0, -120] },
+      camera: { position: [15, 0, -24], target: [15, 0, -120] },
       board: 1,
     }),
   ),
-  checkout: hold(pose({ dart: { position: [11, -0.5, 0], scale: 1.1 }, set: 1 })),
+  // The set of three, centred above the words
+  checkout: hold(pose({ dart: { position: [0, 7.4, 0], scale: 0.8 }, set: 1 })),
 }
 
 const NARROW: Readonly<Record<ChapterId, ChapterMotion>> = {
   // In the free band above the text, its point just touching the headline
   'game-on': hold(pose({ dart: { position: [0, 10.6, 2], rotation: [12, 16, 128], scale: 0.9 } })),
+  press: hold(pose({ dart: DART_ABOVE })),
   grip: {
     from: pose({
       dart: { position: [0, 8.6, 0], rotation: [10, -12, -90], scale: 0.85 },
@@ -103,14 +112,15 @@ const NARROW: Readonly<Record<ChapterId, ChapterMotion>> = {
       camera: { position: [2, 6.6, 23], target: [0.9, 8.3, 0] },
     }),
   },
+  // The band between the title (top) and the facts (bottom)
   weight: {
     from: pose({
-      dart: { position: [0, 9, 0], rotation: [8, -6, -90], scale: 0.85, spin: 160 },
-      camera: { position: [0, 4, 52], target: [0, 4, 0] },
+      dart: { position: [0, 1.2, 0], rotation: [8, -6, -90], scale: 0.8, spin: 160 },
+      camera: { position: [0, 0, 58], target: [0, 0, 0] },
     }),
     to: pose({
-      dart: { position: [0, 9, 0], rotation: [8, -6, -90], scale: 0.85, spin: 220 },
-      camera: { position: [0, 4, 52], target: [0, 4, 0] },
+      dart: { position: [0, 1.2, 0], rotation: [8, -6, -90], scale: 0.8, spin: 220 },
+      camera: { position: [0, 0, 58], target: [0, 0, 0] },
       cog: 1,
     }),
   },

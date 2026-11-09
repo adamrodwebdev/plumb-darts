@@ -22,6 +22,7 @@
   },
   "chapters": {
     "hero": "Game on",
+    "press": "On the oche",
     "grip": "The grip",
     "weight": "The weight",
     "anatomy": "Anatomy",
@@ -38,8 +39,41 @@
     "ctaMeet": "Meet the dart",
     "scroll": "Scroll"
   },
+  "press": {
+    "kicker": "01 · On the oche",
+    "title": "Trusted on the oche.",
+    "body": "Sample clippings, shown the way the club site will show real ones: the paper, the date, the headline, a short credited quote and a link to the article.",
+    "sample": "Sample clipping · fictional",
+    "previous": "Previous clipping",
+    "next": "Next clipping",
+    "status": "Clipping {index} of {count}: {outlet}",
+    "card1Outlet": "The Oche Gazette",
+    "card1Date": "12 Oct 2026",
+    "card1Headline": "Ring grip ends the sweaty-finger season",
+    "card1Quote": "Eighteen shallow rings, and the dart sits in the same place every time.",
+    "card2Outlet": "Sisal Review",
+    "card2Date": "19 Oct 2026",
+    "card2Headline": "Twenty-two grams that fly point first",
+    "card2Quote": "Front-loaded so well that you stop steering it.",
+    "card3Outlet": "Checkout Weekly",
+    "card3Date": "26 Oct 2026",
+    "card3Headline": "Three hundred legs, no slip",
+    "card3Quote": "We threw it for a month. The grip never let go.",
+    "card4Outlet": "Flight Path Monthly",
+    "card4Date": "2 Nov 2026",
+    "card4Headline": "The quietest dart on the board",
+    "card4Quote": "It lands with a thud, not a rattle.",
+    "card5Outlet": "The Bullseye Bulletin",
+    "card5Date": "5 Nov 2026",
+    "card5Headline": "The club players' new favourite",
+    "card5Quote": "Every club night, someone asks to try it.",
+    "card6Outlet": "Leg & Set",
+    "card6Date": "8 Nov 2026",
+    "card6Headline": "Tungsten, turned on one line",
+    "card6Quote": "Tip, barrel, shaft and flight share one perfect axis."
+  },
   "grip": {
-    "kicker": "01 · The grip",
+    "kicker": "02 · The grip",
     "title": "Grip you stop noticing.",
     "body": "Eighteen rings, each 0.3 mm deep and 1.2 mm apart. Your fingers find the same place, throw after throw, without looking for it.",
     "spec1Label": "Ring depth",
@@ -50,7 +84,7 @@
     "spec3Value": "18"
   },
   "weight": {
-    "kicker": "02 · The weight",
+    "kicker": "03 · The weight",
     "title": "Weight where it counts.",
     "figure": "22",
     "unit": "g",
@@ -66,8 +100,9 @@
     "spec3Value": "155 mm"
   },
   "anatomy": {
-    "kicker": "03 · Anatomy",
-    "title": "Four parts, one line.",
+    "kicker": "04 · Anatomy",
+    "title1": "Four parts,",
+    "title2": "one line.",
     "body": "Every part is turned on the same axis, so the dart leaves your hand the way you aimed it.",
     "tipName": "Tip",
     "tipSpec": "Hardened steel, 32 mm",
@@ -79,7 +114,7 @@
     "flightSpec": "Standard, 100 microns"
   },
   "throw": {
-    "kicker": "04 · The finish",
+    "kicker": "05 · The finish",
     "title": "Finish the leg.",
     "body": "Forty left. Hit double 20, tops, to win the leg. You have three darts.",
     "pointerHint": "Tap or click the board to throw where you point, or pick a target below.",
@@ -111,7 +146,7 @@
     "miss": "Missed the board"
   },
   "checkout": {
-    "kicker": "05 · Checkout",
+    "kicker": "06 · Checkout",
     "title": "Game shot.",
     "body": "Plumb doesn't exist. This page shows how an immersive product story can still load fast and work for everyone: with a keyboard, a screen reader, reduced motion, or no 3D at all.",
     "ctaSource": "See how it's built",

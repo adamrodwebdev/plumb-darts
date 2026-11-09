@@ -1,4 +1,4 @@
-export type ChapterId = 'game-on' | 'grip' | 'weight' | 'anatomy' | 'throw' | 'checkout'
+export type ChapterId = 'game-on' | 'press' | 'grip' | 'weight' | 'anatomy' | 'throw' | 'checkout'
 export type Tone = 'night' | 'steel' | 'studio'
 
 export interface Chapter {
@@ -10,11 +10,13 @@ export interface Chapter {
   readonly tone: Tone
 }
 
+/** Visits of 60, 60, 120, 180 (the maximum, on the way into the anatomy), 41 and the checkout */
 export const CHAPTERS: readonly Chapter[] = [
   { id: 'game-on', name: 'chapters.hero', remaining: 501, tone: 'night' },
-  { id: 'grip', name: 'chapters.grip', remaining: 441, tone: 'night' },
-  { id: 'weight', name: 'chapters.weight', remaining: 321, tone: 'steel' },
-  { id: 'anatomy', name: 'chapters.anatomy', remaining: 141, tone: 'studio' },
+  { id: 'press', name: 'chapters.press', remaining: 441, tone: 'night' },
+  { id: 'grip', name: 'chapters.grip', remaining: 381, tone: 'night' },
+  { id: 'weight', name: 'chapters.weight', remaining: 261, tone: 'steel' },
+  { id: 'anatomy', name: 'chapters.anatomy', remaining: 81, tone: 'studio' },
   { id: 'throw', name: 'chapters.throw', remaining: 40, tone: 'night' },
   { id: 'checkout', name: 'chapters.checkout', remaining: 0, tone: 'studio' },
 ]

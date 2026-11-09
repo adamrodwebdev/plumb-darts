@@ -17,7 +17,7 @@ describe('the leg played by the chapters', () => {
   })
 
   test('finds a chapter by its section id', () => {
-    expect(chapterById('anatomy')?.remaining).toBe(141)
+    expect(chapterById('anatomy')?.remaining).toBe(81)
     expect(chapterById('nowhere')).toBeUndefined()
   })
 })

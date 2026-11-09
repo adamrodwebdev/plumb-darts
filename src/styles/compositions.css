@@ -1,0 +1,129 @@
+/* Chapter compositions: never the same column twice in a row. Phones stack the object and the
+   text; wide screens give each chapter its own arrangement around the 3D dart:
+   hero (diagonal) → press (centred) → grip (right) → weight (centred band) → anatomy (corners)
+   → finish (right) → checkout (centred). */
+
+/* ---------- Grip: the barrel close-up on the left, the words on the right ---------- */
+@media (width >= 64rem) {
+  .chapter--grip .chapter__inner {
+    grid-template-columns: minmax(0, 7fr) minmax(0, 5fr);
+    align-content: end;
+  }
+
+  .chapter--grip .chapter__text {
+    grid-column: 2;
+    justify-self: end;
+  }
+
+  .chapter--grip :is(.kicker, .chapter__title) {
+    text-align: end;
+  }
+}
+
+/* ---------- Weight: centred, the title above and the facts below a band for the dart ---------- */
+.chapter--weight .chapter__inner {
+  align-content: stretch;
+}
+
+.chapter--weight .chapter__text {
+  max-width: none;
+  align-content: space-between;
+  justify-items: center;
+  text-align: center;
+}
+
+.weight__head,
+.weight__foot {
+  display: grid;
+  gap: 1rem;
+  justify-items: center;
+}
+
+.chapter--weight .chapter__body {
+  margin-inline: auto;
+}
+
+@media (width >= 64rem) {
+  .weight__foot {
+    grid-template-columns: auto minmax(0, 26rem) auto;
+    align-items: center;
+    column-gap: 3rem;
+    text-align: start;
+  }
+
+  .chapter--weight .specs {
+    grid-template-columns: repeat(3, auto);
+    column-gap: 2rem;
+    padding-block-start: 0;
+    border-block-start: 0;
+  }
+}
+
+/* ---------- Anatomy: the title split across opposite corners, the dart on the diagonal ---------- */
+.split-end {
+  margin-block-start: -0.75rem;
+}
+
+@media (width >= 64rem) {
+  .chapter--anatomy .chapter__inner {
+    align-content: stretch;
+  }
+
+  .chapter--anatomy .chapter__text {
+    max-width: none;
+    grid-template-columns: minmax(0, 30rem) 1fr;
+    grid-template-rows: auto auto auto 1fr auto;
+  }
+
+  .chapter--anatomy .chapter__text > * {
+    grid-column: 1;
+  }
+
+  .chapter--anatomy .chapter__text > .split-end {
+    grid-row: 5;
+    grid-column: 2;
+    justify-self: end;
+    align-self: end;
+    margin: 0;
+    text-align: end;
+  }
+
+  .chapter--anatomy .chapter__body {
+    grid-row: 3;
+  }
+}
+
+/* ---------- The finish: the board on the left, the panel on the right ---------- */
+@media (width >= 64rem) {
+  .chapter--throw .chapter__inner {
+    grid-template-columns: minmax(0, 7fr) minmax(0, 5fr);
+  }
+
+  .chapter--throw .chapter__text {
+    grid-column: 2;
+  }
+}
+
+/* ---------- Checkout: centred, the set of three above the words ---------- */
+.chapter--checkout .chapter__inner {
+  justify-items: center;
+  text-align: center;
+}
+
+.chapter--checkout .chapter__text {
+  justify-items: center;
+}
+
+.has-3d .chapter--checkout .chapter__text {
+  padding-block-start: 32svh;
+}
+
+@media (width >= 64rem) {
+  .chapter--checkout .chapter__inner {
+    align-content: end;
+  }
+
+  .has-3d .chapter--checkout .chapter__text {
+    padding-block-start: 0;
+  }
+}

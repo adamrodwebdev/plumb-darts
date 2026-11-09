@@ -226,9 +226,8 @@
   max-width: 34rem;
 }
 
-/* Phones: the object takes the top of the screen, the text sits below on a soft scrim */
-.has-3d .chapter--split .chapter__text,
-.has-3d .chapter--throw .chapter__text {
+/* Phones: the object takes the top of the screen, the text sits below */
+.has-3d :is(.chapter--grip, .chapter--throw) .chapter__text {
   padding-block-start: 38svh;
 }
 
@@ -237,12 +236,7 @@
     align-content: center;
   }
 
-  .chapter--split .chapter__inner {
-    grid-template-columns: minmax(0, 5fr) minmax(0, 7fr);
-  }
-
-  .has-3d .chapter--split .chapter__text,
-  .has-3d .chapter--throw .chapter__text {
+  .has-3d :is(.chapter--grip, .chapter--throw) .chapter__text {
     padding-block-start: 0;
   }
 }
@@ -298,15 +292,19 @@
   }
 }
 
+/* Wide: the headline holds the top left, the lede and actions answer from the bottom right;
+   the dart crosses the diagonal between them */
 @media (width >= 64rem) {
   .chapter--hero {
-    align-content: center;
-    padding-block-end: 4rem;
+    align-content: stretch;
+    padding-block-end: 3.5rem;
   }
 
   .hero {
-    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
-    column-gap: 3rem;
+    grid-template-columns: minmax(0, 1fr) minmax(0, 27rem);
+    grid-template-rows: auto auto 1fr auto auto;
+    column-gap: 4rem;
+    row-gap: 1.5rem;
   }
 
   .hero__title,
@@ -315,11 +313,13 @@
   }
 
   .hero__lede {
-    grid-column: 1;
+    grid-row: 4;
+    grid-column: 2;
   }
 
   .hero .actions {
-    grid-column: 1;
+    grid-row: 5;
+    grid-column: 2;
   }
 }
 
@@ -379,10 +379,6 @@
 }
 
 /* ---------- Anatomy ---------- */
-.chapter--anatomy .chapter__inner {
-  align-content: start;
-}
-
 .parts {
   display: grid;
   gap: 1rem;
@@ -397,46 +393,7 @@
   }
 }
 
-/* ---------- The finish (throw) ---------- */
-.chapter--throw .chapter__inner {
-  align-content: end;
-}
-
-@media (width >= 64rem) {
-  .chapter--throw .chapter__inner {
-    align-content: center;
-    grid-template-columns: minmax(0, 5fr) minmax(0, 7fr);
-  }
-}
-
-/* ---------- Checkout ---------- */
-.chapter--checkout .chapter__inner {
-  justify-items: center;
-  text-align: center;
-}
-
-.chapter--checkout .chapter__text {
-  justify-items: center;
-}
-
-.has-3d .chapter--checkout .chapter__text {
-  padding-block-start: 30svh;
-}
-
-@media (width >= 64rem) {
-  .has-3d .chapter--checkout .chapter__text {
-    padding-block-start: 0;
-  }
-
-  .chapter--checkout .chapter__inner {
-    justify-items: start;
-    text-align: start;
-  }
-
-  .chapter--checkout .chapter__text {
-    justify-items: start;
-  }
-}
+/* Each chapter's own composition (grip, weight, anatomy, finish, checkout): compositions.css */
 
 /* ---------- Dusk and footer ---------- */
 .dusk {

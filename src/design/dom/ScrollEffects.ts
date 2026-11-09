@@ -6,7 +6,12 @@ import type { ChapterRange } from '../../rules/choreography'
 gsap.registerPlugin(ScrollTrigger)
 
 /** How long each pinned chapter holds the screen, in viewport heights of scrolling */
-const PIN_LENGTH: Partial<Record<ChapterId, number>> = { grip: 1.2, weight: 1.0, anatomy: 1.5 }
+const PIN_LENGTH: Partial<Record<ChapterId, number>> = {
+  press: 1.8,
+  grip: 1.2,
+  weight: 1.0,
+  anatomy: 1.5,
+}
 
 /** Scrub smoothing: the lag that gives the scroll story its weight */
 const SCRUB = 0.6
@@ -84,6 +89,37 @@ export class ScrollEffects {
       scrollTrigger: { start: 0, end: 'max', scrub: SCRUB, invalidateOnRefresh: true },
       onUpdate: () => listener(this.smoothed.y),
     })
+  }
+
+  /**
+   * The orbit's turn across the press chapter's pin: each clipping comes to the front in turn,
+   * the last one at the end of the pin (`endTurn`, in degrees)
+   */
+  onOrbitTurn(endTurn: number, listener: (turn: number) => void): void {
+    const pin = this.triggers.get('press')
+    const press = document.getElementById('press')
+    if (!pin || !press) return
+    const turn = { value: 0 }
+    gsap.to(turn, {
+      value: endTurn,
+      ease: 'none',
+      scrollTrigger: {
+        trigger: press,
+        start: () => pin.start,
+        end: () => pin.end,
+        scrub: SCRUB,
+        invalidateOnRefresh: true,
+      },
+      onUpdate: () => listener(turn.value),
+    })
+  }
+
+  /** Scrolls the story to the point where a clipping faces the front */
+  scrollToOrbit(index: number, count: number): void {
+    const pin = this.triggers.get('press')
+    if (!pin || count < 2) return
+    const top = pin.start + (pin.end - pin.start) * (index / (count - 1))
+    window.scrollTo({ top: Math.round(top), behavior: 'smooth' })
   }
 
   onRefresh(listener: () => void): void {

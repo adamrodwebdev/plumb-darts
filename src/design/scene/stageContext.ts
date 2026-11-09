@@ -33,12 +33,22 @@ export function openStageContext(
   return context
 }
 
-/** The GPU's name: Firefox gives it as RENDERER, Chrome and Safari behind the debug extension */
-function rendererOf(context: WebGL2RenderingContext): string {
+/** What the page reads of a WebGL context to name its renderer (a WebGL2RenderingContext is one) */
+export interface RendererSource {
+  readonly RENDERER: GLenum
+  getParameter(name: GLenum): unknown
+  getExtension(name: 'WEBGL_debug_renderer_info'): WEBGL_debug_renderer_info | null
+}
+
+/**
+ * The renderer's name: Firefox gives it as RENDERER, Chrome and Safari behind the debug
+ * extension. '' when it is unknown (not text, too long, or no extension)
+ */
+export function rendererOf(context: RendererSource): string {
   const plain = rendererName(context.getParameter(context.RENDERER))
   if (plain !== '' && plain !== MASKED_RENDERER) return plain
   const debug = context.getExtension('WEBGL_debug_renderer_info')
-  return debug ? rendererName(context.getParameter(debug.UNMASKED_RENDERER_WEBGL)) : plain
+  return debug ? rendererName(context.getParameter(debug.UNMASKED_RENDERER_WEBGL)) : ''
 }
 
 /** A name from the browser, read as text like any value from outside; unknown when refused */

@@ -93,15 +93,10 @@ test('the page never grows wider than the screen while it boots, so a phone neve
   expect(widest).toBe(page.viewportSize()?.width)
 })
 
-/** Whether this browser opens WebGL 2 at all (Firefox on a CI runner does not) */
-async function hasWebgl2(page: Page): Promise<boolean> {
-  return page.evaluate(() => document.createElement('canvas').getContext('webgl2') !== null)
-}
-
-test('a device whose WebGL a GPU draws gets the 3D scene', async ({ page }) => {
+test('a device whose WebGL a GPU draws gets the 3D scene', async ({ page, browserName }) => {
+  // eslint-disable-next-line playwright/no-skipped-test -- a precondition, not a parked test: on a CI runner Firefox opens no WebGL 2 and WebKit draws it too slowly for the frame-time probe (2026-11-09), so only Chromium can show the scene
+  test.skip(browserName !== 'chromium', 'only Chromium draws WebGL fast enough on a CI runner')
   await page.goto('')
-  // eslint-disable-next-line playwright/no-skipped-test -- a precondition, not a parked test: Firefox on a CI runner opens no WebGL 2, so it has no scene to offer
-  test.skip(!(await hasWebgl2(page)), 'this browser has no WebGL 2')
 
   await expect(page.locator('html')).toHaveClass(/\bhas-3d\b/)
 })

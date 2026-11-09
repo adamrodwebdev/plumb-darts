@@ -21,6 +21,13 @@ All notable changes to this project are written here. The format follows
 - The page no longer stretches (labels clipped to their chapter); thrown darts land tail up; the
   counter is compact on phones.
 
+### Security
+
+- Data from outside is checked at the door (`src/rules/input.ts`): a number must be a finite number
+  within its range, a text must be a string, cleaned of invisible characters and within its
+  length; nothing is coerced. The aim-target check no longer accepts inherited keys such as
+  `toString` or `__proto__`, and the board face worker checks its message and its reply.
+
 ## [0.1.0] - 2026-11-09
 
 ### Added

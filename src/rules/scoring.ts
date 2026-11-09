@@ -57,5 +57,8 @@ export const AIM_POINTS: Readonly<Record<Exclude<AimTarget, 'ANY'>, BoardPoint>>
   T19: polar((BOARD.trebleInner + BOARD.trebleOuter) / 2, 19),
 }
 
+export const AIM_TARGETS: readonly AimTarget[] = ['D20', 'T20', 'BULL', 'T19', 'ANY']
+
+/** Checked against the list itself: `in` would also accept `toString` or `__proto__` */
 export const isAimTarget = (value: string): value is AimTarget =>
-  value === 'ANY' || value in AIM_POINTS
+  AIM_TARGETS.some((target) => target === value)

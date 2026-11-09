@@ -4,6 +4,11 @@ Plumb is a static page: no server code, no forms that send data, no accounts, no
 requests. Each page carries a Content Security Policy in a meta tag (GitHub Pages cannot send
 headers) that allows only the site's own files and its inline blocks by hash.
 
+Data that reaches the page from outside (the stored theme, the target list, worker messages, the
+page's own attributes) goes through the readers of `src/rules/input.ts`: numbers must be finite
+numbers in their range, text must be a string, cleaned of invisible characters and within its
+length, and choices come from a closed list. Nothing is coerced; what does not fit is refused.
+
 To report a problem, open an issue or write through the contact on
 https://github.com/adamrodwebdev.
 

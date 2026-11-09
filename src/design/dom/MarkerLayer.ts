@@ -7,13 +7,13 @@ export interface ScreenPoint {
 export type MarkerVisibility = Readonly<Record<'cog' | 'parts', number>>
 
 /** Which side of its anchor a label sits, with a leader line between them */
-const SIDES: Readonly<Record<string, 'above' | 'below'>> = {
-  tip: 'above',
-  barrel: 'below',
-  shaft: 'above',
-  flight: 'below',
-  cog: 'below',
-}
+const SIDES: ReadonlyMap<string, 'above' | 'below'> = new Map([
+  ['tip', 'above'],
+  ['barrel', 'below'],
+  ['shaft', 'above'],
+  ['flight', 'below'],
+  ['cog', 'below'],
+])
 
 /**
  * Labels pinned to points of the 3D dart (its parts, its centre of gravity). The labels are the
@@ -25,7 +25,8 @@ export class MarkerLayer {
   constructor(root: ParentNode) {
     this.markers = [...root.querySelectorAll<HTMLElement>('[data-anchor]')]
     for (const marker of this.markers) {
-      marker.classList.add(`marker--${SIDES[marker.dataset['anchor'] ?? ''] ?? 'below'}`)
+      // A map, not an object: an attribute such as `toString` finds nothing instead of a method
+      marker.classList.add(`marker--${SIDES.get(marker.dataset['anchor'] ?? '') ?? 'below'}`)
     }
   }
 

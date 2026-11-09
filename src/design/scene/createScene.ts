@@ -57,9 +57,9 @@ function drawFace(size: number, seed: number): Promise<ImageBitmap | HTMLCanvasE
   if (typeof OffscreenCanvas === 'undefined') return Promise.resolve(drawFaceHere(size, seed))
   return new Promise((resolve) => {
     const worker = new Worker(new URL('./boardFace.worker.ts', import.meta.url), { type: 'module' })
-    worker.onmessage = (event: MessageEvent<ImageBitmap | null>) => {
+    worker.onmessage = (event: MessageEvent<unknown>) => {
       worker.terminate()
-      resolve(event.data)
+      resolve(event.data instanceof ImageBitmap ? event.data : null)
     }
     worker.onerror = () => {
       worker.terminate()

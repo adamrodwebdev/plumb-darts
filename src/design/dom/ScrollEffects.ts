@@ -1,6 +1,6 @@
 import { gsap } from 'gsap'
 import { ScrollTrigger } from 'gsap/ScrollTrigger'
-import type { ChapterId } from '../../rules/chapters'
+import { type ChapterId, chapterById } from '../../rules/chapters'
 import type { ChapterRange } from '../../rules/choreography'
 
 gsap.registerPlugin(ScrollTrigger)
@@ -11,6 +11,11 @@ const PIN_LENGTH: Partial<Record<ChapterId, number>> = {
   grip: 1.2,
   weight: 1.0,
   anatomy: 1.5,
+}
+
+/** The chapter a section names, checked against the list (the attribute is only text) */
+function chapterOf(section: HTMLElement): ChapterId | undefined {
+  return chapterById(section.dataset['chapter'] ?? '')?.id
 }
 
 /** Scrub smoothing: the lag that gives the scroll story its weight */
@@ -28,7 +33,8 @@ export class ScrollEffects {
 
   init(): void {
     for (const section of this.sections) {
-      const id = section.dataset['chapter'] as ChapterId
+      const id = chapterOf(section)
+      if (!id) continue
       const length = PIN_LENGTH[id]
       const trigger =
         length && section.hasAttribute('data-pin')
@@ -75,9 +81,9 @@ export class ScrollEffects {
   /** Scroll ranges where each chapter holds the screen, in page order */
   ranges(): ChapterRange[] {
     return this.sections.flatMap((section) => {
-      const id = section.dataset['chapter'] as ChapterId
-      const trigger = this.triggers.get(id)
-      return trigger ? [{ id, start: trigger.start, end: trigger.end }] : []
+      const id = chapterOf(section)
+      const trigger = id ? this.triggers.get(id) : undefined
+      return id && trigger ? [{ id, start: trigger.start, end: trigger.end }] : []
     })
   }
 

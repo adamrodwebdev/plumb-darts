@@ -71,4 +71,11 @@ describe('targets', () => {
     expect(['D20', 'T20', 'BULL', 'T19', 'ANY'].every(isAimTarget)).toBe(true)
     expect(isAimTarget('D25')).toBe(false)
   })
+
+  test.each(['toString', 'constructor', '__proto__', 'hasOwnProperty'])(
+    'refuses %s, a key every object inherits',
+    (value) => {
+      expect(isAimTarget(value)).toBe(false)
+    },
+  )
 })

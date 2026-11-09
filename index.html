@@ -102,69 +102,71 @@
 
       <section id="press" class="chapter chapter--press" data-chapter="press" data-tone="night" data-pin aria-labelledby="press-title">
         <div class="chapter__inner">
-          <div class="press__intro">
+          <div class="press__intro" data-steps-aside>
             <p class="kicker">{{ press.kicker }}</p>
             <p class="chapter__body">{{ press.body }}</p>
           </div>
           <div class="orbit" data-orbit>
-            <div class="orbit__space">
-              <h2 class="orbit__title" id="press-title">{{ press.title }}</h2>
-              <ol class="orbit__ring" data-orbit-ring>
-                <li class="clipping" data-visual="board">
-                  <article class="clipping__paper">
-                    <p class="clipping__label">{{ press.sample }}</p>
-                    <div class="clipping__photo" aria-hidden="true"></div>
-                    <p class="clipping__source"><span class="clipping__outlet">{{ press.card1Outlet }}</span> <time datetime="2026-10-12">{{ date 2026-10-12 }}</time></p>
-                    <h3 class="clipping__headline">{{ press.card1Headline }}</h3>
-                    <blockquote class="clipping__quote"><p>{{ press.card1Quote }}</p></blockquote>
-                  </article>
-                </li>
-                <li class="clipping" data-visual="rings">
-                  <article class="clipping__paper">
-                    <p class="clipping__label">{{ press.sample }}</p>
-                    <div class="clipping__photo" aria-hidden="true"></div>
-                    <p class="clipping__source"><span class="clipping__outlet">{{ press.card2Outlet }}</span> <time datetime="2026-10-19">{{ date 2026-10-19 }}</time></p>
-                    <h3 class="clipping__headline">{{ press.card2Headline }}</h3>
-                    <blockquote class="clipping__quote"><p>{{ press.card2Quote }}</p></blockquote>
-                  </article>
-                </li>
-                <li class="clipping" data-visual="spot">
-                  <article class="clipping__paper">
-                    <p class="clipping__label">{{ press.sample }}</p>
-                    <div class="clipping__photo" aria-hidden="true"></div>
-                    <p class="clipping__source"><span class="clipping__outlet">{{ press.card3Outlet }}</span> <time datetime="2026-10-26">{{ date 2026-10-26 }}</time></p>
-                    <h3 class="clipping__headline">{{ press.card3Headline }}</h3>
-                    <blockquote class="clipping__quote"><p>{{ press.card3Quote }}</p></blockquote>
-                  </article>
-                </li>
-                <li class="clipping" data-visual="flight">
-                  <article class="clipping__paper">
-                    <p class="clipping__label">{{ press.sample }}</p>
-                    <div class="clipping__photo" aria-hidden="true"></div>
-                    <p class="clipping__source"><span class="clipping__outlet">{{ press.card4Outlet }}</span> <time datetime="2026-11-02">{{ date 2026-11-02 }}</time></p>
-                    <h3 class="clipping__headline">{{ press.card4Headline }}</h3>
-                    <blockquote class="clipping__quote"><p>{{ press.card4Quote }}</p></blockquote>
-                  </article>
-                </li>
-                <li class="clipping" data-visual="halftone">
-                  <article class="clipping__paper">
-                    <p class="clipping__label">{{ press.sample }}</p>
-                    <div class="clipping__photo" aria-hidden="true"></div>
-                    <p class="clipping__source"><span class="clipping__outlet">{{ press.card5Outlet }}</span> <time datetime="2026-11-05">{{ date 2026-11-05 }}</time></p>
-                    <h3 class="clipping__headline">{{ press.card5Headline }}</h3>
-                    <blockquote class="clipping__quote"><p>{{ press.card5Quote }}</p></blockquote>
-                  </article>
-                </li>
-                <li class="clipping" data-visual="axis">
-                  <article class="clipping__paper">
-                    <p class="clipping__label">{{ press.sample }}</p>
-                    <div class="clipping__photo" aria-hidden="true"></div>
-                    <p class="clipping__source"><span class="clipping__outlet">{{ press.card6Outlet }}</span> <time datetime="2026-11-08">{{ date 2026-11-08 }}</time></p>
-                    <h3 class="clipping__headline">{{ press.card6Headline }}</h3>
-                    <blockquote class="clipping__quote"><p>{{ press.card6Quote }}</p></blockquote>
-                  </article>
-                </li>
-              </ol>
+            <div class="orbit__stage" data-orbit-stage>
+              <div class="orbit__space">
+                <h2 class="orbit__title" id="press-title">{{ press.title }}</h2>
+                <ol class="orbit__ring" data-orbit-ring>
+                  <li class="clipping" data-visual="board">
+                    <article class="clipping__paper">
+                      <p class="clipping__label">{{ press.sample }}</p>
+                      <div class="clipping__photo" aria-hidden="true"></div>
+                      <p class="clipping__source"><span class="clipping__outlet">{{ press.card1Outlet }}</span> <time datetime="2026-10-12">{{ date 2026-10-12 }}</time></p>
+                      <h3 class="clipping__headline">{{ press.card1Headline }}</h3>
+                      <blockquote class="clipping__quote"><p>{{ press.card1Quote }}</p></blockquote>
+                    </article>
+                  </li>
+                  <li class="clipping" data-visual="rings">
+                    <article class="clipping__paper">
+                      <p class="clipping__label">{{ press.sample }}</p>
+                      <div class="clipping__photo" aria-hidden="true"></div>
+                      <p class="clipping__source"><span class="clipping__outlet">{{ press.card2Outlet }}</span> <time datetime="2026-10-19">{{ date 2026-10-19 }}</time></p>
+                      <h3 class="clipping__headline">{{ press.card2Headline }}</h3>
+                      <blockquote class="clipping__quote"><p>{{ press.card2Quote }}</p></blockquote>
+                    </article>
+                  </li>
+                  <li class="clipping" data-visual="spot">
+                    <article class="clipping__paper">
+                      <p class="clipping__label">{{ press.sample }}</p>
+                      <div class="clipping__photo" aria-hidden="true"></div>
+                      <p class="clipping__source"><span class="clipping__outlet">{{ press.card3Outlet }}</span> <time datetime="2026-10-26">{{ date 2026-10-26 }}</time></p>
+                      <h3 class="clipping__headline">{{ press.card3Headline }}</h3>
+                      <blockquote class="clipping__quote"><p>{{ press.card3Quote }}</p></blockquote>
+                    </article>
+                  </li>
+                  <li class="clipping" data-visual="flight">
+                    <article class="clipping__paper">
+                      <p class="clipping__label">{{ press.sample }}</p>
+                      <div class="clipping__photo" aria-hidden="true"></div>
+                      <p class="clipping__source"><span class="clipping__outlet">{{ press.card4Outlet }}</span> <time datetime="2026-11-02">{{ date 2026-11-02 }}</time></p>
+                      <h3 class="clipping__headline">{{ press.card4Headline }}</h3>
+                      <blockquote class="clipping__quote"><p>{{ press.card4Quote }}</p></blockquote>
+                    </article>
+                  </li>
+                  <li class="clipping" data-visual="halftone">
+                    <article class="clipping__paper">
+                      <p class="clipping__label">{{ press.sample }}</p>
+                      <div class="clipping__photo" aria-hidden="true"></div>
+                      <p class="clipping__source"><span class="clipping__outlet">{{ press.card5Outlet }}</span> <time datetime="2026-11-05">{{ date 2026-11-05 }}</time></p>
+                      <h3 class="clipping__headline">{{ press.card5Headline }}</h3>
+                      <blockquote class="clipping__quote"><p>{{ press.card5Quote }}</p></blockquote>
+                    </article>
+                  </li>
+                  <li class="clipping" data-visual="axis">
+                    <article class="clipping__paper">
+                      <p class="clipping__label">{{ press.sample }}</p>
+                      <div class="clipping__photo" aria-hidden="true"></div>
+                      <p class="clipping__source"><span class="clipping__outlet">{{ press.card6Outlet }}</span> <time datetime="2026-11-08">{{ date 2026-11-08 }}</time></p>
+                      <h3 class="clipping__headline">{{ press.card6Headline }}</h3>
+                      <blockquote class="clipping__quote"><p>{{ press.card6Quote }}</p></blockquote>
+                    </article>
+                  </li>
+                </ol>
+              </div>
             </div>
             <div class="orbit__controls" data-orbit-controls data-enhance>
               <button class="icon-button" type="button" data-orbit-previous aria-label="{{ press.previous }}">

@@ -41,6 +41,11 @@ export default defineConfig(
     ...playwright.configs['flat/recommended'],
     name: 'app/e2e',
     files: ['e2e/**/*.ts'],
+    rules: {
+      ...playwright.configs['flat/recommended'].rules,
+      // Helpers named expect… assert for the test that calls them
+      'playwright/expect-expect': ['warn', { assertFunctionPatterns: ['^expect[A-Z]'] }],
+    },
   },
   oxlint.configs['flat/recommended'],
   prettier,

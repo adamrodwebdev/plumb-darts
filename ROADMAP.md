@@ -47,6 +47,8 @@ on a real phone. Patterns come from the playbook in
 - ✅ French, Russian, Spanish, Italian and Indonesian (the user's request, 2026-11-09): a static
   page per language, a language menu, hreflang; Oswald for Russian. A native speaker still has to
   review the Russian and Indonesian copy
+- ✅ The press chapter fits every screen (v0.3.2): its ring is measured and fitted to the room the
+  screen leaves, the intro steps aside while it holds, a phone on its side gets the flat grid
 
 **Done when** the gate is green, Lighthouse stays 100 × 4 and the user has tried it on a phone.
 

@@ -1,5 +1,5 @@
 import { describe, expect, test } from 'vitest'
-import { facing, frontCard, orbitSlots, turnFor } from './orbit'
+import { facing, fitRing, frontCard, MIN_RING_SCALE, orbitSlots, turnFor } from './orbit'
 
 describe('orbitSlots', () => {
   test('spreads six cards evenly around the ring', () => {
@@ -36,5 +36,46 @@ describe('turning to a card', () => {
     expect(frontCard(-70, 6)).toBe(1)
     expect(frontCard(-400, 6)).toBe(1)
     expect(frontCard(20, 6)).toBe(0)
+  })
+})
+
+describe('fitting the ring into its stage', () => {
+  test('leaves a scene that fits at its full size, moved to the middle of its band', () => {
+    expect(fitRing({ top: 100, bottom: 300 }, { top: 0, bottom: 500 })).toEqual({
+      scale: 1,
+      shift: 50,
+    })
+  })
+
+  test('shrinks a scene taller than its band to the band, centred in it', () => {
+    const fit = fitRing({ top: 0, bottom: 500 }, { top: 100, bottom: 500 })
+    expect(fit.scale).toBeCloseTo(0.8)
+    expect(fit.shift).toBeCloseTo(40)
+  })
+
+  test('keeps a fit already applied when the scene, measured with it, fills its band', () => {
+    const fit = fitRing({ top: 100, bottom: 500 }, { top: 100, bottom: 500 }, { scale: 0.8, shift: 40 })
+    expect(fit.scale).toBeCloseTo(0.8)
+    expect(fit.shift).toBeCloseTo(40)
+  })
+
+  test('grows a shrunk scene back to its full size when its band grows', () => {
+    const fit = fitRing({ top: 100, bottom: 500 }, { top: -200, bottom: 800 }, { scale: 0.8, shift: 40 })
+    expect(fit.scale).toBe(1)
+    expect(fit.shift).toBeCloseTo(50)
+  })
+
+  test('never shrinks the print below a readable size, nor grows it past full size', () => {
+    expect(fitRing({ top: 0, bottom: 1000 }, { top: 0, bottom: 100 }).scale).toBe(MIN_RING_SCALE)
+    expect(fitRing({ top: 0, bottom: 100 }, { top: 0, bottom: 1000 }).scale).toBe(1)
+  })
+
+  test.each([
+    { name: 'an empty scene', extent: { top: 50, bottom: 50 }, band: { top: 0, bottom: 500 } },
+    { name: 'an empty band', extent: { top: 0, bottom: 300 }, band: { top: 80, bottom: 80 } },
+    { name: 'a scene not measured', extent: { top: Number.NaN, bottom: 300 }, band: { top: 0, bottom: 500 } },
+  ])('keeps the current fit for $name', ({ extent, band }) => {
+    const current = { scale: 0.8, shift: 12 }
+    expect(fitRing(extent, band, current)).toBe(current)
   })
 })

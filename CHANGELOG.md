@@ -6,6 +6,33 @@ All notable changes to this project are written here. The format follows
 
 ## [Unreleased]
 
+## [0.3.2] - 2026-11-09
+
+The press chapter fits every screen.
+
+### Fixed
+
+- The press chapter was taller than most screens while it held them: on a phone with its browser
+  bars (390 × 664) or a laptop (1366 × 657), the bottom of the clipping in front ran under the score
+  counter and the arrows left the screen; on a laptop the clippings also covered the intro's words
+  (two of its three lines at 1280 × 800); on a phone on its side the ring was cut in half. The
+  ring's scene now has a stage no taller than the screen allows, and is measured with each clipping
+  brought to the front in turn, then scaled and centred in it: no clipping covers the intro, the
+  controls, the counter or, on a phone, the headline above the ring, in any language.
+- A chapter taller than its screen now holds with its end in view: the intro, read on the way in,
+  steps aside while the ring turns, instead of the ring running off the bottom.
+- Up to a desktop's height (and on a short phone) the clippings show a slimmer picture and, on a
+  wide screen, a calmer cloud, so the scene needs less height and the print stays large: the cards
+  keep their size at 1280 × 800 and 1920 × 1080, and shrink by 6 to 19 % on short phones and laptops.
+  On a phone, the ring is as tall as its clippings reach, measured, so none climbs onto the headline.
+- A screen too short for the ring (a phone on its side, under 36rem tall) lays the clippings flat,
+  with slim pictures, and the chapter scrolls with the page; turning the phone upright brings the
+  ring back.
+- Tests: at the project's own sizes in every engine, then at 320 × 568, 375 × 548, 390 × 844,
+  1280 × 720, 1366 × 657 and 1920 × 1080, each clipping is brought to the front and checked clear of
+  the masthead, the intro, the controls, the counter and the screen's edges; a phone turned on its
+  side gets the flat grid, and the ring back once upright.
+
 ## [0.3.1] - 2026-11-09
 
 Phones: short-screen landings, the anatomy's labels and the press ring.

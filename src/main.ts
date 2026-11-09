@@ -19,7 +19,7 @@ import { ThrowSession } from './logic/ThrowSession'
 import type { Layout } from './rules/choreography'
 import { CHAPTERS, chapterById } from './rules/chapters'
 import { JOURNEY_MEDIA } from './rules/journey'
-import { turnFor } from './rules/orbit'
+import { RING_MEDIA, turnFor } from './rules/orbit'
 import { QUALITY, chooseTier } from './rules/quality'
 import { performanceClock } from './time/clock'
 import { nextTask } from './time/nextTask'
@@ -103,10 +103,13 @@ async function start(view: Window): Promise<void> {
   if (motionAllowed()) {
     root.classList.add('motion-ok')
     revealOnScroll(page)
-    // The orbit takes its 3D height before the pins are measured
+    // The orbit takes its 3D height before the pins are measured: a ring where the screen is tall
+    // enough for its print, a flat grid elsewhere (both follow the screen as it turns, the orbit
+    // first: its listener comes before the scroll effects' own)
+    const ringScreen = view.matchMedia(RING_MEDIA)
     const orbitRoot = page.querySelector<HTMLElement>('[data-orbit]')
     const orbit = orbitRoot ? new OrbitCarousel(orbitRoot, translator, announcer) : null
-    orbit?.enable((index) => effects?.scrollToOrbit(index, orbit.count()))
+    orbit?.enable((index) => effects?.scrollToOrbit(index, orbit.count()), ringScreen)
     await nextTask()
     const { ScrollEffects } = await import('./design/dom/ScrollEffects')
     // The module's evaluation (GSAP) is a task of its own, then each chapter's trigger
@@ -115,6 +118,7 @@ async function start(view: Window): Promise<void> {
       sections,
       journey: journeyOf(page),
       sideways: view.matchMedia(JOURNEY_MEDIA),
+      ring: ringScreen,
       arrival,
     })
     await effects.init()

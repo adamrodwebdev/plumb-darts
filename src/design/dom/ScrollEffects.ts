@@ -15,12 +15,25 @@ import { cssPixels } from './cssPixels'
 
 gsap.registerPlugin(ScrollTrigger)
 
-/** How long each pinned chapter holds the screen in the stacked story, in viewport heights */
-const PIN_LENGTH: Partial<Record<ChapterId, number>> = {
-  press: 1.8,
-  grip: 1.2,
-  weight: 1.0,
-  anatomy: 1.5,
+/** How a pinned chapter holds the screen in the stacked story */
+interface Hold {
+  /** For how long, in viewport heights */
+  readonly length: number
+  /** Only where its clippings turn as a ring: a flat grid scrolls with the page */
+  readonly ring?: boolean
+  /**
+   * Taller than its screen, it holds with its end in view: its intro steps aside, and the ring,
+   * fitted to the room left, stays clear of the counter (it held its top, and the end ran under
+   * the counter and off the screen, 2026-11-09)
+   */
+  readonly end?: boolean
+}
+
+const HOLDS: Partial<Record<ChapterId, Hold>> = {
+  press: { length: 1.8, ring: true, end: true },
+  grip: { length: 1.2 },
+  weight: { length: 1.0 },
+  anatomy: { length: 1.5 },
 }
 
 /** Scrub smoothing: the lag that gives the scroll story its weight */
@@ -112,6 +125,8 @@ export interface ScrollEffectsOptions {
   readonly journey: JourneyElements | null
   /** Screens where the journey travels sideways (tall enough for a chapter to fit one screen) */
   readonly sideways: MediaQueryList
+  /** Screens where the press clippings turn as a ring (tall enough for its print) */
+  readonly ring: MediaQueryList
   /** The journey chapter the visitor came to, whose fragment the head script kept aside */
   readonly arrival: ChapterId | null
 }
@@ -126,6 +141,7 @@ export class ScrollEffects {
   private readonly sections: readonly HTMLElement[]
   private readonly journey: JourneyElements | null
   private readonly sideways: MediaQueryList
+  private readonly ring: MediaQueryList
   private readonly arrival: ChapterId | null
   private readonly plan: JourneyPlan = planJourney(JOURNEY_CHAPTERS, JOURNEY_HOLDS, JOURNEY_MOVE)
   private readonly triggers = new Map<ChapterId, ScrollTrigger>()
@@ -148,6 +164,7 @@ export class ScrollEffects {
     this.sections = options.sections
     this.journey = options.journey
     this.sideways = options.sideways
+    this.ring = options.ring
     this.arrival = options.arrival
   }
 
@@ -192,6 +209,7 @@ export class ScrollEffects {
     ScrollTrigger.addEventListener('scrollEnd', () => this.rest())
     this.rest()
     this.sideways.addEventListener('change', () => void this.relayOut())
+    this.ring.addEventListener('change', () => void this.relayOut())
     document.addEventListener('click', (event) => this.followLink(event))
     window.addEventListener('hashchange', () => this.revealHash())
     this.journey?.root.addEventListener('focusin', (event) => this.revealFocus(event))
@@ -231,7 +249,7 @@ export class ScrollEffects {
   /** Scrolls the story to the point where a clipping faces the front */
   scrollToOrbit(index: number, count: number): void {
     const pin = this.triggers.get('press')
-    if (!pin || count < 2) return
+    if (!pin || count < 2 || !this.ring.matches) return
     const top = pin.start + (pin.end - pin.start) * (index / (count - 1))
     window.scrollTo({ top: Math.round(top), behavior: 'smooth' })
   }
@@ -301,15 +319,23 @@ export class ScrollEffects {
   }
 
   private chapterTrigger(section: HTMLElement, id: ChapterId): ScrollTrigger {
-    const length = PIN_LENGTH[id]
-    return length && section.hasAttribute('data-pin')
+    const hold = HOLDS[id]
+    const endInView = (): boolean => hold?.end === true && section.offsetHeight > window.innerHeight
+    // Held with its end in view, the chapter's top would sit under the masthead, over its logo
+    // and buttons: that part steps aside while it holds ([data-steps-aside])
+    const stepAside = (self: ScrollTrigger): void => {
+      section.classList.toggle('holds-end', self.isActive && endInView())
+    }
+    return hold && section.hasAttribute('data-pin') && (!hold.ring || this.ring.matches)
       ? ScrollTrigger.create({
           trigger: section,
-          start: 'top top',
-          end: () => `+=${Math.round(window.innerHeight * length)}`,
+          start: () => (endInView() ? 'bottom bottom' : 'top top'),
+          end: () => `+=${Math.round(window.innerHeight * hold.length)}`,
           pin: true,
           anticipatePin: 1,
           invalidateOnRefresh: true,
+          onToggle: stepAside,
+          onRefresh: stepAside,
         })
       : // A chapter that scrolls through holds its pose while its top is near the screen's top
         ScrollTrigger.create({
@@ -445,7 +471,7 @@ export class ScrollEffects {
   private turnOrbit(): void {
     const pin = this.triggers.get('press')
     const press = document.getElementById('press')
-    if (!this.orbit || !pin || !press) return
+    if (!this.orbit || !pin || !press || !this.ring.matches) return
     const { endTurn, listener } = this.orbit
     const turn = { value: 0 }
     gsap.to(turn, {

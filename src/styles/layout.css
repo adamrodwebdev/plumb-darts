@@ -170,11 +170,13 @@
 
 /* ---------- Chapters ---------- */
 .chapter {
+  /* The band kept free at the bottom for the score counter */
+  --counter-band: 6rem;
   position: relative;
   z-index: 3;
   display: grid;
   min-height: 100svh;
-  padding: calc(var(--masthead-height) + 1.5rem) var(--gutter) 6rem;
+  padding: calc(var(--masthead-height) + 1.5rem) var(--gutter) var(--counter-band);
   color: var(--ink);
 }
 
@@ -227,7 +229,7 @@
 /* Short screens (a laptop with its toolbars, a landscape phone): pinned chapters must fit */
 @media (height < 50rem) {
   .chapter {
-    padding-block-end: 4.5rem;
+    --counter-band: 4.5rem;
   }
 
   .chapter__text {

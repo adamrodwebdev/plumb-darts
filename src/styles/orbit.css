@@ -17,6 +17,16 @@
   justify-items: center;
 }
 
+/* While the chapter holds the screen with its end in view, its intro (read on the way in) would sit
+   under the masthead: it steps aside (ScrollEffects) */
+[data-steps-aside] {
+  transition: opacity 0.3s var(--ease-out);
+}
+
+.holds-end [data-steps-aside] {
+  opacity: 0;
+}
+
 .orbit {
   width: 100%;
 }
@@ -150,20 +160,43 @@
     #e3d9c4;
 }
 
-/* ---------- 3D: the ring, turned by the scroll ---------- */
+/* ---------- 3D: the ring, turned by the scroll ----------
+   A column: the stage, then the controls. The stage holds the scene (the headline and the ring)
+   and is never taller than what the screen leaves under the masthead and above the counter's
+   band, where the chapter holds the screen (its intro steps aside first: ScrollEffects). The
+   script measures the scene, each clipping brought to the front in turn, then scales and centres
+   it in its stage (--fit, --shift): no clipping ever covers the intro, the controls or the
+   counter. Before, the clippings spilled out of their box: over the intro on a laptop, below the
+   screen on a phone with its browser bars (2026-11-09). */
 .orbit.is-3d {
   position: relative;
+  display: flex;
+  flex-direction: column;
   height: clamp(27rem, 70svh, 50rem);
-  perspective: 1700px;
-  perspective-origin: 50% 40%;
+  /* svh, except where a browser reports a small viewport taller than its window (WebKit's
+     iPhone, 736 against 664 px) */
+  max-height: calc(
+    min(100svh, 100dvh) - var(--masthead-height) - 0.75rem - var(--counter-band, 6rem)
+  );
 }
 
-/* The ring above, the controls in their own band below it: no card ever covers them */
+/* Scaled and moved as a flat picture: the perspective is drawn first, so the scene shrinks and
+   moves as one, without parallax */
+.orbit.is-3d .orbit__stage {
+  position: relative;
+  flex: 1 1 0;
+  min-height: 0;
+  perspective: 1700px;
+  perspective-origin: 50% 45%;
+  scale: var(--fit, 1);
+  translate: 0 var(--shift, 0px);
+}
+
 .orbit.is-3d .orbit__space {
   position: absolute;
-  inset: 0 0 5.5rem;
+  inset: 0;
   transform-style: preserve-3d;
-  transform: translateY(-1.5rem) rotateX(-6deg);
+  transform: rotateX(-6deg);
 }
 
 .orbit.is-3d .orbit__title {
@@ -219,13 +252,26 @@
 }
 
 .orbit.is-3d .orbit__controls {
-  position: absolute;
-  inset: auto 0 0;
+  position: relative;
   z-index: 2;
   display: flex;
+  flex: none;
   align-items: center;
   justify-content: center;
   gap: 1rem;
+  min-height: 4rem;
+}
+
+/* Up to a desktop's height, a slimmer picture and a calmer cloud: the scene needs less height,
+   so its print stays large (a phone gets its own threshold below) */
+@media (width >= 40rem) and (height < 60rem) {
+  .orbit.is-3d .clipping {
+    --lift-scale: 0.5;
+  }
+
+  .orbit.is-3d .clipping__photo {
+    aspect-ratio: 16 / 4.5;
+  }
 }
 
 .orbit__controls svg {
@@ -246,6 +292,11 @@
 @media (width < 40rem) {
   .orbit.is-3d {
     height: auto;
+  }
+
+  /* As tall as its scene, shrunk to the room left on a short phone */
+  .orbit.is-3d .orbit__stage {
+    flex: 0 1 auto;
     perspective: 900px;
   }
 
@@ -268,21 +319,22 @@
     transform: none;
   }
 
+  /* As tall as its clippings reach, measured by the script (the headline above is never covered,
+     nor left with a gap under it, in any language) */
   .orbit.is-3d .orbit__ring {
     position: relative;
     inset: auto;
-    height: 24.5rem;
+    height: var(--ring-height, 24.5rem);
   }
 
   .orbit.is-3d .orbit__controls {
-    position: relative;
-    inset: auto;
+    min-height: 0;
     margin-block-start: 0.75rem;
   }
 
   .orbit.is-3d .clipping {
     --radius: 10rem;
-    --lift-scale: 0.3;
+    --lift-scale: 0.15;
     width: 11.25rem;
     /* Only the front clipping and its two neighbours show: behind them, the back of the ring was a
        stack of papers seen through each other (the owner's phone, 2026-11-09). Whole or hidden, the
@@ -321,5 +373,27 @@
   .orbit__status {
     min-width: 0;
     flex: 1;
+  }
+}
+
+/* A screen too short for the ring (a phone on its side): the flat grid's pictures slim down, so a
+   clipping is no taller than the screen */
+@media (height < 36rem) {
+  .clipping__photo {
+    aspect-ratio: 16 / 4.5;
+  }
+}
+
+/* A short phone (its browser bars showing): a slimmer picture */
+@media (width < 40rem) and (height < 46rem) {
+  .orbit.is-3d .clipping__photo {
+    aspect-ratio: 16 / 4.5;
+  }
+}
+
+/* A narrow phone: the headline on one line in every language, so the ring keeps that height */
+@media (width < 22.5rem) {
+  .orbit.is-3d .orbit__title {
+    font-size: 2rem;
   }
 }

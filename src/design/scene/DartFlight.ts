@@ -5,11 +5,14 @@ import type { DartModel } from './DartModel'
 import type { Animation } from './Stage'
 
 const AXIS = new Vector3(0, 1, 0)
+const UP = new Vector3(0, 1, 0)
 const FLIGHT_MS = 420
 const WOBBLE_MS = 650
 const ARC_CM = 5
 /** How deep the point sinks into the sisal */
 const BITE_CM = 0.35
+/** A landed dart's tail rises above its point (the throw's arc ends falling): readable from the oche */
+const LANDING_PITCH = 0.32
 
 export interface FlightPlan {
   readonly from: Vector3
@@ -39,7 +42,10 @@ export class DartFlight implements Animation {
     private readonly dart: DartModel,
     private readonly plan: FlightPlan,
   ) {
-    this.direction = plan.to.clone().sub(plan.from).normalize()
+    const travel = plan.to.clone().sub(plan.from).normalize()
+    // Tilt the resting axis so the tail rises: pitch around the horizontal axis across the throw
+    const across = new Vector3().crossVectors(travel, UP).normalize()
+    this.direction = travel.applyAxisAngle(across, -LANDING_PITCH).normalize()
     this.restRotation = new Quaternion().setFromUnitVectors(AXIS, this.direction)
     this.tip = plan.to.clone().addScaledVector(this.direction, BITE_CM)
     // The centre of gravity sits the tip's length behind the point

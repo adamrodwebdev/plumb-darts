@@ -41,7 +41,7 @@ export interface SceneHandle extends ThrowStage {
 }
 
 /** Where the throwing hand is, in the camera's own space (right of and below the eye) */
-const HAND = new Vector3(6, -8, -16)
+const HAND = new Vector3(11, -13, -12)
 
 function drawFaceHere(size: number, seed: number): HTMLCanvasElement {
   const canvas = document.createElement('canvas')

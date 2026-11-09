@@ -364,6 +364,23 @@
   text-transform: uppercase;
 }
 
+/* Phones: a compact counter, so it covers as little of the page as possible */
+@media (width < 40rem) {
+  .hud__toggle {
+    gap: 0.5rem;
+    min-height: 2.75rem;
+    padding: 0.25rem 0.75rem 0.25rem 0.625rem;
+  }
+
+  .hud__score {
+    font-size: 1.75rem;
+  }
+
+  .hud__label {
+    display: none;
+  }
+}
+
 .hud__menu {
   position: fixed;
   inset: auto var(--gutter) 5.5rem auto;

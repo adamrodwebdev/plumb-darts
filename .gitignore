@@ -8,3 +8,6 @@ blob-report/
 *.log
 .DS_Store
 .vite/
+
+# Local Claude Code settings: never in the repository
+.claude/

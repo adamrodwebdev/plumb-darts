@@ -45,15 +45,17 @@ const pose = (parts: PoseParts): ScenePose => ({
 const DART_AWAY: Partial<DartPose> = { position: [0, -40, 20], rotation: [0, 0, -90], visible: 0 }
 
 const WIDE: Readonly<Record<ChapterId, ChapterMotion>> = {
-  'game-on': hold(pose({ dart: { position: [7.5, 1.2, 4], rotation: [14, 20, 124], scale: 1.5 } })),
+  // The dart crosses the end of the headline: the words sit behind it
+  'game-on': hold(pose({ dart: { position: [0, 2.5, 8], rotation: [14, 20, 105], scale: 1.45 } })),
+  // Tip towards the text (thin), flights off to the right; the camera looks left of the dart
   grip: {
     from: pose({
-      dart: { position: [9, 0.4, 0], rotation: [10, -14, -90] },
-      camera: { position: [4.5, 1.6, 25], target: [9, 0.3, 0] },
+      dart: { position: [9, 0.4, 0], rotation: [10, 14, 90] },
+      camera: { position: [6, 1.6, 34], target: [4.5, 0.3, 0] },
     }),
     to: pose({
-      dart: { position: [9, 0.4, 0], rotation: [10, -14, -90], spin: 160 },
-      camera: { position: [11.5, 0.9, 18], target: [9.7, 0.3, 0] },
+      dart: { position: [9, 0.4, 0], rotation: [10, 14, 90], spin: 160 },
+      camera: { position: [6, 0.8, 16], target: [3.6, 0.3, 0] },
     }),
   },
   weight: {
@@ -89,7 +91,8 @@ const WIDE: Readonly<Record<ChapterId, ChapterMotion>> = {
 }
 
 const NARROW: Readonly<Record<ChapterId, ChapterMotion>> = {
-  'game-on': hold(pose({ dart: { position: [0.6, 7.6, 2], rotation: [12, 16, 140], scale: 1.05 } })),
+  // In the free band above the text, its point just touching the headline
+  'game-on': hold(pose({ dart: { position: [0, 10.6, 2], rotation: [12, 16, 128], scale: 0.9 } })),
   grip: {
     from: pose({
       dart: { position: [0, 8.6, 0], rotation: [10, -12, -90], scale: 0.85 },

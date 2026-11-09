@@ -12,6 +12,8 @@ html {
   -webkit-text-size-adjust: 100%;
   text-size-adjust: 100%;
   scroll-padding-block-start: calc(var(--masthead-height) + 1rem);
+  /* The score counter is fixed at the bottom: a focused control is never hidden behind it */
+  scroll-padding-block-end: 5.5rem;
   background: var(--night-bg);
   color: var(--night-ink);
 }

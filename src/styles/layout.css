@@ -178,6 +178,39 @@
   background: var(--bg);
 }
 
+/* Labels that follow the 3D model are moved by transforms: clipped to their chapter, they can
+   never stretch the page while they wait off screen */
+.chapter[data-pin] {
+  overflow: clip;
+}
+
+/* Short screens (a laptop with its toolbars, a landscape phone): pinned chapters must fit */
+@media (height < 50rem) {
+  .chapter {
+    padding-block-end: 4.5rem;
+  }
+
+  .chapter__text {
+    gap: 0.875rem;
+  }
+
+  .chapter .chapter__title {
+    font-size: clamp(2.25rem, 1rem + 4.2vw, 4.75rem);
+  }
+
+  .chapter .gauge {
+    width: 7.5rem;
+  }
+
+  .chapter .gauge__figure {
+    font-size: 3.25rem;
+  }
+
+  .chapter .specs {
+    padding-block-start: 0.75rem;
+  }
+}
+
 .chapter__inner {
   position: relative;
   display: grid;

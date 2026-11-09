@@ -291,6 +291,19 @@ describe('InputRecord: an object from outside, read field by field', () => {
     expect(problem(() => save.record('constructor'))).toBe('not-a-record')
   })
 
+  test('tells a field that is null from a missing one', () => {
+    const plan = InputRecord.parse('{"stoppedOn": null, "level": 3}', SAVE_SIZE, 'plan')
+    expect(plan.isNull('stoppedOn')).toBe(true)
+    expect(plan.isNull('level')).toBe(false)
+    expect(plan.isNull('missing')).toBe(false)
+  })
+
+  test('lists its own field names up to a maximum, for maps keyed by data', () => {
+    const days = InputRecord.parse('{"2026-11-08": 120, "2026-11-09": 95}', SAVE_SIZE, 'records')
+    expect(days.keys(10)).toEqual(['2026-11-08', '2026-11-09'])
+    expect(problem(() => days.keys(1))).toBe('too-many')
+  })
+
   test('reads a list item by item, with the index in the path', () => {
     const save = InputRecord.parse('{"stars": [3, 2, "1"]}', SAVE_SIZE, 'save')
     const stars = {

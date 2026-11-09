@@ -115,7 +115,8 @@ function isInvisible(character: string): boolean {
  * where it is shown, for that place (textContent, a template's interpolation, an attribute).
  */
 function clean(text: string, multiline: boolean): string {
-  const visible = [...text.replace(/\r\n?/g, '\n')]
+  // Array.from walks code points like a spread, and strict type-checked lint accepts it
+  const visible = Array.from(text.replace(/\r\n?/g, '\n'))
     .filter((character) => !isInvisible(character))
     .join('')
   const composed = visible.normalize('NFC')
@@ -140,7 +141,7 @@ export function readText(value: unknown, rule: TextRule, field: string): string 
     if (rule.required === true) throw new InvalidInput(field, 'empty')
     return text
   }
-  if ([...text].length > rule.maxLength) throw new InvalidInput(field, 'too-long')
+  if (Array.from(text).length > rule.maxLength) throw new InvalidInput(field, 'too-long')
   if (rule.pattern && !matchesWhole(rule.pattern, text)) throw new InvalidInput(field, 'bad-format')
   return text
 }
@@ -205,6 +206,18 @@ export class InputRecord {
 
   has(key: string): boolean {
     return owns(this.fields, key)
+  }
+
+  /** The field is present and null: a nullable field (`stoppedOn: null`), told from a missing one */
+  isNull(key: string): boolean {
+    return owns(this.fields, key) && this.fields[key] === null
+  }
+
+  /** The record's own field names, refused beyond `maxKeys`: a map keyed by data (days, ids) */
+  keys(maxKeys: number): readonly string[] {
+    const keys = Object.keys(this.fields)
+    if (keys.length > maxKeys) throw new InvalidInput(this.name, 'too-many')
+    return keys
   }
 
   number(key: string, rule: NumberRule): number {

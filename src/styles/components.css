@@ -570,9 +570,12 @@
     /* A longer translation wraps instead of running off the screen */
     max-width: calc(100vw - var(--x, 0) * 1px - var(--leader) - 1rem);
     white-space: normal;
+    /* Centred on its point, but never above the masthead's bottom: on a screen 640 px tall the
+       tip's label, near the top of the stage, rose under the masthead (2026-11-09). Held just below
+       it, its leader still meets the tip */
     transform: translate3d(
       calc(var(--x, -500) * 1px + var(--leader)),
-      calc(var(--y, -500) * 1px - 50%),
+      calc(max(var(--y, -500) * 1px, var(--masthead-height) + 0.25rem + 50%) - 50%),
       0
     );
   }

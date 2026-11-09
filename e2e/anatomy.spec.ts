@@ -32,7 +32,7 @@ for (const { width, height } of [
   { width: 390, height: 844 },
   { width: 430, height: 932 },
 ]) {
-  test(`at ${width} × ${height}, the anatomy's labels never cover its words`, async ({
+  test(`at ${width} × ${height}, the anatomy's labels cover neither its words nor the masthead`, async ({
     page,
     browserName,
   }) => {
@@ -55,6 +55,13 @@ for (const { width, height } of [
       }),
     )
     expect(words.length).toBeGreaterThan(0)
+    // Nor under the masthead, which stays on top of the page
+    const masthead = await page.locator('.masthead').boundingBox()
+    expect(masthead).not.toBeNull()
+    const below = (masthead?.y ?? 0) + (masthead?.height ?? 0)
+    for (const label of await shownLabels(page)) {
+      expect(label.y, JSON.stringify({ label, below })).toBeGreaterThanOrEqual(below - 0.5)
+    }
     for (const label of await shownLabels(page)) {
       for (const part of words) {
         expect(overlap(label, part), JSON.stringify({ label, part })).toBe(false)

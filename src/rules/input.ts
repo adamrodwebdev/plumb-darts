@@ -181,8 +181,14 @@ export class InputRecord {
     return new InputRecord(value, name)
   }
 
-  /** Parses JSON first: text that is not JSON is refused like any other bad input */
-  static parse(json: string, name: string): InputRecord {
+  /**
+   * Parses JSON first, from text no longer than `maxLength` UTF-16 units (a save, a stored
+   * preference, a message): what is too long is refused before parsing, and text that is not
+   * JSON is refused like any other bad input.
+   */
+  static parse(json: unknown, maxLength: number, name: string): InputRecord {
+    if (typeof json !== 'string') throw new InvalidInput(name, 'not-text')
+    if (json.length > maxLength) throw new InvalidInput(name, 'too-long')
     let value: unknown
     try {
       value = JSON.parse(json)

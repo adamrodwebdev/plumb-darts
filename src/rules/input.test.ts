@@ -13,6 +13,8 @@ import {
 const LEVEL = { min: 1, max: 60, integer: true } as const
 const VOLUME = { min: 0, max: 1 } as const
 const NAME = { maxLength: 12, required: true } as const
+/** The longest save text read back from storage, in UTF-16 units */
+const SAVE_SIZE = 10_000
 
 /** The reason a read refused its value, or 'accepted' */
 function problem(read: () => unknown): string {
@@ -245,19 +247,38 @@ describe('InputRecord: an object from outside, read field by field', () => {
     expect(problem(() => InputRecord.from(value, 'save'))).toBe('not-a-record')
   })
 
+  test('refuses a stored text longer than its limit before parsing it', () => {
+    const huge = JSON.stringify({ name: 'a'.repeat(SAVE_SIZE) })
+    expect(problem(() => InputRecord.parse(huge, SAVE_SIZE, 'save'))).toBe('too-long')
+  })
+
+  test('reads a stored text exactly as long as its limit', () => {
+    const exact = `{"n":"${'a'.repeat(SAVE_SIZE - 8)}"}`
+    expect(exact).toHaveLength(SAVE_SIZE)
+    expect(InputRecord.parse(exact, SAVE_SIZE, 'save').has('n')).toBe(true)
+  })
+
+  test('refuses a stored value that is not text', () => {
+    expect(problem(() => InputRecord.parse(null, SAVE_SIZE, 'save'))).toBe('not-text')
+  })
+
   test('refuses text that is not JSON', () => {
-    expect(problem(() => InputRecord.parse('{level: 3', 'save'))).toBe('bad-format')
+    expect(problem(() => InputRecord.parse('{level: 3', SAVE_SIZE, 'save'))).toBe('bad-format')
   })
 
   test('reads typed fields from JSON', () => {
-    const save = InputRecord.parse('{"level": 3, "name": " Ana ", "muted": true}', 'save')
+    const save = InputRecord.parse(
+      '{"level": 3, "name": " Ana ", "muted": true}',
+      SAVE_SIZE,
+      'save',
+    )
     expect(save.number('level', LEVEL)).toBe(3)
     expect(save.text('name', NAME)).toBe('Ana')
     expect(save.boolean('muted')).toBe(true)
   })
 
   test('names the path of a refused field', () => {
-    const state = InputRecord.parse('{"save": {"level": "3"}}', 'state')
+    const state = InputRecord.parse('{"save": {"level": "3"}}', SAVE_SIZE, 'state')
     expect(() => state.record('save').number('level', LEVEL)).toThrow(
       'state.save.level: not-a-number',
     )
@@ -271,7 +292,7 @@ describe('InputRecord: an object from outside, read field by field', () => {
   })
 
   test('reads a list item by item, with the index in the path', () => {
-    const save = InputRecord.parse('{"stars": [3, 2, "1"]}', 'save')
+    const save = InputRecord.parse('{"stars": [3, 2, "1"]}', SAVE_SIZE, 'save')
     const stars = {
       maxItems: 60,
       item: (value: unknown, field: string) => readNumber(value, LEVEL, field),
@@ -280,7 +301,7 @@ describe('InputRecord: an object from outside, read field by field', () => {
   })
 
   test('refuses a list longer than allowed, or a field that is not a list', () => {
-    const save = InputRecord.parse('{"stars": [1, 2, 3], "name": "Ana"}', 'save')
+    const save = InputRecord.parse('{"stars": [1, 2, 3], "name": "Ana"}', SAVE_SIZE, 'save')
     const two = {
       maxItems: 2,
       item: (value: unknown, field: string) => readNumber(value, LEVEL, field),

@@ -203,9 +203,12 @@
 
 /* The print shows only where it can be read: it leaves a clipping turning away before its paper
    fades, so no text is ever shown faint (WCAG 1.4.3: back cards read at 1.5 to 2.9 : 1 before,
-   2026-11-09), and comes back over a few degrees as the clipping comes round */
+   2026-11-09). Whole or hidden, never in between: faded by the angle, it stayed half clear
+   wherever the reader stopped scrolling with a clipping at the side (axe, 2026-11-09). The switch
+   happens over a short time instead */
 .orbit.is-3d .clipping__paper > * {
-  opacity: clamp(0, (var(--facing) - 0.5) * 10, 1);
+  opacity: clamp(0, (var(--facing) - 0.55) * 1000, 1);
+  transition: opacity 0.25s;
 }
 
 .orbit.is-3d .orbit__controls {

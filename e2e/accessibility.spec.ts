@@ -1,4 +1,5 @@
 import AxeBuilder from '@axe-core/playwright'
+import { settled } from './boot'
 import { expect, test, type Page } from './fixtures'
 
 /** WCAG 2.2 AA, the level the project promises */
@@ -38,4 +39,32 @@ test('the missing page meets WCAG 2.2 AA', async ({ page }) => {
   await expect(page.getByRole('heading', { level: 1 })).toBeVisible()
 
   expect(await violations(page)).toEqual([])
+})
+
+test('a clipping of the orbit is printed whole or not at all, at any turn of the ring', async ({
+  page,
+}) => {
+  await page.emulateMedia({ reducedMotion: 'no-preference' })
+  await page.goto('')
+  await settled(page)
+  const ring = page.locator('.orbit.is-3d [data-orbit-ring]')
+  await expect(ring).toHaveCount(1)
+
+  // Turns that leave a clipping near the side of the ring, where its print used to fade
+  for (const turn of [25, 85, 149, 205, 266, 331]) {
+    await ring.evaluate((element, degrees) => {
+      element.style.setProperty('--turn', `${degrees}deg`)
+    }, turn)
+    await expect
+      .poll(() =>
+        ring.evaluate(
+          (element) =>
+            [...element.querySelectorAll('.clipping__paper > *')].filter((part) => {
+              const opacity = Number.parseFloat(getComputedStyle(part).opacity)
+              return opacity > 0.01 && opacity < 0.99
+            }).length,
+        ),
+      )
+      .toBe(0)
+  }
 })

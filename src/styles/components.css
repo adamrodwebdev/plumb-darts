@@ -731,6 +731,20 @@
   }
 }
 
+/* A very short phone (a landscape one): each label gives its room to the part's name, its spec
+   kept for screen readers. At 360 × 496 the tip's label, held below the masthead and wrapped on
+   four lines, met the shaft's on the same side (CI, 2026-11-09) */
+@media (width < 64rem) and (height < 34rem) {
+  .has-3d .marker--part .marker__value {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    overflow: hidden;
+    clip-path: inset(50%);
+    white-space: nowrap;
+  }
+}
+
 /* ---------- Weight gauge ---------- */
 .gauge {
   position: relative;

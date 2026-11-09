@@ -22,7 +22,8 @@ Phones: short-screen landings, the anatomy's labels and the press ring.
 - Phones, the anatomy: the tip's and the barrel's labels, both on the right, met while the dart came
   apart, and on a screen 640 px tall even once apart (seen on the live v0.3.0 at 360 and 390 px).
   The dart now stands in the middle and the labels alternate sides, the tip's and the shaft's to the
-  left: two neighbours never share a side.
+  left: two neighbours never share a side. On a very short phone (under 34rem tall, a landscape
+  one) the labels show the part's name only, its spec kept for screen readers.
 - The press orbit turned each clipping back towards the viewer from its raw angle, so the sixth
   (300 degrees) turned its back and showed its print mirrored. It now turns from its angle seen from
   the front (`atan2`). On phones, where the cards merged into a stack of papers seen through each

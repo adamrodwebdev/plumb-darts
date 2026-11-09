@@ -98,10 +98,14 @@ async function start(view: Window): Promise<void> {
     await effects.init()
     if (orbit) effects.onOrbitTurn(turnFor(orbit.count() - 1, orbit.count()), (turn) => orbit.setTurn(turn))
   }
-  if (!tier || !context) return
+  const progress = required<HTMLElement>(page, '[data-boot-progress]')
+  if (!tier || !context) {
+    // Nothing more to load: the page is complete, its scroll effects included
+    progress.classList.add('is-done')
+    return
+  }
 
   // 5. The 3D scene
-  const progress = required<HTMLElement>(page, '[data-boot-progress]')
   const setProgress = (value: number): void => {
     progress.style.setProperty('--progress', value.toFixed(2))
   }

@@ -30,3 +30,19 @@ jobs:
       # Every visible string comes from the messages: a placeholder left in a page means a missing key
       - name: No placeholder left in the pages
         run: "! grep -n '{{' dist/index.html dist/404.html"
+
+  e2e:
+    # Chromium, Firefox and WebKit on desktop, and two phones: Firefox does not start on the
+    # developer's Windows machine, so this job is where it runs
+    name: E2E (three engines and two phones)
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+      - uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7.1.0
+        with:
+          node-version: 24
+          cache: npm
+      - run: npm ci
+      - run: npx playwright install --with-deps chromium firefox webkit
+      - run: npm run build
+      - run: npx playwright test

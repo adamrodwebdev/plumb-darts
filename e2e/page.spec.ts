@@ -1,0 +1,103 @@
+import { expect, test, type Page } from '@playwright/test'
+import { settled } from './boot'
+
+interface Watch {
+  readonly errors: string[]
+  readonly outside: string[]
+}
+
+/** The browser's own console line for a CSP refusal: the violation event below names its element */
+const CSP_CONSOLE_LINE = /^Refused to /
+
+/** Records console errors, uncaught errors, CSP violations and requests to another origin */
+async function watch(page: Page, origin: string): Promise<Watch> {
+  const seen: Watch = { errors: [], outside: [] }
+  page.on('console', (message) => {
+    if (message.type() === 'error' && !CSP_CONSOLE_LINE.test(message.text())) {
+      seen.errors.push(message.text())
+    }
+  })
+  page.on('pageerror', (error) => seen.errors.push(error.message))
+  page.on('request', (request) => {
+    const url = new URL(request.url())
+    if (url.protocol.startsWith('http') && url.origin !== origin) seen.outside.push(request.url())
+  })
+  await page.addInitScript(() => {
+    document.addEventListener('securitypolicyviolation', (event) => {
+      const element = event.target instanceof Element ? event.target : null
+      // WebKit on Windows styles its own <select> from inside: a style-src-attr refusal on a
+      // select that carries no style attribute is the engine's, not the page's (seen 2026-11-09)
+      const engine =
+        element?.tagName === 'SELECT' &&
+        !element.hasAttribute('style') &&
+        event.violatedDirective === 'style-src-attr'
+      if (!engine) {
+        console.error(
+          `CSP blocked ${event.blockedURI} (${event.violatedDirective}) on ${element?.tagName ?? 'the document'}`,
+        )
+      }
+    })
+  })
+  return seen
+}
+
+test('the page opens and scrolls to its end with no error, no CSP violation and no outside request', async ({
+  page,
+  baseURL,
+}) => {
+  const seen = await watch(page, new URL(baseURL ?? '').origin)
+  await page.goto('')
+
+  await expect(page.getByRole('heading', { level: 1 })).toBeVisible()
+  await settled(page)
+  await page.locator('.dusk').scrollIntoViewIfNeeded()
+  await expect(page.locator('.dusk')).toBeInViewport()
+
+  expect(seen.errors).toEqual([])
+  expect(seen.outside).toEqual([])
+})
+
+test('the finish is played with the keyboard alone: three darts, then collected', async ({
+  page,
+}) => {
+  await page.goto('#throw')
+  const log = page.locator('[data-throw-log] li')
+  const throwButton = page.getByRole('button', { name: 'Throw' })
+
+  await page.getByLabel('Aim for').selectOption('T20')
+  await throwButton.focus()
+  await page.keyboard.press('Enter')
+  await expect(log).toHaveCount(1)
+  await expect(page.getByText('2 darts left')).toBeVisible()
+
+  await expect(throwButton).toBeEnabled()
+  await page.keyboard.press('Enter')
+  await expect(log).toHaveCount(2)
+  await expect(throwButton).toBeEnabled()
+  await page.keyboard.press('Enter')
+  await expect(log).toHaveCount(3)
+
+  await page.getByRole('button', { name: 'Collect the darts' }).click()
+  await expect(log).toHaveCount(0)
+  await expect(page.getByText('3 darts left')).toBeVisible()
+})
+
+test('the cursor shows only what can be clicked', async ({ page }) => {
+  await page.goto('')
+
+  await expect(page.getByRole('heading', { level: 1 })).toHaveCSS('cursor', 'default')
+  await expect(page.locator('.chapter__body').first()).toHaveCSS('cursor', 'default')
+  await expect(page.locator('a[href]').first()).toHaveCSS('cursor', 'pointer')
+  await expect(page.getByLabel('Aim for')).toHaveCSS('cursor', 'pointer')
+  await expect(page.getByRole('button', { name: 'Throw' })).toHaveCSS('cursor', 'pointer')
+})
+
+test('the missing page offers the way back to the oche', async ({ page }) => {
+  await page.goto('404.html')
+
+  await expect(page.getByRole('heading', { level: 1 })).toHaveText('Missed the board.')
+  await expect(page.getByRole('link', { name: 'Back to the oche' })).toHaveAttribute(
+    'href',
+    '/plumb-darts/',
+  )
+})

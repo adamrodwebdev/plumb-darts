@@ -16,6 +16,7 @@
     "resolveJsonModule": true,
     "types": ["node"],
     "noEmit": true,
-    "noUncheckedIndexedAccess": true
+    "noUncheckedIndexedAccess": true,
+    "lib": ["ES2024", "DOM", "DOM.Iterable"]
   }
 }

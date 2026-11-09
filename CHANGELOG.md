@@ -11,6 +11,10 @@ All notable changes to this project are written here. The format follows
 - "Trusted on the oche": six sample press clippings orbiting their headline in CSS 3D, turned by
   the scroll, with Previous and Next buttons. It prototypes the Halloween press ring planned for
   Skull Darts 71. Flat grid without script or with reduced motion; a cover flow on phones.
+- End-to-end tests (Playwright) on Chromium, Firefox, WebKit and two phones: no error, CSP
+  violation or outside request down to the end of the story; the finish played with the keyboard
+  alone; the cursors; the 404 page; axe (WCAG 2.2 AA) in light and dark; no sideways scroll from
+  320 to 2,560 px and at 320 × 256; a stable page length. They run in CI on every pull request.
 
 ### Changed
 
@@ -21,12 +25,22 @@ All notable changes to this project are written here. The format follows
 - The page no longer stretches (labels clipped to their chapter); thrown darts land tail up; the
   counter is compact on phones.
 
+### Fixed
+
+- `vite preview` served the build under `/` instead of `/plumb-darts/`: every local preview fell
+  back to the home page without its scripts.
+
 ### Security
 
 - Data from outside is checked at the door (`src/rules/input.ts`): a number must be a finite number
   within its range, a text must be a string, cleaned of invisible characters and within its
   length; nothing is coerced. The aim-target check no longer accepts inherited keys such as
   `toString` or `__proto__`, and the board face worker checks its message and its reply.
+- minimatch pinned to 11.0.5 for the dev tools (ESLint, typescript-eslint): the moderate advisory
+  GHSA-g3hv-75wg-m249 is fixed and `npm audit` finds nothing.
+- The policy drops `upgrade-insecure-requests`: GitHub Pages serves HTTPS only and every URL is
+  relative, so it upgraded nothing there, while over plain HTTP (a preview on the local network,
+  WebKit even on localhost) it sent the scripts and fonts to an address that does not answer.
 
 ## [0.1.0] - 2026-11-09
 

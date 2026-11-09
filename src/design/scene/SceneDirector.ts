@@ -2,16 +2,19 @@ import { Vector3 } from 'three'
 import { BOARD } from '../../rules/board'
 import type { ChapterId } from '../../rules/chapters'
 import {
+  ARRIVAL_OFFSET,
   BOARD_POSITION,
   CHOREOGRAPHY,
   type ChapterRange,
   EXIT,
   type Layout,
+  narrowHero,
   poseAt,
+  type ScreenBand,
 } from '../../rules/choreography'
 import type { DartPart } from '../../rules/dartProfile'
 import { clamp01, easeOutQuart } from '../../rules/easing'
-import type { ScenePose } from '../../rules/pose'
+import type { ChapterMotion, ScenePose } from '../../rules/pose'
 import type { Clock } from '../../time/clock'
 import type { MarkerLayer, ScreenPoint } from '../dom/MarkerLayer'
 import type { BoardModel } from './BoardModel'
@@ -53,8 +56,13 @@ export interface ScreenCircle {
  */
 export class SceneDirector {
   private layout: Layout
+  private motions: Readonly<Record<ChapterId, ChapterMotion>>
+  private heroBand: ScreenBand | null = null
   private ranges: readonly ChapterRange[] = []
   private exitDistance = 0
+  private scroll: number | null = null
+  /** Reduced motion: the closing dusk is on screen and the dart is gone */
+  private exited = false
   private chapter: ChapterId = 'game-on'
   private pose: ScenePose
   private idleSpin = 0
@@ -66,14 +74,22 @@ export class SceneDirector {
 
   constructor(private readonly parts: DirectorParts) {
     this.layout = parts.layout
-    this.pose = CHOREOGRAPHY[this.layout]['game-on'].from
+    this.motions = this.motionsFor(this.layout)
+    this.pose = this.motions['game-on'].from
     parts.stage.onRender(() => this.placeMarkers())
   }
 
   setLayout(layout: Layout): void {
     this.layout = layout
-    this.pose = this.ranges.length ? this.pose : CHOREOGRAPHY[layout][this.chapter].to
-    this.apply()
+    this.motions = this.motionsFor(layout)
+    this.repose()
+  }
+
+  /** The room a phone's hero leaves above its text (fractions of the screen's height) */
+  setHeroBand(band: ScreenBand): void {
+    this.heroBand = band
+    this.motions = this.motionsFor(this.layout)
+    this.repose()
   }
 
   /** Chapter ranges, and the scroll distance over which the set leaves after the last one */
@@ -84,7 +100,8 @@ export class SceneDirector {
 
   /** Scroll-driven mode: the pose follows the smoothed scroll position */
   setScroll(scroll: number): void {
-    this.pose = poseAt(scroll, this.ranges, CHOREOGRAPHY[this.layout], {
+    this.scroll = scroll
+    this.pose = poseAt(scroll, this.ranges, this.motions, {
       pose: EXIT[this.layout],
       distance: this.exitDistance,
     })
@@ -93,13 +110,15 @@ export class SceneDirector {
 
   /** Reduced motion: past the last chapter, the dart is simply gone (no flight) */
   showExit(): void {
+    this.exited = true
     this.pose = EXIT[this.layout]
     this.apply()
   }
 
   /** Reduced motion: each chapter shows its resting pose, without travelling between them */
   showChapter(chapter: ChapterId): void {
-    this.pose = CHOREOGRAPHY[this.layout][chapter].to
+    this.exited = false
+    this.pose = this.motions[chapter].to
     this.apply()
   }
 
@@ -137,6 +156,23 @@ export class SceneDirector {
     return { cx: centre.x, cy: centre.y, r: Math.hypot(edge.x - centre.x, edge.y - centre.y) }
   }
 
+  /** The pose again, once the poses themselves changed (a new layout, a measured hero band) */
+  private repose(): void {
+    if (this.ranges.length && this.scroll !== null) {
+      this.setScroll(this.scroll)
+      return
+    }
+    this.pose = this.exited ? EXIT[this.layout] : this.motions[this.chapter].to
+    this.apply()
+  }
+
+  private motionsFor(layout: Layout): Readonly<Record<ChapterId, ChapterMotion>> {
+    const motions = CHOREOGRAPHY[layout]
+    return layout === 'narrow' && this.heroBand
+      ? { ...motions, 'game-on': narrowHero(this.heroBand) }
+      : motions
+  }
+
   private startIdle(): void {
     if (this.idleRunning || !IDLE_CHAPTERS.has(this.chapter) || !this.parts.motion()) return
     this.idleRunning = true
@@ -158,13 +194,14 @@ export class SceneDirector {
     const { hero, set, board, stage } = this.parts
     const { dart, camera } = this.pose
     const away = 1 - this.arrival
+    const from = ARRIVAL_OFFSET[this.layout]
     const float = IDLE_CHAPTERS.has(this.chapter) ? Math.sin(this.idleTime / 900) * 0.18 : 0
 
     hero.root.visible = dart.visible > 0.02
     hero.root.position.set(
-      dart.position[0] + away * 16,
-      dart.position[1] + away * 12 + float,
-      dart.position[2] - away * 40,
+      dart.position[0] + away * from[0],
+      dart.position[1] + away * from[1] + float,
+      dart.position[2] + away * from[2],
     )
     hero.root.rotation.set(
       toRadians(dart.rotation[0]),

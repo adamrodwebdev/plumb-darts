@@ -16,7 +16,7 @@ lead-weighted throwing dart of Roman soldiers.
 |---|---|---|
 | Game on | Giant headline painted from the HTML; the 3D dart flies in front of it | text behind the object, light sweep |
 | The grip | Pinned: the camera glides along the 18 ring grooves while the dart turns | scrubbed 3D camera move |
-| The weight | A gauge fills to 22 g; a label tracks the centre of gravity on the model | DOM labels pinned to 3D points |
+| The weight | A gauge fills to 25 g; a label tracks the centre of gravity on the model | DOM labels pinned to 3D points |
 | Anatomy | The dart explodes into tip, barrel, shaft and flight, each labelled | exploded view |
 | The finish | Throw three darts at the board (click, tap, or keyboard); double 20 wins | interactive proof |
 | Checkout | The set of three, the honest call to action | finale |

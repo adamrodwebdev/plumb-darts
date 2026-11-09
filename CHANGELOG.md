@@ -51,6 +51,12 @@ All notable changes to this project are written here. The format follows
 
 ### Fixed
 
+- On devices with a GPU the 3D scene started with one long task: three's reflections (PMREM)
+  compiled their room, blur, GGX and integration shader programs on the main thread at first use
+  (a 250 ms task on a laptop GPU, more on a phone). They now compile in parallel beforehand
+  (`KHR_parallel_shader_compile`), nothing is drawn before the scene shows (an early frame compiled
+  every model's program), and the GPU's anisotropy is read once at the start: no task of the 3D
+  start reaches 50 ms on that laptop now.
 - Phones: the hero dart's flight rested under the Sound button, the exploded view crossed the
   anatomy's title and text, the barrel's and the shaft's labels met in one spot and the tip's
   went under the masthead, and the board ran under the masthead and over the finish's label.

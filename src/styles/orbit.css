@@ -185,6 +185,8 @@
 }
 
 .orbit.is-3d .clipping {
+  /* 1 facing the viewer, 0 at the back of the ring */
+  --facing: calc(0.5 + 0.5 * cos(calc(var(--a, 0deg) + var(--turn, 0deg))));
   --radius: clamp(10rem, 4rem + 26vw, 30rem);
   position: absolute;
   inset: 50% auto auto 50%;
@@ -194,8 +196,16 @@
   transform: translate(-50%, -50%) rotateY(var(--a, 0deg)) translateZ(var(--radius))
     translateY(calc(var(--lift, 0rem) * var(--lift-scale, 1)))
     rotateY(calc((var(--a, 0deg) + var(--turn, 0deg)) * -0.6)) rotate(var(--tilt, 0deg));
-  /* 1 at the front, 0.28 at the back */
-  opacity: calc(0.28 + 0.72 * (0.5 + 0.5 * cos(calc(var(--a, 0deg) + var(--turn, 0deg)))));
+  /* Whole and opaque over the front half of the ring; behind it, the paper fades to 0.28 so the
+     headline reads through */
+  opacity: clamp(0.28, 0.28 + (var(--facing) - 0.1) * 1.8, 1);
+}
+
+/* The print shows only where it can be read: it leaves a clipping turning away before its paper
+   fades, so no text is ever shown faint (WCAG 1.4.3: back cards read at 1.5 to 2.9 : 1 before,
+   2026-11-09), and comes back over a few degrees as the clipping comes round */
+.orbit.is-3d .clipping__paper > * {
+  opacity: clamp(0, (var(--facing) - 0.5) * 10, 1);
 }
 
 .orbit.is-3d .orbit__controls {

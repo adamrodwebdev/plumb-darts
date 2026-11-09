@@ -56,6 +56,16 @@
   color: var(--muted);
 }
 
+/* Text the 3D dart can pass behind keeps a soft halo of its own background: invisible on the
+   plain backdrop, it keeps the words readable over the dart (not on colour-filled titles,
+   whose transparent fill would show it) */
+.has-3d .chapter :is(.chapter__body, .kicker, .eyebrow, .hero__lede, .specs, .throw-panel__hint),
+.has-3d .chapter--checkout .chapter__title {
+  text-shadow:
+    0 0 0.5rem var(--bg),
+    0 0 1.25rem var(--bg);
+}
+
 /* ---------- Specs ---------- */
 .specs {
   display: grid;

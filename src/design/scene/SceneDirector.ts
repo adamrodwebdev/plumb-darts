@@ -5,6 +5,7 @@ import {
   BOARD_POSITION,
   CHOREOGRAPHY,
   type ChapterRange,
+  EXIT,
   type Layout,
   poseAt,
 } from '../../rules/choreography'
@@ -48,6 +49,7 @@ export interface ScreenCircle {
 export class SceneDirector {
   private layout: Layout
   private ranges: readonly ChapterRange[] = []
+  private exitDistance = 0
   private chapter: ChapterId = 'game-on'
   private pose: ScenePose
   private idleSpin = 0
@@ -69,13 +71,24 @@ export class SceneDirector {
     this.apply()
   }
 
-  setRanges(ranges: readonly ChapterRange[]): void {
+  /** Chapter ranges, and the scroll distance over which the set leaves after the last one */
+  setRanges(ranges: readonly ChapterRange[], exitDistance: number): void {
     this.ranges = ranges
+    this.exitDistance = exitDistance
   }
 
   /** Scroll-driven mode: the pose follows the smoothed scroll position */
   setScroll(scroll: number): void {
-    this.pose = poseAt(scroll, this.ranges, CHOREOGRAPHY[this.layout])
+    this.pose = poseAt(scroll, this.ranges, CHOREOGRAPHY[this.layout], {
+      pose: EXIT[this.layout],
+      distance: this.exitDistance,
+    })
+    this.apply()
+  }
+
+  /** Reduced motion: past the last chapter, the dart is simply gone (no flight) */
+  showExit(): void {
+    this.pose = EXIT[this.layout]
     this.apply()
   }
 

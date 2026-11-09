@@ -1,5 +1,5 @@
 import { describe, expect, test } from 'vitest'
-import { CHOREOGRAPHY, type ChapterRange, poseAt } from './choreography'
+import { CHOREOGRAPHY, type ChapterRange, EXIT, poseAt } from './choreography'
 
 const motions = CHOREOGRAPHY.wide
 const ranges: ChapterRange[] = [
@@ -33,6 +33,14 @@ describe('poseAt', () => {
 
   test('holds the last chapter after the end of the story', () => {
     expect(poseAt(9000, ranges, motions)).toEqual(motions.weight.to)
+  })
+
+  test('sends the dart away after the last chapter when an exit is given', () => {
+    const exit = { pose: EXIT.wide, distance: 400 }
+    expect(poseAt(4000, ranges, motions, exit)).toEqual(motions.weight.to)
+    expect(poseAt(4200, ranges, motions, exit).dart.visible).toBeGreaterThan(0)
+    expect(poseAt(4200, ranges, motions, exit).dart.visible).toBeLessThan(1)
+    expect(poseAt(4400, ranges, motions, exit)).toEqual(EXIT.wide)
   })
 
   test('shows the opening pose when no range is known yet', () => {

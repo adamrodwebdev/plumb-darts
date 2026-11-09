@@ -138,13 +138,23 @@ async function start(view: Window): Promise<void> {
     scene.director.setChapter(tracker.chapter().id)
     if (effects) {
       const scroll = effects
-      const applyRanges = (): void => scene.director.setRanges(scroll.ranges())
+      // The set leaves over half a screen of scrolling once the checkout has been shown
+      const applyRanges = (): void =>
+        scene.director.setRanges(scroll.ranges(), view.innerHeight * 0.5)
       applyRanges()
       scroll.onRefresh(applyRanges)
       scroll.onSmoothedScroll((y) => scene.director.setScroll(y))
       scene.director.setScroll(view.scrollY)
     } else {
       scene.director.showChapter(tracker.chapter().id)
+      // Reduced motion: the dart is gone as soon as the closing dusk comes on screen
+      const dusk = page.querySelector('.dusk')
+      if (dusk) {
+        new IntersectionObserver(([entry]) => {
+          if (entry?.isIntersecting) scene.director.showExit()
+          else scene.director.showChapter(tracker.chapter().id)
+        }).observe(dusk)
+      }
     }
     panel.attachStage(scene)
     wireAimPad(page, scene, panel)

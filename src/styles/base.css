@@ -16,6 +16,9 @@ html {
   scroll-padding-block-end: 5.5rem;
   background: var(--night-bg);
   color: var(--night-ink);
+  /* The cursor tells what can be clicked: the arrow on all content (never the text I-beam), the
+     pointer only on what reacts to a click (the user's directive, 2026-11-09) */
+  cursor: default;
 }
 
 body {
@@ -47,8 +50,35 @@ select {
   color: inherit;
 }
 
-button {
+a[href],
+button:not(:disabled),
+select:not(:disabled),
+summary,
+label[for],
+[role='button'],
+input:is([type='checkbox'], [type='radio'], [type='submit'], [type='button'], [type='reset']):not(
+    :disabled
+  ) {
   cursor: pointer;
+}
+
+input:is(
+    :not([type]),
+    [type='text'],
+    [type='email'],
+    [type='search'],
+    [type='password'],
+    [type='number'],
+    [type='tel'],
+    [type='url']
+  ),
+textarea {
+  cursor: text;
+}
+
+:disabled,
+[aria-disabled='true'] {
+  cursor: not-allowed;
 }
 
 :focus-visible {

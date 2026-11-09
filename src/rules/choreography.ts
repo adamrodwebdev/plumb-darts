@@ -146,6 +146,21 @@ export const CHOREOGRAPHY: Readonly<Record<Layout, Readonly<Record<ChapterId, Ch
   narrow: NARROW,
 }
 
+/**
+ * After the checkout, the set flies up and fades while the closing words scroll on: no dart is
+ * left behind the text on the way to the footer.
+ */
+export const EXIT: Readonly<Record<Layout, ScenePose>> = {
+  wide: pose({ dart: { position: [0, 26, -6], scale: 0.8, visible: 0 } }),
+  narrow: pose({ dart: { position: [0, 24, -6], scale: 0.8, visible: 0 } }),
+}
+
+export interface Exit {
+  readonly pose: ScenePose
+  /** Scroll distance (px) over which the last pose gives way to the exit pose */
+  readonly distance: number
+}
+
 /** Where the board hangs in the scene (centimetres) */
 export const BOARD_POSITION = [0, 0, -120] as const
 
@@ -165,6 +180,7 @@ export function poseAt(
   scroll: number,
   ranges: readonly ChapterRange[],
   motions: Readonly<Record<ChapterId, ChapterMotion>>,
+  exit?: Exit,
 ): ScenePose {
   const first = ranges[0]
   if (!first) return motions['game-on'].from
@@ -180,7 +196,11 @@ export function poseAt(
       return mixPose(motion.from, motion.to, easeInOutCubic(clamp01(t)))
     }
     const next = ranges[index + 1]
-    if (!next) return motion.to
+    if (!next) {
+      if (!exit || exit.distance <= 0) return motion.to
+      const u = (scroll - range.end) / exit.distance
+      return mixPose(motion.to, exit.pose, easeInOutCubic(clamp01(u)))
+    }
     if (scroll < next.start) {
       const gap = next.start - range.end
       const u = gap > 0 ? (scroll - range.end) / gap : 1

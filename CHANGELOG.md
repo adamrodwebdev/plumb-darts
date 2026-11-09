@@ -14,7 +14,9 @@ All notable changes to this project are written here. The format follows
 - End-to-end tests (Playwright) on Chromium, Firefox, WebKit and two phones: no error, CSP
   violation or outside request down to the end of the story; the finish played with the keyboard
   alone; the cursors; the 404 page; axe (WCAG 2.2 AA) in light and dark; no sideways scroll from
-  320 to 2,560 px and at 320 × 256; a stable page length. They run in CI on every pull request.
+  320 to 2,560 px and at 320 × 256; a stable page length; a phone that never zooms the page out.
+  They run in CI on every pull request, standing for a device with a GPU, and check the page
+  without 3D by naming a software renderer.
 
 ### Changed
 
@@ -24,6 +26,11 @@ All notable changes to this project are written here. The format follows
 - The 3D dart follows each composition, and leaves the stage during the press orbit.
 - The page no longer stretches (labels clipped to their chapter); thrown darts land tail up; the
   counter is compact on phones.
+- 3D needs WebGL 2 drawn by a GPU: the context is opened, and its renderer checked, before
+  Three.js is requested. Where the processor would draw it (no usable GPU; lab machines such as
+  Lighthouse's), the page keeps its art: one software frame blocked the page for 0.8 s.
+- Without 3D, the drawn dart takes the 3D one's place across the headline and flies in; it stays
+  out of the flow, so showing it never moves the page.
 
 ### Fixed
 
@@ -31,6 +38,11 @@ All notable changes to this project are written here. The format follows
   back to the home page without its scripts.
 - Without WebGL 2 (no GPU, a blocked one, Firefox on a CI runner) the page goes on without 3D
   silently: the stage creates the context itself, where three.js logged two console errors first.
+- The drawn dart no longer pushed the headline up once the device was known (layout shift 0.08).
+- On phones, the drawn dart flying in from the right no longer zoomed the whole page out and back
+  in (layout shift 0.32): the hero clips what it draws sideways.
+- Clippings turning away on the press ring no longer show faint text: their print leaves before
+  their paper fades (back cards read at 1.5 to 2.9 : 1, under the 4.5 : 1 of WCAG 1.4.3).
 
 ### Security
 

@@ -31,7 +31,8 @@ and back through a dusk gradient. Sound is optional and made in code.
 - **Keyboard and screen readers:** a skip link, a chapter menu (native popover), a target list
   and Throw button for the game, results announced politely.
 - **Reduced motion:** no pinning, no scrubbing, no fly-in; each chapter shows a still pose.
-- **No 3D** (no WebGL 2, Save-Data, a slow device): the page keeps its content and a drawn dart.
+- **No 3D** (no WebGL 2, WebGL drawn by the processor for want of a usable GPU, Save-Data, a
+  slow device): the page keeps its content, and a drawn dart takes the 3D one's place.
 - **Watchdog:** if the scene is not up within 8 s, the page falls back.
 - **Light and dark themes**, following the system, with a remembered toggle.
 
@@ -40,8 +41,10 @@ and back through a dusk gradient. Sound is optional and made in code.
 1. The first paint comes from `index.html` alone: inline CSS, and the hero headline, wordmark and
    score digits set in an embedded 5 kB subset of the display face (no request, no swap).
 2. Code is requested only once the browser reports that first paint (`build/deferredBoot.ts`).
-3. The 3D scene (Three.js, about 150 kB gzip) loads only on devices that get 3D, and boots one
-   short task at a time: renderer, light, models, shaders compiled asynchronously.
+3. The 3D scene (Three.js, about 150 kB gzip) loads only on devices that get 3D: the WebGL 2
+   context is opened, and its renderer checked, before Three.js is requested, so a device whose
+   processor would draw it (one frame blocked the page for 0.8 s) never downloads it. The scene
+   boots one short task at a time: renderer, light, models, shaders compiled asynchronously.
 4. The board's face is drawn in a Web Worker; textures upload in their own task.
 5. Render scale is capped (DPR 1.5 / 1.25 / 1 by quality tier); the scene renders only when
    something moves, and pauses in a hidden tab.
@@ -63,6 +66,7 @@ npm run dev
 | `npm run lint` | oxlint, then ESLint |
 | `npm run typecheck` | TypeScript, app and build scripts |
 | `npm test` | Unit tests (Vitest) |
+| `npm run test:e2e` | End-to-end tests (Playwright) on the build: run `npm run build` first |
 
 ## Architecture
 
@@ -85,8 +89,20 @@ build/          Vite plugins: html i18n, inline styles + hero font subset, defer
 ## Tests
 
 `npm test` runs the unit suite (scoring rings and segments, the 501 digits, the choreography's
-pose maths, quality tiers, a seeded 3000-dart simulation of the throw, the translator, the build
-plugins). End-to-end tests, accessibility scans and Lighthouse runs come with v0.2.
+pose maths, quality tiers and software renderers, a seeded 3000-dart simulation of the throw, the
+translator, the input readers, the build plugins).
+
+`npm run test:e2e` builds nothing: run `npm run build` first. Playwright then serves the build and
+checks it on Chromium, Firefox, WebKit, a Pixel 7 and an iPhone 14: no console error, CSP violation
+or outside request; the finish played with the keyboard alone; the cursors; axe (WCAG 2.2 AA) in
+both themes; no sideways scroll from 320 to 2,560 px; a stable page length; a phone that never
+zooms out. Headless browsers draw WebGL with the processor, which the page refuses: the tests
+stand for a device with a GPU (`e2e/fixtures.ts`), and name a software renderer to check the page
+without 3D.
+
+Lighthouse, production build, 2026-11-09: 100 in all four categories on mobile (worst of three
+runs) and on desktop. Its lab machine has no GPU, so it scores the page without 3D; the 3D boot
+was measured on a GPU instead (longest frame 65 ms, 14 ms of it blocking, on a fast laptop).
 
 ## Branches and deployment
 

@@ -1,0 +1,134 @@
+{
+  "meta": {
+    "title": "Plumb, tungsten darts · design demo",
+    "description": "Plumb is a fictional tungsten dart, told as an immersive 3D product page: a design and engineering demo built to keep Lighthouse at 100 and to meet WCAG 2.2 AA.",
+    "notFoundTitle": "Missed the board · Plumb"
+  },
+  "a11y": {
+    "skip": "Skip to content",
+    "home": "Plumb, back to the top"
+  },
+  "header": {
+    "tag": "Fictional brand · design demo",
+    "themeToLight": "Switch to the light theme",
+    "themeToDark": "Switch to the dark theme",
+    "sound": "Sound"
+  },
+  "hud": {
+    "label": "Score left",
+    "chapters": "Chapters",
+    "current": "Chapters. Now: {chapter}, {remaining} left.",
+    "oneEighty": "One hundred and eighty!"
+  },
+  "chapters": {
+    "hero": "Game on",
+    "grip": "The grip",
+    "weight": "The weight",
+    "anatomy": "Anatomy",
+    "throw": "The finish",
+    "checkout": "Checkout"
+  },
+  "hero": {
+    "eyebrow": "90% tungsten · 22 g · steel tip",
+    "title1": "Weight,",
+    "title2": "well",
+    "title3": "placed.",
+    "lede": "Plumb darts are front-loaded tungsten, cut for a grip you stop noticing. The name comes from the plumbata, the lead-weighted throwing dart of Roman soldiers.",
+    "ctaThrow": "Throw a dart",
+    "ctaMeet": "Meet the dart",
+    "scroll": "Scroll"
+  },
+  "grip": {
+    "kicker": "01 · The grip",
+    "title": "Grip you stop noticing.",
+    "body": "Eighteen rings, each 0.3 mm deep and 1.2 mm apart. Your fingers find the same place, throw after throw, without looking for it.",
+    "spec1Label": "Ring depth",
+    "spec1Value": "0.3 mm",
+    "spec2Label": "Ring pitch",
+    "spec2Value": "1.2 mm",
+    "spec3Label": "Rings",
+    "spec3Value": "18"
+  },
+  "weight": {
+    "kicker": "02 · The weight",
+    "title": "Weight where it counts.",
+    "figure": "22",
+    "unit": "g",
+    "figureLabel": "22 grams",
+    "body": "Sixty per cent of the mass sits ahead of your fingers. The dart wants to fly point first, so you stop steering it.",
+    "cog": "Centre of gravity",
+    "cogValue": "38% from the tip",
+    "spec1Label": "Tungsten",
+    "spec1Value": "90%",
+    "spec2Label": "Barrel",
+    "spec2Value": "50 × 6.6 mm",
+    "spec3Label": "Length",
+    "spec3Value": "155 mm"
+  },
+  "anatomy": {
+    "kicker": "03 · Anatomy",
+    "title": "Four parts, one line.",
+    "body": "Every part is turned on the same axis, so the dart leaves your hand the way you aimed it.",
+    "tipName": "Tip",
+    "tipSpec": "Hardened steel, 32 mm",
+    "barrelName": "Barrel",
+    "barrelSpec": "90% tungsten, ring cut",
+    "shaftName": "Shaft",
+    "shaftSpec": "Aluminium, medium",
+    "flightName": "Flight",
+    "flightSpec": "Standard, 100 microns"
+  },
+  "throw": {
+    "kicker": "04 · The finish",
+    "title": "Finish the leg.",
+    "body": "Forty left. Hit double 20, tops, to win the leg. You have three darts.",
+    "pointerHint": "Tap or click the board to throw where you point, or pick a target below.",
+    "aimLabel": "Aim for",
+    "aimD20": "Double 20 (tops)",
+    "aimT20": "Treble 20",
+    "aimBull": "Bullseye",
+    "aimT19": "Treble 19",
+    "aimAny": "Anywhere",
+    "throwButton": "Throw",
+    "collect": "Collect the darts",
+    "visit": "This visit",
+    "dartsLeftInitial": "3 darts left",
+    "dartsLeft": {
+      "one": "{count} dart left",
+      "other": "{count} darts left"
+    },
+    "hit": "{label}, {points} points.",
+    "win": "Double 20. Game shot!",
+    "noDarts": "No darts left. Collect them to throw again.",
+    "collected": "Darts collected. Three darts left."
+  },
+  "score": {
+    "single": "Single {segment}",
+    "double": "Double {segment}",
+    "treble": "Treble {segment}",
+    "outer-bull": "Outer bull",
+    "bull": "Bullseye",
+    "miss": "Missed the board"
+  },
+  "checkout": {
+    "kicker": "05 · Checkout",
+    "title": "Game shot.",
+    "body": "Plumb doesn't exist. This page shows how an immersive product story can still load fast and work for everyone: with a keyboard, a screen reader, reduced motion, or no 3D at all.",
+    "ctaSource": "See how it's built",
+    "ctaAgain": "Throw again"
+  },
+  "footer": {
+    "wordmark": "Plumb",
+    "disclaimer": "Plumb is a fictional brand made for a design and engineering demo. Nothing is for sale.",
+    "source": "Source on GitHub",
+    "credit": "Design and code by AdamRodWebDev",
+    "fonts": "Type: Big Shoulders Display and Geist Mono, SIL Open Font License.",
+    "top": "Back to the top"
+  },
+  "notFound": {
+    "kicker": "Error 404",
+    "title": "Missed the board.",
+    "body": "This page doesn't exist. Even the best players miss sometimes.",
+    "back": "Back to the oche"
+  }
+}

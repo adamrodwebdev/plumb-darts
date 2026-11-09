@@ -51,14 +51,32 @@ select {
 }
 
 a[href],
+area[href],
 button:not(:disabled),
 select:not(:disabled),
 summary,
 label[for],
 [role='button'],
-input:is([type='checkbox'], [type='radio'], [type='submit'], [type='button'], [type='reset']):not(
-    :disabled
-  ) {
+[role='link'],
+[role='tab'],
+[role='menuitem'],
+[role='option'],
+[role='switch'],
+input:is(
+    [type='checkbox'],
+    [type='radio'],
+    [type='submit'],
+    [type='button'],
+    [type='reset'],
+    [type='file'],
+    [type='color'],
+    [type='range']
+  ):not(:disabled) {
+  cursor: pointer;
+}
+
+/* Its own rule: a browser without :has() drops only this one, not the list above */
+label:has(> input:not(:disabled)) {
   cursor: pointer;
 }
 
@@ -71,8 +89,9 @@ input:is(
     [type='number'],
     [type='tel'],
     [type='url']
-  ),
-textarea {
+  ):not(:disabled),
+textarea:not(:disabled),
+[contenteditable='true'] {
   cursor: text;
 }
 

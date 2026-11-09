@@ -18,4 +18,4 @@ https://github.com/adamrodwebdev.
 
 | Advisory | Severity | Where | Status |
 |---|---|---|---|
-| minimatch, GHSA-g3hv-75wg-m249 (denial of service through glob patterns) | moderate | dev tooling only (ESLint and typescript-eslint); nothing shipped | **awaiting the user's decision** before v1.0; same case the user accepted for Skull Darts 71 on 2026-11-05 |
+| minimatch, GHSA-g3hv-75wg-m249 (denial of service through glob patterns) | moderate | dev tooling only (ESLint and typescript-eslint); nothing shipped | **fixed on 2026-11-09**: `overrides` pins minimatch 11.0.5; ESLint checked to still match its file patterns; `npm audit` finds 0 |

@@ -18,9 +18,10 @@ function themeScript(): Plugin {
   }
 }
 
-// GitHub Pages serves the project under /plumb-darts/
-export default defineConfig(({ command }) => ({
-  base: command === 'build' ? '/plumb-darts/' : '/',
+// GitHub Pages serves the project under /plumb-darts/. `vite preview` runs as command "serve":
+// it needs the same base as the build it serves, or every page falls back to the home page
+export default defineConfig(({ command, isPreview }) => ({
+  base: command === 'build' || isPreview === true ? '/plumb-darts/' : '/',
   plugins: [
     htmlI18n({ messagesFile: path('./src/i18n/en.json') }),
     themeScript(),

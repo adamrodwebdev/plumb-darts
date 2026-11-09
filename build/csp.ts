@@ -25,7 +25,9 @@ export function policyFor(html: string): string {
     "object-src 'none'",
     "base-uri 'self'",
     "form-action 'none'",
-    'upgrade-insecure-requests',
+    // No upgrade-insecure-requests: GitHub Pages serves HTTPS only and every URL here is relative,
+    // so it upgrades nothing there, while over plain HTTP (a preview on the local network, WebKit
+    // even on localhost) it sent the scripts and fonts to an https:// address that does not answer
   ].join('; ')
 }
 

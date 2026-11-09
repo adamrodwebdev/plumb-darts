@@ -92,8 +92,10 @@ async function start(view: Window): Promise<void> {
     orbit?.enable((index) => effects?.scrollToOrbit(index, orbit.count()))
     await nextTask()
     const { ScrollEffects } = await import('./design/dom/ScrollEffects')
+    // The module's evaluation (GSAP) is a task of its own, then each chapter's trigger
+    await nextTask()
     effects = new ScrollEffects(sections)
-    effects.init()
+    await effects.init()
     if (orbit) effects.onOrbitTurn(turnFor(orbit.count() - 1, orbit.count()), (turn) => orbit.setTurn(turn))
   }
   if (!tier || !context) return

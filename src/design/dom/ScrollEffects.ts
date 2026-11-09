@@ -2,6 +2,7 @@ import { gsap } from 'gsap'
 import { ScrollTrigger } from 'gsap/ScrollTrigger'
 import { type ChapterId, chapterById } from '../../rules/chapters'
 import type { ChapterRange } from '../../rules/choreography'
+import { nextTask } from '../../time/nextTask'
 
 gsap.registerPlugin(ScrollTrigger)
 
@@ -31,7 +32,11 @@ export class ScrollEffects {
 
   constructor(private readonly sections: readonly HTMLElement[]) {}
 
-  init(): void {
+  /**
+   * One task per chapter: each trigger measures the page (a forced layout), and eight of them in
+   * one task blocked a phone for 99 ms (Lighthouse, 2026-11-09). The titles and the gauge follow.
+   */
+  async init(): Promise<void> {
     for (const section of this.sections) {
       const id = chapterOf(section)
       if (!id) continue
@@ -49,6 +54,7 @@ export class ScrollEffects {
           : // A chapter that scrolls through holds its pose while its top is near the screen's top
             ScrollTrigger.create({ trigger: section, start: 'top 12%', end: 'top -12%' })
       this.triggers.set(id, trigger)
+      await nextTask()
     }
 
     for (const title of document.querySelectorAll<HTMLElement>('.fill-title')) {

@@ -23,6 +23,44 @@ async function shownLabels(page: Page): Promise<Box[]> {
   )
 }
 
+/** The scroll story follows the wheel with a lag: the labels have come to rest */
+async function restingLabels(page: Page): Promise<void> {
+  let last = ''
+  await expect
+    .poll(
+      async () => {
+        const now = JSON.stringify(await shownLabels(page))
+        const same = now === last
+        last = now
+        return same
+      },
+      { intervals: [250], timeout: 10_000 },
+    )
+    .toBe(true)
+}
+
+/** The labels showing cover neither the chapter's words, nor each other, nor the masthead */
+async function expectClearLabels(page: Page): Promise<void> {
+  const labels = await shownLabels(page)
+  // The words themselves (label, title, paragraph), not their block, whose top padding keeps the
+  // band for the object
+  const words = await page.locator('#anatomy .chapter__text > *').evaluateAll((parts) =>
+    parts.map((part) => {
+      const box = part.getBoundingClientRect()
+      return { x: box.x, y: box.y, width: box.width, height: box.height }
+    }),
+  )
+  const masthead = await page.locator('.masthead').boundingBox()
+  const below = (masthead?.y ?? 0) + (masthead?.height ?? 0)
+  for (const [index, label] of labels.entries()) {
+    expect(label.y, JSON.stringify({ label, below })).toBeGreaterThanOrEqual(below - 0.5)
+    for (const part of words) expect(overlap(label, part), JSON.stringify({ label, part })).toBe(false)
+    for (const other of labels.slice(index + 1)) {
+      expect(overlap(label, other), JSON.stringify({ label, other })).toBe(false)
+    }
+  }
+}
+
 // Phones from the narrowest the site supports (320 px), sideways (tall enough) and stacked (320 × 568,
 // 360 × 496): the labels sat on the anatomy's paragraph at 360 px wide in v0.2 (found by the
 // marketing capture, 2026-11-09)
@@ -34,7 +72,7 @@ for (const { width, height } of [
   { width: 390, height: 844 },
   { width: 430, height: 932 },
 ]) {
-  test(`at ${width} × ${height}, the anatomy's labels cover neither its words nor the masthead`, async ({
+  test(`at ${width} × ${height}, the anatomy's labels cover neither its words, nor each other, nor the masthead`, async ({
     page,
     browserName,
   }) => {
@@ -44,30 +82,16 @@ for (const { width, height } of [
     await page.setViewportSize({ width, height })
     await page.goto('#anatomy')
     await settled(page)
-    // Further into the chapter's hold: the dart explodes and its labels come on
-    await page.mouse.wheel(0, Math.round(height * 1.2))
+    // Through the chapter's hold, while the dart comes apart and once it is apart: the labels
+    // showing at each point cover neither the words, nor each other, nor the masthead
+    for (const share of [0.6, 0.3]) {
+      await page.mouse.wheel(0, Math.round(height * share))
+      await restingLabels(page)
+      await expectClearLabels(page)
+    }
+    await page.mouse.wheel(0, Math.round(height * 0.3))
     await expect.poll(async () => (await shownLabels(page)).length, { timeout: 10_000 }).toBe(4)
-
-    // The words themselves (label, title, paragraph), not their block, whose top padding keeps
-    // the band for the object
-    const words = await page.locator('#anatomy .chapter__text > *').evaluateAll((parts) =>
-      parts.map((part) => {
-        const box = part.getBoundingClientRect()
-        return { x: box.x, y: box.y, width: box.width, height: box.height }
-      }),
-    )
-    expect(words.length).toBeGreaterThan(0)
-    // Nor under the masthead, which stays on top of the page
-    const masthead = await page.locator('.masthead').boundingBox()
-    expect(masthead).not.toBeNull()
-    const below = (masthead?.y ?? 0) + (masthead?.height ?? 0)
-    for (const label of await shownLabels(page)) {
-      expect(label.y, JSON.stringify({ label, below })).toBeGreaterThanOrEqual(below - 0.5)
-    }
-    for (const label of await shownLabels(page)) {
-      for (const part of words) {
-        expect(overlap(label, part), JSON.stringify({ label, part })).toBe(false)
-      }
-    }
+    await restingLabels(page)
+    await expectClearLabels(page)
   })
 }

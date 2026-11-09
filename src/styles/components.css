@@ -676,9 +676,11 @@
   bottom: 50%;
 }
 
-/* Phones: the exploded dart stands upright at the left of its stage, so each part's label sits to
-   its right on a level leader. Above and below, the barrel's and the shaft's labels met in one spot
-   and the tip's went under the masthead (2026-11-09) */
+/* Phones: the exploded dart stands upright in the middle of its stage, each part's label beside it
+   on a level leader, the barrel's and the flight's to the right, the tip's and the shaft's to the
+   left. Two neighbours never share a side, whatever the explosion: above and below, the barrel's
+   and the shaft's labels met in one spot; all on the right, the tip's and the barrel's met while
+   the dart came apart, and on a screen 640 px tall even once apart (2026-11-09) */
 @media (width < 64rem) {
   .has-3d .marker--part {
     --leader: 2rem;
@@ -699,6 +701,33 @@
     inset: 50% auto auto calc(var(--leader) * -1);
     width: var(--leader);
     height: 1px;
+  }
+
+  /* The tip's and the shaft's labels (the ones above on wide screens): to the left, their dot on
+     the right, their words set against it */
+  .has-3d .marker--part.marker--above {
+    grid-template-columns: 1fr auto;
+    max-width: calc(var(--x, 0) * 1px - var(--leader) - 1rem);
+    padding: 0.25rem 0 0.25rem 0.5rem;
+    text-align: end;
+    transform: translate3d(
+      calc(var(--x, -500) * 1px - var(--leader) - 100%),
+      calc(max(var(--y, -500) * 1px, var(--masthead-height) + 0.25rem + 50% - var(--top, 0) * 1px) - 50%),
+      0
+    );
+  }
+
+  .has-3d .marker--part.marker--above .marker__dot {
+    grid-column: 2;
+    grid-row: 1 / span 2;
+  }
+
+  .has-3d .marker--part.marker--above :is(.marker__name, .marker__value) {
+    grid-column: 1;
+  }
+
+  .has-3d .marker--part.marker--above::after {
+    inset: 50% auto auto 100%;
   }
 }
 

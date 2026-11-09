@@ -208,15 +208,15 @@ const NARROW: Readonly<Record<ChapterId, ChapterMotion>> = {
       cog: 1,
     }),
   },
-  // Upright on the left of the stage, its labels to the right: above the title, which it crossed
+  // Upright in the middle of the stage, its labels on both sides: above the title, which it crossed
   // when it stood at the bottom of the screen (2026-11-09)
   anatomy: {
     from: pose({
-      dart: { position: [-3, ANATOMY_Y - 0.6, 0], rotation: [0, 18, 0], scale: ANATOMY_SCALE },
+      dart: { position: [0, ANATOMY_Y - 0.6, 0], rotation: [0, 18, 0], scale: ANATOMY_SCALE },
     }),
     to: pose({
       dart: {
-        position: [-3, ANATOMY_Y, 0],
+        position: [0, ANATOMY_Y, 0],
         rotation: [0, 18, 0],
         scale: ANATOMY_SCALE,
         spin: 50,

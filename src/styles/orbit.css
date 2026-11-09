@@ -185,17 +185,24 @@
 }
 
 .orbit.is-3d .clipping {
+  /* Where the clipping stands round the ring, seen from the front: between -180 and 180 degrees */
+  --angle: atan2(
+    sin(calc(var(--a, 0deg) + var(--turn, 0deg))),
+    cos(calc(var(--a, 0deg) + var(--turn, 0deg)))
+  );
   /* 1 facing the viewer, 0 at the back of the ring */
-  --facing: calc(0.5 + 0.5 * cos(calc(var(--a, 0deg) + var(--turn, 0deg))));
+  --facing: calc(0.5 + 0.5 * cos(var(--angle)));
   --radius: clamp(10rem, 4rem + 26vw, 30rem);
   position: absolute;
   inset: 50% auto auto 50%;
   width: clamp(12rem, 7rem + 9vw, 16rem);
   /* Centred on the ring, turned to its place, pushed out, lifted, then turned back towards the
-     viewer by 60 % so a card at the side still reads */
+     viewer by 60 % of its angle so a card at the side still reads. The angle is the one from the
+     front: from the raw one, the sixth clipping (300 deg) turned 180 deg and showed its print
+     mirrored (2026-11-09) */
   transform: translate(-50%, -50%) rotateY(var(--a, 0deg)) translateZ(var(--radius))
-    translateY(calc(var(--lift, 0rem) * var(--lift-scale, 1)))
-    rotateY(calc((var(--a, 0deg) + var(--turn, 0deg)) * -0.6)) rotate(var(--tilt, 0deg));
+    translateY(calc(var(--lift, 0rem) * var(--lift-scale, 1))) rotateY(calc(var(--angle) * -0.6))
+    rotate(var(--tilt, 0deg));
   /* Whole and opaque over the front half of the ring; behind it, the paper fades to 0.28 so the
      headline reads through */
   opacity: clamp(0.28, 0.28 + (var(--facing) - 0.1) * 1.8, 1);
@@ -274,14 +281,25 @@
   }
 
   .orbit.is-3d .clipping {
-    --radius: 8.5rem;
+    --radius: 10rem;
     --lift-scale: 0.3;
     width: 11.25rem;
+    /* Only the front clipping and its two neighbours show: behind them, the back of the ring was a
+       stack of papers seen through each other (the owner's phone, 2026-11-09). Whole or hidden, the
+       switch over a short time, so no print is ever left faint */
+    opacity: clamp(0, (var(--facing) - 0.6) * 1000, 1);
+    transition: opacity 0.25s;
   }
 
   .orbit.is-3d .clipping__paper {
     gap: 0.375rem;
     padding: 0.625rem 0.75rem 0.75rem;
+  }
+
+  /* Only the clipping in front prints: its neighbours, half behind it, are paper peeking out on
+     both sides, with no words cut off by its edges */
+  .orbit.is-3d .clipping__paper > * {
+    opacity: clamp(0, (var(--facing) - 0.9) * 1000, 1);
   }
 
   .orbit.is-3d .clipping__label {

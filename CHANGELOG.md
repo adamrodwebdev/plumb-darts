@@ -15,8 +15,17 @@ All notable changes to this project are written here. The format follows
   chapter itself; back and forward land on it too.
 - On a short phone, a part label of the exploded view went under the masthead while its chapter
   scrolled: the floor below the masthead is now kept on screen, not in the chapter.
-- Tests: the anatomy's labels cover neither its words nor the masthead at 320 × 568, 320 × 640,
-  360 × 640, 360 × 496, 390 × 844 and 430 × 932; a link to a chapter lands on it on a short screen.
+- Phones, the anatomy: the tip's and the barrel's labels, both on the right, met while the dart came
+  apart, and on a screen 640 px tall even once apart (seen on the live v0.3.0 at 360 and 390 px).
+  The dart now stands in the middle and the labels alternate sides, the tip's and the shaft's to the
+  left: two neighbours never share a side.
+- The press orbit turned each clipping back towards the viewer from its raw angle, so the sixth
+  (300 degrees) turned its back and showed its print mirrored. It now turns from its angle seen from
+  the front (`atan2`). On phones, where the cards merged into a stack of papers seen through each
+  other, only the clipping in front and its two neighbours show, and only the one in front prints.
+- Tests: the anatomy's labels cover neither its words, nor each other, nor the masthead, checked
+  three times through the explosion at 320 × 568, 320 × 640, 360 × 640, 360 × 496, 390 × 844 and
+  430 × 932; a link to a chapter lands on it on a short screen.
 
 ## [0.3.0] - 2026-11-09
 

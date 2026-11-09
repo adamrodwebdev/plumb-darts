@@ -26,8 +26,8 @@ const PIN_LENGTH: Partial<Record<ChapterId, number>> = {
 /** Scrub smoothing: the lag that gives the scroll story its weight */
 const SCRUB = 0.6
 
-/** The weight gauge's needle at the dart's 22 g (0 to 1) */
-const GAUGE_END = 0.73
+/** The weight gauge's needle at the dart's 25 g, on a dial that reads 0 to 30 g (0 to 1) */
+const GAUGE_END = 25 / 30
 
 /** Where in a hold a jump lands: just inside it, so the chapter is already the current one */
 const LANDING = 0.02
@@ -426,7 +426,7 @@ export class ScrollEffects {
     }
   }
 
-  /** The gauge rises to 22 g as the weight chapter arrives (inside the journey: its timeline) */
+  /** The gauge rises to 25 g as the weight chapter arrives (inside the journey: its timeline) */
   private fillGauge(journey: JourneyElements | null): void {
     const gauge = document.querySelector('.gauge__value')
     const weight = document.getElementById('weight')

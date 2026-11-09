@@ -266,8 +266,9 @@
   max-width: 34rem;
 }
 
-/* Phones: the object takes the top of the screen, the text sits below */
-.has-3d :is(.chapter--grip, .chapter--throw) .chapter__text {
+/* Phones: the object takes the top of the screen, the text sits below (the scene places the dart,
+   the exploded view and the board in that band: rules/choreography.ts, NARROW_STAGE) */
+.has-3d :is(.chapter--grip, .chapter--anatomy, .chapter--throw) .chapter__text {
   padding-block-start: 38svh;
 }
 
@@ -276,7 +277,7 @@
     align-content: center;
   }
 
-  .has-3d :is(.chapter--grip, .chapter--throw) .chapter__text {
+  .has-3d :is(.chapter--grip, .chapter--anatomy, .chapter--throw) .chapter__text {
     padding-block-start: 0;
   }
 }

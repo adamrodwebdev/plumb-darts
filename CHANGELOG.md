@@ -58,8 +58,7 @@ All notable changes to this project are written here. The format follows
   about 20 kB per page (30 kB in Russian) instead of 59 kB (80 kB) for the packages' files, which
   Lighthouse counted in the Russian page's first paint (99 before, see the pull request).
 - The dart's numbers (ring depth and pitch, weight, tungsten, sizes, centre of gravity) and the
-  clipping dates are written once and formatted by `Intl` in each language; the dart weighs 25 g,
-  as the model does.
+  clipping dates are written once and formatted by `Intl` in each language.
 - A throw's points agree with their count ("Single 1, 1 point."), in Russian too (очко, очка,
   очков).
 - Spec figures keep the case of their unit symbols (0.3 mm, not 0.3 MM), and are set in the full
@@ -83,9 +82,24 @@ All notable changes to this project are written here. The format follows
 - The board's face takes a third of the room's reflected light: under the full light its colours
   went pastel.
 - The flight's wordmark reads left to right on the hero.
+- The dart weighs 25 g, as modelled: the copy, the gauge (its needle at 25 of 30 g) and the press
+  clipping's headline say so in every language (they said 22 g).
+- Phones: the hero dart is sized and placed in the room the page leaves between the masthead and
+  the first line (from 12 % to 37 % of the screen, measured on the page), and flies in from the
+  right, level with it; the exploded view stands in the top of the screen kept for the object,
+  with every label to its right on a level leader; the board fills that same band.
 
 ### Fixed
 
+- On devices with a GPU the 3D scene started with one long task: three's reflections (PMREM)
+  compiled their room, blur, GGX and integration shader programs on the main thread at first use
+  (a 250 ms task on a laptop GPU, more on a phone). They now compile in parallel beforehand
+  (`KHR_parallel_shader_compile`), nothing is drawn before the scene shows (an early frame compiled
+  every model's program), and the GPU's anisotropy is read once at the start: no task of the 3D
+  start reaches 50 ms on that laptop now.
+- Phones: the hero dart's flight rested under the Sound button, the exploded view crossed the
+  anatomy's title and text, the barrel's and the shaft's labels met in one spot and the tip's
+  went under the masthead, and the board ran under the masthead and over the finish's label.
 - The masthead's logo mark was squeezed to nothing when the row ran short of room.
 - On wide screens the board's rim covered the first letters of the finish's text (17 to 39 px from
   1024 to 1920 px wide): the camera now keeps it clear of the words.

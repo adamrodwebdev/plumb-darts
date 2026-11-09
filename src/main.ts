@@ -1,6 +1,7 @@
 import { SoundEngine } from './design/audio/SoundEngine'
 import { Announcer, SoundToggle, ThemeToggle, revealOnScroll } from './design/dom/controls'
 import { Hud } from './design/dom/Hud'
+import { watchHeroBand } from './design/dom/heroBand'
 import { LanguageMenu } from './design/dom/LanguageMenu'
 import { MarkerLayer } from './design/dom/MarkerLayer'
 import { OrbitCarousel } from './design/dom/OrbitCarousel'
@@ -172,6 +173,9 @@ async function start(view: Window): Promise<void> {
     wide.addEventListener('change', () => scene.director.setLayout(layout()))
     tracker.onChange((chapter) => scene.director.setChapter(chapter.id))
     scene.director.setChapter(tracker.chapter().id)
+    // A phone's hero dart rests in the room its text leaves above it, measured on the page (kept on
+    // wide screens too, for a window narrowed later)
+    watchHeroBand(page, view, (band) => scene.director.setHeroBand(band))
     if (effects) {
       const scroll = effects
       // The set leaves over half a screen of scrolling once the checkout has been shown

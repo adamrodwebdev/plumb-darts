@@ -1,7 +1,11 @@
 import {
   ACESFilmicToneMapping,
   AmbientLight,
+  BoxGeometry,
   DirectionalLight,
+  HalfFloatType,
+  type Material,
+  Mesh,
   PCFShadowMap,
   PMREMGenerator,
   PerspectiveCamera,
@@ -12,10 +16,11 @@ import {
   type Texture,
   Vector2,
   Vector3,
+  WebGLCubeRenderTarget,
   WebGLRenderer,
 } from 'three'
 import { RoomEnvironment } from 'three/addons/environments/RoomEnvironment.js'
-import { BOARD_POSITION } from '../../rules/choreography'
+import { BOARD_POSITION, CAMERA_FOV } from '../../rules/choreography'
 import type { QualitySettings } from '../../rules/quality'
 import type { Clock } from '../../time/clock'
 import { nextTask } from '../../time/nextTask'
@@ -31,6 +36,10 @@ const SHADOW_HALF_SIDE = 27
 /** How much of the key light a dart's shadow takes away */
 const SHADOW_STRENGTH = 0.7
 
+/** The reflected studio room: a slight blur (radians), and its faces' size (three keeps 256 at least) */
+const ROOM_BLUR = 0.04
+const ROOM_SIZE = { size: 128 } as const
+
 /** Something that moves over time; returns false once finished */
 export interface Animation {
   step(now: number): boolean
@@ -42,13 +51,23 @@ export interface Animation {
  */
 export class Stage {
   readonly scene = new Scene()
-  readonly camera = new PerspectiveCamera(30, 1, 1, 800)
+  readonly camera = new PerspectiveCamera(CAMERA_FOV, 1, 1, 800)
   private readonly canvas: HTMLCanvasElement
   private readonly renderer: WebGLRenderer
   private readonly raycaster = new Raycaster()
   private readonly animations = new Set<Animation>()
   private readonly renderListeners = new Set<() => void>()
   private frame = 0
+  /**
+   * Nothing is drawn before the scene is shown: a frame drawn early (the resize observer's first
+   * call, once the models were in) compiled every program on the main thread, ahead of compile()
+   */
+  private live = false
+  /**
+   * Read once, before anything is drawn: asked after the reflections were built, the first query
+   * waited for the GPU process to work through them (25 ms on a laptop, 2026-11-09)
+   */
+  private readonly anisotropy: number
   private width = 0
   private height = 0
 
@@ -71,6 +90,7 @@ export class Stage {
     this.renderer.toneMapping = ACESFilmicToneMapping
     this.renderer.toneMappingExposure = 1.05
     this.renderer.setClearColor(0x000000, 0)
+    this.anisotropy = Math.min(MAX_ANISOTROPY, this.renderer.capabilities.getMaxAnisotropy())
   }
 
   /** Lighting and reflections, one task each */
@@ -79,9 +99,10 @@ export class Stage {
     await nextTask()
     // A neutral studio room reflected in the metal: no environment file to download
     const generator = new PMREMGenerator(this.renderer)
-    this.scene.environment = generator.fromScene(new RoomEnvironment(), 0.04, 0.1, 100, {
-      size: 128,
-    }).texture
+    const room = new RoomEnvironment()
+    await this.warmReflections(generator, room)
+    await nextTask()
+    this.scene.environment = generator.fromScene(room, ROOM_BLUR, 0.1, 100, ROOM_SIZE).texture
     generator.dispose()
     this.scene.environmentIntensity = 0.85
     await nextTask()
@@ -122,6 +143,51 @@ export class Stage {
     })
   }
 
+  /**
+   * The reflections' shader programs, compiled in parallel (KHR_parallel_shader_compile) before the
+   * generator first draws with them. Cold, three's PMREM compiled its room, blur, GGX and
+   * integration programs on the main thread at first use: one 250 ms task on a laptop's GPU, more
+   * on a phone (2026-11-09). A dry run that draws nothing collects the generator's own materials
+   * through its private `_renderCube`; if three renames it, the warm-up steps aside and the
+   * reflections are built cold, as before.
+   */
+  private async warmReflections(generator: PMREMGenerator, room: Scene): Promise<void> {
+    const internal = generator as unknown as {
+      _renderCube?: (target: unknown, lod: number, material: Material) => void
+    }
+    const renderCube = internal._renderCube
+    if (typeof renderCube !== 'function') return
+    const materials = new Set<Material>()
+    const render = this.renderer.render
+    internal._renderCube = (_target, _lod, material) => {
+      materials.add(material)
+    }
+    this.renderer.render = () => undefined
+    try {
+      generator.fromScene(room, ROOM_BLUR, 0.1, 100, ROOM_SIZE).dispose()
+    } finally {
+      this.renderer.render = render
+      internal._renderCube = renderCube
+    }
+
+    // Compiled as they will be drawn: into a cube render target (no tone mapping, linear output)
+    const target = new WebGLCubeRenderTarget(16, { type: HalfFloatType })
+    const camera = new PerspectiveCamera(90, 1, 0.1, 100)
+    const geometry = new BoxGeometry()
+    const boxes = new Scene()
+    for (const material of materials) boxes.add(new Mesh(geometry, material))
+    const previous = this.renderer.getRenderTarget()
+    this.renderer.setRenderTarget(target)
+    try {
+      await this.renderer.compileAsync(room, camera)
+      await this.renderer.compileAsync(boxes, camera)
+    } finally {
+      this.renderer.setRenderTarget(previous)
+      target.dispose()
+      geometry.dispose()
+    }
+  }
+
   /** Shader programs compiled without blocking (KHR_parallel_shader_compile where available) */
   async compile(): Promise<void> {
     await this.renderer.compileAsync(this.scene, this.camera)
@@ -132,7 +198,7 @@ export class Stage {
    * anisotropic filtering: the barrel's rings and the board's fibres stay sharp at a slant
    */
   upload(texture: Texture): void {
-    texture.anisotropy = Math.min(MAX_ANISOTROPY, this.renderer.capabilities.getMaxAnisotropy())
+    texture.anisotropy = this.anisotropy
     this.renderer.initTexture(texture)
   }
 
@@ -143,6 +209,8 @@ export class Stage {
   /** Fades the canvas in (styles: .is-live) */
   show(): void {
     this.canvas.classList.add('is-live')
+    this.live = true
+    this.schedule()
   }
 
   requestRender(): void {
@@ -181,7 +249,7 @@ export class Stage {
   }
 
   private schedule(): void {
-    if (this.frame !== 0 || document.visibilityState === 'hidden') return
+    if (!this.live || this.frame !== 0 || document.visibilityState === 'hidden') return
     this.frame = requestAnimationFrame(() => this.tick())
   }
 

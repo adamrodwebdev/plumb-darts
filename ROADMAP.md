@@ -37,6 +37,19 @@ on a real phone. Patterns come from the playbook in
 
 **Done when** the full gate is green and Lighthouse shows 100 × 4 on the worst run.
 
+## v0.3 — The journey and realism (published on 2026-11-09)
+
+- ✅ Chapters 3 to 7 travel sideways on tall screens (sticky frame, holds, the 3D following),
+  stacked on short screens and under reduced motion; links, focus and the chapter menu land on
+  each chapter (the user's request, 2026-11-09)
+- ✅ The board comes in and leaves with the finish instead of vanishing (the user's request)
+- ✅ A realistic dart and board, built in Blender from the shared 3D toolkit (the user's request)
+- ✅ French, Russian, Spanish, Italian and Indonesian (the user's request, 2026-11-09): a static
+  page per language, a language menu, hreflang; Oswald for Russian. A native speaker still has to
+  review the Russian and Indonesian copy
+
+**Done when** the gate is green, Lighthouse stays 100 × 4 and the user has tried it on a phone.
+
 ## v1.0 — Published
 
 - ✅ Merge `dev` into `main` with the user's go: GitHub Pages deploys after a green CI (v0.2.0)

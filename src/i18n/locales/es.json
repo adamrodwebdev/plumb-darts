@@ -1,0 +1,160 @@
+{
+  "meta": {
+    "title": "Plumb, dardos de tungsteno · demo de diseño",
+    "description": "Plumb es un dardo de tungsteno ficticio, contado como una página de producto inmersiva en 3D: una demo de diseño e ingeniería hecha para mantener Lighthouse en 100 y cumplir las WCAG 2.2 AA.",
+    "notFoundTitle": "Fuera de la diana · Plumb"
+  },
+  "a11y": {
+    "skip": "Saltar al contenido",
+    "home": "Plumb, volver arriba"
+  },
+  "header": {
+    "tag": "Marca ficticia · demo de diseño",
+    "themeToLight": "Cambiar al tema claro",
+    "themeToDark": "Cambiar al tema oscuro",
+    "sound": "Sonido",
+    "language": "Idioma"
+  },
+  "hud": {
+    "label": "Puntos restantes",
+    "chapters": "Capítulos",
+    "current": "Capítulos. Ahora: {chapter}, quedan {remaining}."
+  },
+  "chapters": {
+    "hero": "A jugar",
+    "press": "En la línea",
+    "grip": "El agarre",
+    "weight": "El peso",
+    "anatomy": "Anatomía",
+    "throw": "El remate",
+    "checkout": "El cierre"
+  },
+  "hero": {
+    "eyebrow": "{tungsten} de tungsteno · {weight} · punta de acero",
+    "title1": "El peso,",
+    "title2": "bien",
+    "title3": "puesto.",
+    "lede": "Los dardos Plumb llevan el tungsteno adelantado y un anillado pensado para que te olvides del agarre. El nombre viene de la plumbata, el dardo lastrado con plomo de los soldados romanos.",
+    "ctaThrow": "Lanzar un dardo",
+    "ctaMeet": "Conocer el dardo",
+    "scroll": "Desliza"
+  },
+  "press": {
+    "kicker": "01 · En la línea",
+    "title": "Probado en la línea.",
+    "body": "Recortes de ejemplo, mostrados como el sitio del club mostrará los reales: el medio, la fecha, el titular, una cita breve con su autor y un enlace al artículo.",
+    "sample": "Recorte de ejemplo · ficticio",
+    "previous": "Recorte anterior",
+    "next": "Recorte siguiente",
+    "status": "Recorte {index} de {count}: {outlet}",
+    "card1Outlet": "The Oche Gazette",
+    "card1Headline": "Los anillos acaban con los dedos sudados",
+    "card1Quote": "Dieciocho anillos finos, y el dardo siempre se asienta en el mismo sitio.",
+    "card2Outlet": "Sisal Review",
+    "card2Headline": "Veinticinco gramos, punta por delante",
+    "card2Quote": "Tan bien cargado hacia delante que dejas de guiarlo.",
+    "card3Outlet": "Checkout Weekly",
+    "card3Headline": "Trescientos legs sin un resbalón",
+    "card3Quote": "Lo lanzamos durante un mes. El agarre nunca falló.",
+    "card4Outlet": "Flight Path Monthly",
+    "card4Headline": "El dardo más silencioso de la diana",
+    "card4Quote": "Entra con un golpe seco, sin vibrar.",
+    "card5Outlet": "The Bullseye Bulletin",
+    "card5Headline": "El nuevo favorito de los jugadores de club",
+    "card5Quote": "Cada noche de club, alguien pide probarlo.",
+    "card6Outlet": "Leg & Set",
+    "card6Headline": "Tungsteno torneado sobre un solo eje",
+    "card6Quote": "Punta, barril, caña y pluma comparten un eje perfecto."
+  },
+  "grip": {
+    "kicker": "02 · El agarre",
+    "title": "Un agarre que olvidas.",
+    "body": "Dieciocho anillos de {ringDepth} de profundidad, separados {ringPitch}. Tus dedos encuentran el mismo sitio, tiro tras tiro, sin buscarlo.",
+    "spec1Label": "Profundidad",
+    "spec2Label": "Separación",
+    "spec3Label": "Anillos"
+  },
+  "weight": {
+    "kicker": "03 · El peso",
+    "title": "El peso donde cuenta.",
+    "body": "El sesenta por ciento de la masa va por delante de tus dedos. El dardo quiere volar con la punta por delante, así que dejas de guiarlo.",
+    "cog": "Centro de gravedad",
+    "cogValue": "A {cog} de la punta",
+    "spec1Label": "Tungsteno",
+    "spec2Label": "Barril",
+    "spec3Label": "Longitud"
+  },
+  "anatomy": {
+    "kicker": "04 · Anatomía",
+    "title1": "Cuatro piezas,",
+    "title2": "un solo eje.",
+    "body": "Cada pieza se tornea sobre el mismo eje, así que el dardo sale de tu mano tal y como apuntaste.",
+    "tipName": "Punta",
+    "tipSpec": "Acero templado, {tipLength}",
+    "barrelName": "Barril",
+    "barrelSpec": "Tungsteno al {tungsten}, anillado",
+    "shaftName": "Caña",
+    "shaftSpec": "Aluminio, media",
+    "flightName": "Pluma",
+    "flightSpec": "Estándar, {flightThickness} micras"
+  },
+  "throw": {
+    "kicker": "05 · El remate",
+    "title": "Cierra el leg.",
+    "body": "Quedan cuarenta. Acierta el doble 20, arriba del todo, para ganar el leg. Tienes tres dardos.",
+    "pointerHint": "Toca o haz clic en la diana para lanzar donde apuntas, o elige un objetivo abajo.",
+    "aimLabel": "Apuntar a",
+    "aimD20": "Doble 20 (arriba)",
+    "aimT20": "Triple 20",
+    "aimBull": "Bull (centro)",
+    "aimT19": "Triple 19",
+    "aimAny": "Donde sea",
+    "throwButton": "Lanzar",
+    "collect": "Recoger los dardos",
+    "visit": "Esta tirada",
+    "dartsLeftInitial": "Quedan 3 dardos",
+    "dartsLeft": {
+      "one": "Queda {count} dardo",
+      "many": "Quedan {count} de dardos",
+      "other": "Quedan {count} dardos"
+    },
+    "hit": {
+      "one": "{label}, {count} punto.",
+      "many": "{label}, {count} de puntos.",
+      "other": "{label}, {count} puntos."
+    },
+    "win": "Doble 20. ¡Leg ganado!",
+    "noDarts": "No te quedan dardos. Recógelos para volver a lanzar.",
+    "collected": "Dardos recogidos. Vuelves a tener tres."
+  },
+  "score": {
+    "single": "Simple {segment}",
+    "double": "Doble {segment}",
+    "treble": "Triple {segment}",
+    "outer-bull": "Bull simple",
+    "bull": "Bull",
+    "miss": "Fuera de la diana"
+  },
+  "checkout": {
+    "kicker": "06 · El cierre",
+    "title": "Leg ganado.",
+    "body": "Plumb no existe. Esta página demuestra que una historia de producto inmersiva puede cargar rápido y funcionar para todos: con teclado, con lector de pantalla, con movimiento reducido o sin 3D.",
+    "ctaSource": "Ver cómo está hecho",
+    "ctaAgain": "Lanzar otra vez"
+  },
+  "footer": {
+    "wordmark": "Plumb",
+    "disclaimer": "Plumb es una marca ficticia creada para una demo de diseño e ingeniería. No se vende nada.",
+    "source": "Código fuente en GitHub",
+    "credit": "Diseño y código: AdamRodWebDev",
+    "fonts": "Tipografía: Big Shoulders Display y Geist Mono, SIL Open Font License.",
+    "top": "Volver arriba"
+  },
+  "notFound": {
+    "kicker": "Error 404",
+    "title": "Fuera de la diana.",
+    "body": "Esta página no existe. Hasta los mejores fallan a veces.",
+    "back": "Volver a la línea",
+    "languages": "La línea en tu idioma"
+  }
+}

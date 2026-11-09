@@ -1,5 +1,5 @@
 <!doctype html>
-<html lang="en">
+<html lang="{{ page.lang }}">
   <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -8,12 +8,15 @@
     <meta name="color-scheme" content="dark light">
     <meta name="theme-color" content="#0b0c0e" media="(prefers-color-scheme: dark)">
     <meta name="theme-color" content="#ece8e1" media="(prefers-color-scheme: light)">
-    <link rel="canonical" href="https://adamrodwebdev.github.io/plumb-darts/">
+    <link rel="canonical" href="{{ page.url }}">
+    <!-- language-alternates -->
     <link rel="icon" href="%BASE_URL%favicon.svg" type="image/svg+xml">
     <meta property="og:type" content="website">
+    <meta property="og:locale" content="{{ page.ogLocale }}">
+    <!-- locale-alternates -->
     <meta property="og:title" content="{{ meta.title }}">
     <meta property="og:description" content="{{ meta.description }}">
-    <meta property="og:url" content="https://adamrodwebdev.github.io/plumb-darts/">
+    <meta property="og:url" content="{{ page.url }}">
     <!-- theme-script -->
     <!-- inline-styles -->
   </head>
@@ -40,6 +43,7 @@
       </a>
       <p class="masthead__tag">{{ header.tag }}</p>
       <div class="masthead__actions">
+        <!-- language-menu -->
         <button
           class="icon-button"
           type="button"
@@ -110,7 +114,7 @@
                   <article class="clipping__paper">
                     <p class="clipping__label">{{ press.sample }}</p>
                     <div class="clipping__photo" aria-hidden="true"></div>
-                    <p class="clipping__source"><span class="clipping__outlet">{{ press.card1Outlet }}</span> <time datetime="2026-10-12">{{ press.card1Date }}</time></p>
+                    <p class="clipping__source"><span class="clipping__outlet">{{ press.card1Outlet }}</span> <time datetime="2026-10-12">{{ date 2026-10-12 }}</time></p>
                     <h3 class="clipping__headline">{{ press.card1Headline }}</h3>
                     <blockquote class="clipping__quote"><p>{{ press.card1Quote }}</p></blockquote>
                   </article>
@@ -119,7 +123,7 @@
                   <article class="clipping__paper">
                     <p class="clipping__label">{{ press.sample }}</p>
                     <div class="clipping__photo" aria-hidden="true"></div>
-                    <p class="clipping__source"><span class="clipping__outlet">{{ press.card2Outlet }}</span> <time datetime="2026-10-19">{{ press.card2Date }}</time></p>
+                    <p class="clipping__source"><span class="clipping__outlet">{{ press.card2Outlet }}</span> <time datetime="2026-10-19">{{ date 2026-10-19 }}</time></p>
                     <h3 class="clipping__headline">{{ press.card2Headline }}</h3>
                     <blockquote class="clipping__quote"><p>{{ press.card2Quote }}</p></blockquote>
                   </article>
@@ -128,7 +132,7 @@
                   <article class="clipping__paper">
                     <p class="clipping__label">{{ press.sample }}</p>
                     <div class="clipping__photo" aria-hidden="true"></div>
-                    <p class="clipping__source"><span class="clipping__outlet">{{ press.card3Outlet }}</span> <time datetime="2026-10-26">{{ press.card3Date }}</time></p>
+                    <p class="clipping__source"><span class="clipping__outlet">{{ press.card3Outlet }}</span> <time datetime="2026-10-26">{{ date 2026-10-26 }}</time></p>
                     <h3 class="clipping__headline">{{ press.card3Headline }}</h3>
                     <blockquote class="clipping__quote"><p>{{ press.card3Quote }}</p></blockquote>
                   </article>
@@ -137,7 +141,7 @@
                   <article class="clipping__paper">
                     <p class="clipping__label">{{ press.sample }}</p>
                     <div class="clipping__photo" aria-hidden="true"></div>
-                    <p class="clipping__source"><span class="clipping__outlet">{{ press.card4Outlet }}</span> <time datetime="2026-11-02">{{ press.card4Date }}</time></p>
+                    <p class="clipping__source"><span class="clipping__outlet">{{ press.card4Outlet }}</span> <time datetime="2026-11-02">{{ date 2026-11-02 }}</time></p>
                     <h3 class="clipping__headline">{{ press.card4Headline }}</h3>
                     <blockquote class="clipping__quote"><p>{{ press.card4Quote }}</p></blockquote>
                   </article>
@@ -146,7 +150,7 @@
                   <article class="clipping__paper">
                     <p class="clipping__label">{{ press.sample }}</p>
                     <div class="clipping__photo" aria-hidden="true"></div>
-                    <p class="clipping__source"><span class="clipping__outlet">{{ press.card5Outlet }}</span> <time datetime="2026-11-05">{{ press.card5Date }}</time></p>
+                    <p class="clipping__source"><span class="clipping__outlet">{{ press.card5Outlet }}</span> <time datetime="2026-11-05">{{ date 2026-11-05 }}</time></p>
                     <h3 class="clipping__headline">{{ press.card5Headline }}</h3>
                     <blockquote class="clipping__quote"><p>{{ press.card5Quote }}</p></blockquote>
                   </article>
@@ -155,7 +159,7 @@
                   <article class="clipping__paper">
                     <p class="clipping__label">{{ press.sample }}</p>
                     <div class="clipping__photo" aria-hidden="true"></div>
-                    <p class="clipping__source"><span class="clipping__outlet">{{ press.card6Outlet }}</span> <time datetime="2026-11-08">{{ press.card6Date }}</time></p>
+                    <p class="clipping__source"><span class="clipping__outlet">{{ press.card6Outlet }}</span> <time datetime="2026-11-08">{{ date 2026-11-08 }}</time></p>
                     <h3 class="clipping__headline">{{ press.card6Headline }}</h3>
                     <blockquote class="clipping__quote"><p>{{ press.card6Quote }}</p></blockquote>
                   </article>
@@ -175,6 +179,11 @@
         </div>
       </section>
 
+      <!-- Chapters 3 to 7: one sideways journey where the screen is tall enough and motion is welcome
+           (the script's .is-sideways); stacked like the rest of the page otherwise -->
+      <div class="journey" data-journey>
+      <div class="journey__frame" data-journey-frame>
+      <div class="journey__track" data-journey-track>
       <section id="grip" class="chapter chapter--grip" data-chapter="grip" data-tone="night" data-pin aria-labelledby="grip-title">
         <div class="chapter__inner">
           <div class="chapter__text">
@@ -182,9 +191,9 @@
             <h2 class="chapter__title fill-title" id="grip-title">{{ grip.title }}</h2>
             <p class="chapter__body">{{ grip.body }}</p>
             <dl class="specs">
-              <div class="specs__item"><dt>{{ grip.spec1Label }}</dt><dd>{{ grip.spec1Value }}</dd></div>
-              <div class="specs__item"><dt>{{ grip.spec2Label }}</dt><dd>{{ grip.spec2Value }}</dd></div>
-              <div class="specs__item"><dt>{{ grip.spec3Label }}</dt><dd>{{ grip.spec3Value }}</dd></div>
+              <div class="specs__item"><dt>{{ grip.spec1Label }}</dt><dd>{{ fact.ringDepth }}</dd></div>
+              <div class="specs__item"><dt>{{ grip.spec2Label }}</dt><dd>{{ fact.ringPitch }}</dd></div>
+              <div class="specs__item"><dt>{{ grip.spec3Label }}</dt><dd>{{ fact.rings }}</dd></div>
             </dl>
           </div>
         </div>
@@ -198,18 +207,18 @@
               <h2 class="chapter__title fill-title" id="weight-title">{{ weight.title }}</h2>
             </div>
             <div class="weight__foot">
-              <div class="gauge" role="img" aria-label="{{ weight.figureLabel }}">
+              <div class="gauge" role="img" aria-label="{{ fact.weightLong }}">
                 <svg class="gauge__dial" viewBox="0 0 200 200" aria-hidden="true" focusable="false">
                   <circle class="gauge__track" cx="100" cy="100" r="92" />
                   <circle class="gauge__value" cx="100" cy="100" r="92" pathLength="100" />
                 </svg>
-                <p class="gauge__figure" aria-hidden="true">{{ weight.figure }}<span class="gauge__unit">{{ weight.unit }}</span></p>
+                <p class="gauge__figure" aria-hidden="true">{{ fact.weightValue }}<span class="gauge__unit">{{ fact.weightUnit }}</span></p>
               </div>
               <p class="chapter__body">{{ weight.body }}</p>
               <dl class="specs">
-                <div class="specs__item"><dt>{{ weight.spec1Label }}</dt><dd>{{ weight.spec1Value }}</dd></div>
-                <div class="specs__item"><dt>{{ weight.spec2Label }}</dt><dd>{{ weight.spec2Value }}</dd></div>
-                <div class="specs__item"><dt>{{ weight.spec3Label }}</dt><dd>{{ weight.spec3Value }}</dd></div>
+                <div class="specs__item"><dt>{{ weight.spec1Label }}</dt><dd>{{ fact.tungsten }}</dd></div>
+                <div class="specs__item"><dt>{{ weight.spec2Label }}</dt><dd>{{ fact.barrelSize }}</dd></div>
+                <div class="specs__item"><dt>{{ weight.spec3Label }}</dt><dd>{{ fact.length }}</dd></div>
               </dl>
             </div>
           </div>
@@ -307,6 +316,9 @@
           </div>
         </div>
       </section>
+      </div>
+      </div>
+      </div>
       <div class="dusk" aria-hidden="true"></div>
     </main>
 

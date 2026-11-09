@@ -25,6 +25,11 @@ export interface ScenePose {
   readonly camera: CameraPose
   /** 0 the board is away, 1 in place */
   readonly board: number
+  /**
+   * The side the board comes from or leaves by, while it is away: -1 left, 1 right. It travels
+   * with the story (in from the right before the finish, out to the left after it)
+   */
+  readonly boardSide: number
   /** 0 a single dart, 1 the set of three on show */
   readonly set: number
   /** Visibility of the centre-of-gravity marker */
@@ -61,6 +66,7 @@ export function mixPose(a: ScenePose, b: ScenePose, t: number): ScenePose {
       target: mixVec(a.camera.target, b.camera.target, t),
     },
     board: lerp(a.board, b.board, t),
+    boardSide: lerp(a.boardSide, b.boardSide, t),
     set: lerp(a.set, b.set, t),
     cog: lerp(a.cog, b.cog, t),
     parts: lerp(a.parts, b.parts, t),

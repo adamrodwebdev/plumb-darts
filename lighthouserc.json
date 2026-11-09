@@ -1,7 +1,11 @@
 {
   "ci": {
     "collect": {
-      "url": ["http://localhost:4173/plumb-darts/"],
+      "url": [
+        "http://localhost:4173/plumb-darts/",
+        "http://localhost:4173/plumb-darts/fr/",
+        "http://localhost:4173/plumb-darts/ru/"
+      ],
       "numberOfRuns": 3
     },
     "assert": {

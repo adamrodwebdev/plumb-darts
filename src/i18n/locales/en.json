@@ -12,13 +12,13 @@
     "tag": "Fictional brand · design demo",
     "themeToLight": "Switch to the light theme",
     "themeToDark": "Switch to the dark theme",
-    "sound": "Sound"
+    "sound": "Sound",
+    "language": "Language"
   },
   "hud": {
     "label": "Score left",
     "chapters": "Chapters",
-    "current": "Chapters. Now: {chapter}, {remaining} left.",
-    "oneEighty": "One hundred and eighty!"
+    "current": "Chapters. Now: {chapter}, {remaining} left."
   },
   "chapters": {
     "hero": "Game on",
@@ -30,7 +30,7 @@
     "checkout": "Checkout"
   },
   "hero": {
-    "eyebrow": "90% tungsten · 22 g · steel tip",
+    "eyebrow": "{tungsten} tungsten · {weight} · steel tip",
     "title1": "Weight,",
     "title2": "well",
     "title3": "placed.",
@@ -48,56 +48,41 @@
     "next": "Next clipping",
     "status": "Clipping {index} of {count}: {outlet}",
     "card1Outlet": "The Oche Gazette",
-    "card1Date": "12 Oct 2026",
     "card1Headline": "Ring grip ends the sweaty-finger season",
     "card1Quote": "Eighteen shallow rings, and the dart sits in the same place every time.",
     "card2Outlet": "Sisal Review",
-    "card2Date": "19 Oct 2026",
-    "card2Headline": "Twenty-two grams that fly point first",
+    "card2Headline": "Twenty-five grams that fly point first",
     "card2Quote": "Front-loaded so well that you stop steering it.",
     "card3Outlet": "Checkout Weekly",
-    "card3Date": "26 Oct 2026",
     "card3Headline": "Three hundred legs, no slip",
     "card3Quote": "We threw it for a month. The grip never let go.",
     "card4Outlet": "Flight Path Monthly",
-    "card4Date": "2 Nov 2026",
     "card4Headline": "The quietest dart on the board",
     "card4Quote": "It lands with a thud, not a rattle.",
     "card5Outlet": "The Bullseye Bulletin",
-    "card5Date": "5 Nov 2026",
-    "card5Headline": "The club players' new favourite",
+    "card5Headline": "The club players’ new favourite",
     "card5Quote": "Every club night, someone asks to try it.",
     "card6Outlet": "Leg & Set",
-    "card6Date": "8 Nov 2026",
     "card6Headline": "Tungsten, turned on one line",
     "card6Quote": "Tip, barrel, shaft and flight share one perfect axis."
   },
   "grip": {
     "kicker": "02 · The grip",
     "title": "Grip you stop noticing.",
-    "body": "Eighteen rings, each 0.3 mm deep and 1.2 mm apart. Your fingers find the same place, throw after throw, without looking for it.",
+    "body": "Eighteen rings, each {ringDepth} deep and {ringPitch} apart. Your fingers find the same place, throw after throw, without looking for it.",
     "spec1Label": "Ring depth",
-    "spec1Value": "0.3 mm",
     "spec2Label": "Ring pitch",
-    "spec2Value": "1.2 mm",
-    "spec3Label": "Rings",
-    "spec3Value": "18"
+    "spec3Label": "Rings"
   },
   "weight": {
     "kicker": "03 · The weight",
     "title": "Weight where it counts.",
-    "figure": "22",
-    "unit": "g",
-    "figureLabel": "22 grams",
     "body": "Sixty per cent of the mass sits ahead of your fingers. The dart wants to fly point first, so you stop steering it.",
     "cog": "Centre of gravity",
-    "cogValue": "38% from the tip",
+    "cogValue": "{cog} from the tip",
     "spec1Label": "Tungsten",
-    "spec1Value": "90%",
     "spec2Label": "Barrel",
-    "spec2Value": "50 × 6.6 mm",
-    "spec3Label": "Length",
-    "spec3Value": "155 mm"
+    "spec3Label": "Length"
   },
   "anatomy": {
     "kicker": "04 · Anatomy",
@@ -105,13 +90,13 @@
     "title2": "one line.",
     "body": "Every part is turned on the same axis, so the dart leaves your hand the way you aimed it.",
     "tipName": "Tip",
-    "tipSpec": "Hardened steel, 32 mm",
+    "tipSpec": "Hardened steel, {tipLength}",
     "barrelName": "Barrel",
-    "barrelSpec": "90% tungsten, ring cut",
+    "barrelSpec": "{tungsten} tungsten, ring cut",
     "shaftName": "Shaft",
     "shaftSpec": "Aluminium, medium",
     "flightName": "Flight",
-    "flightSpec": "Standard, 100 microns"
+    "flightSpec": "Standard, {flightThickness} microns"
   },
   "throw": {
     "kicker": "05 · The finish",
@@ -132,7 +117,10 @@
       "one": "{count} dart left",
       "other": "{count} darts left"
     },
-    "hit": "{label}, {points} points.",
+    "hit": {
+      "one": "{label}, {count} point.",
+      "other": "{label}, {count} points."
+    },
     "win": "Double 20. Game shot!",
     "noDarts": "No darts left. Collect them to throw again.",
     "collected": "Darts collected. Three darts left."
@@ -148,8 +136,8 @@
   "checkout": {
     "kicker": "06 · Checkout",
     "title": "Game shot.",
-    "body": "Plumb doesn't exist. This page shows how an immersive product story can still load fast and work for everyone: with a keyboard, a screen reader, reduced motion, or no 3D at all.",
-    "ctaSource": "See how it's built",
+    "body": "Plumb doesn’t exist. This page shows how an immersive product story can still load fast and work for everyone: with a keyboard, a screen reader, reduced motion, or no 3D at all.",
+    "ctaSource": "See how it’s built",
     "ctaAgain": "Throw again"
   },
   "footer": {
@@ -163,7 +151,8 @@
   "notFound": {
     "kicker": "Error 404",
     "title": "Missed the board.",
-    "body": "This page doesn't exist. Even the best players miss sometimes.",
-    "back": "Back to the oche"
+    "body": "This page doesn’t exist. Even the best players miss sometimes.",
+    "back": "Back to the oche",
+    "languages": "The oche in your language"
   }
 }

@@ -1,19 +1,24 @@
 import { SoundEngine } from './design/audio/SoundEngine'
 import { Announcer, SoundToggle, ThemeToggle, revealOnScroll } from './design/dom/controls'
 import { Hud } from './design/dom/Hud'
+import { watchHeroBand } from './design/dom/heroBand'
+import { LanguageMenu } from './design/dom/LanguageMenu'
 import { MarkerLayer } from './design/dom/MarkerLayer'
 import { OrbitCarousel } from './design/dom/OrbitCarousel'
-import type { ScrollEffects } from './design/dom/ScrollEffects'
+import type { JourneyElements, ScrollEffects } from './design/dom/ScrollEffects'
 import { ThrowPanel } from './design/dom/ThrowPanel'
 import type { SceneHandle } from './design/scene/createScene'
 import { openStageContext } from './design/scene/stageContext'
-import messages from './i18n/en.json'
+import { languageOf } from './i18n/languages'
+import { loadMessages } from './i18n/loadMessages'
 import { Translator } from './i18n/Translator'
 import { ChapterTracker } from './logic/ChapterTracker'
 import { probeDevice } from './logic/deviceProbe'
 import { BrowserStore, MotionPreference, ThemePreference } from './logic/preferences'
 import { ThrowSession } from './logic/ThrowSession'
 import type { Layout } from './rules/choreography'
+import { CHAPTERS, chapterById } from './rules/chapters'
+import { JOURNEY_MEDIA } from './rules/journey'
 import { turnFor } from './rules/orbit'
 import { QUALITY, chooseTier } from './rules/quality'
 import { performanceClock } from './time/clock'
@@ -38,7 +43,10 @@ async function start(view: Window): Promise<void> {
   const root = page.documentElement
   root.classList.add('js')
 
-  const translator = new Translator(messages, 'en')
+  // The page's language, read through the allow-list: its messages are their own chunk, which the
+  // boot script preloads with the code
+  const language = languageOf(root.lang)
+  const translator = new Translator(await loadMessages(language.code), language.intl)
   const clock = performanceClock
   const random = new SeededRandom(view.crypto.getRandomValues(new Uint32Array(1))[0] ?? 1)
   const motion = new MotionPreference(view.matchMedia('(prefers-reduced-motion: reduce)'))
@@ -64,6 +72,11 @@ async function start(view: Window): Promise<void> {
     root.dataset['currentTone'] = chapter.tone
     hud.show(chapter, previous)
   })
+  // Another language opens on the chapter on screen (the first one needs no fragment)
+  new LanguageMenu(required(page, '[data-lang-menu]'), () => {
+    const id = tracker.chapter().id
+    return id === CHAPTERS[0]?.id ? null : id
+  })
   await nextTask()
 
   // 2. The finish works from here, in text; the 3D darts join it later
@@ -81,6 +94,10 @@ async function start(view: Window): Promise<void> {
   const markers = new MarkerLayer(page)
   root.classList.add(tier ? 'has-3d' : 'no-3d')
 
+  // The journey chapter the visitor came to, kept aside by the head script (build/inline/arrival.js)
+  const arrival = chapterById(root.dataset['arrival'] ?? '')?.id ?? null
+  delete root.dataset['arrival']
+
   // 4. Scroll effects, only when motion is welcome
   let effects: ScrollEffects | null = null
   if (motionAllowed()) {
@@ -94,11 +111,21 @@ async function start(view: Window): Promise<void> {
     const { ScrollEffects } = await import('./design/dom/ScrollEffects')
     // The module's evaluation (GSAP) is a task of its own, then each chapter's trigger
     await nextTask()
-    effects = new ScrollEffects(sections)
+    effects = new ScrollEffects({
+      sections,
+      journey: journeyOf(page),
+      sideways: view.matchMedia(JOURNEY_MEDIA),
+      arrival,
+    })
     await effects.init()
     if (orbit) effects.onOrbitTurn(turnFor(orbit.count() - 1, orbit.count()), (turn) => orbit.setTurn(turn))
   }
   const progress = required<HTMLElement>(page, '[data-boot-progress]')
+  if (arrival && !effects) {
+    // Motion turned off since the head script ran: the browser's own jump, done here
+    view.history.replaceState(view.history.state, '', `#${arrival}`)
+    page.getElementById(arrival)?.scrollIntoView({ block: 'start' })
+  }
   if (!tier || !context) {
     // Nothing more to load: the page is complete, its scroll effects included
     progress.classList.add('is-done')
@@ -146,6 +173,9 @@ async function start(view: Window): Promise<void> {
     wide.addEventListener('change', () => scene.director.setLayout(layout()))
     tracker.onChange((chapter) => scene.director.setChapter(chapter.id))
     scene.director.setChapter(tracker.chapter().id)
+    // A phone's hero dart rests in the room its text leaves above it, measured on the page (kept on
+    // wide screens too, for a window narrowed later)
+    watchHeroBand(page, view, (band) => scene.director.setHeroBand(band))
     if (effects) {
       const scroll = effects
       // The set leaves over half a screen of scrolling once the checkout has been shown
@@ -178,6 +208,14 @@ async function start(view: Window): Promise<void> {
     clearTimeout(watchdog)
     if (!settled) fallBack()
   }
+}
+
+/** Chapters 3 to 7's journey, its sticky frame and its strip, when the page has them */
+function journeyOf(page: ParentNode): JourneyElements | null {
+  const root = page.querySelector<HTMLElement>('[data-journey]')
+  const frame = page.querySelector<HTMLElement>('[data-journey-frame]')
+  const track = page.querySelector<HTMLElement>('[data-journey-track]')
+  return root && frame && track ? { root, frame, track } : null
 }
 
 /** Pointer aiming over the 3D board: the pad follows the board's circle on screen */

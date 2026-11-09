@@ -1,6 +1,6 @@
 {
   "name": "plumb-darts",
-  "version": "0.2.0",
+  "version": "0.3.0",
   "private": true,
   "description": "Plumb, a fictional tungsten dart: an immersive 3D product page built to keep Lighthouse 100 and WCAG 2.2 AA.",
   "license": "MIT",
@@ -27,6 +27,7 @@
     "@eslint/js": "^10.0.0",
     "@fontsource-variable/big-shoulders-display": "^5.3.0",
     "@fontsource-variable/geist-mono": "^5.3.0",
+    "@fontsource-variable/oswald": "^5.3.0",
     "@playwright/test": "1.64.0",
     "@tsconfig/node24": "^24.0.5",
     "@types/node": "^24.13.4",

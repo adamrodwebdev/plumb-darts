@@ -25,8 +25,8 @@
   margin-block-end: 2rem;
   font-family: var(--font-display);
   font-size: clamp(2.75rem, 1.2rem + 6.4vw, 6.875rem);
-  font-weight: 800;
-  line-height: 0.88;
+  font-weight: var(--display-heavy);
+  line-height: var(--leading-title);
   text-transform: uppercase;
   text-wrap: balance;
 }
@@ -203,9 +203,12 @@
 
 /* The print shows only where it can be read: it leaves a clipping turning away before its paper
    fades, so no text is ever shown faint (WCAG 1.4.3: back cards read at 1.5 to 2.9 : 1 before,
-   2026-11-09), and comes back over a few degrees as the clipping comes round */
+   2026-11-09). Whole or hidden, never in between: faded by the angle, it stayed half clear
+   wherever the reader stopped scrolling with a clipping at the side (axe, 2026-11-09). The switch
+   happens over a short time instead */
 .orbit.is-3d .clipping__paper > * {
-  opacity: clamp(0, (var(--facing) - 0.5) * 10, 1);
+  opacity: clamp(0, (var(--facing) - 0.55) * 1000, 1);
+  transition: opacity 0.25s;
 }
 
 .orbit.is-3d .orbit__controls {
@@ -235,20 +238,39 @@
    neighbours peek out on both sides */
 @media (width < 40rem) {
   .orbit.is-3d {
-    height: 30.5rem;
+    height: auto;
     perspective: 900px;
   }
 
-  /* The headline sits above the ring on phones: behind it, the cards would hide it */
+  /* The headline sits above the ring on phones, in the flow: behind it, the cards would hide it,
+     and a headline on two lines (or set in a taller face) once ran into the clippings, which a
+     longer language also makes taller (2026-11-09). The ring then holds the tallest clipping,
+     magnified by the perspective, below it. */
   .orbit.is-3d .orbit__space {
-    inset: 3.5rem 0 4.75rem;
+    position: relative;
+    inset: auto;
+    display: flex;
+    flex-direction: column;
     transform: rotateX(-4deg);
   }
 
   .orbit.is-3d .orbit__title {
-    inset: -3.5rem 0 auto;
+    position: static;
+    margin-block-end: 0.75rem;
     font-size: 2.5rem;
     transform: none;
+  }
+
+  .orbit.is-3d .orbit__ring {
+    position: relative;
+    inset: auto;
+    height: 24.5rem;
+  }
+
+  .orbit.is-3d .orbit__controls {
+    position: relative;
+    inset: auto;
+    margin-block-start: 0.75rem;
   }
 
   .orbit.is-3d .clipping {

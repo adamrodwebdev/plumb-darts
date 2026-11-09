@@ -1,4 +1,6 @@
 import AxeBuilder from '@axe-core/playwright'
+import { LANGUAGES } from '../src/i18n/languages.ts'
+import { settled } from './boot'
 import { expect, test, type Page } from './fixtures'
 
 /** WCAG 2.2 AA, the level the project promises */
@@ -13,10 +15,17 @@ async function violations(page: Page): Promise<string[]> {
   )
 }
 
-for (const colorScheme of ['light', 'dark'] as const) {
-  test(`the page meets WCAG 2.2 AA in the ${colorScheme} theme`, async ({ page }) => {
+/** English, and the two languages whose copy and faces differ most from it */
+const SCANNED = LANGUAGES.filter((language) => ['en', 'fr', 'ru'].includes(language.code))
+
+for (const [language, colorScheme] of SCANNED.flatMap((language) =>
+  (['light', 'dark'] as const).map((scheme) => [language, scheme] as const),
+)) {
+  test(`the ${language.name} page meets WCAG 2.2 AA in the ${colorScheme} theme`, async ({
+    page,
+  }) => {
     await page.emulateMedia({ colorScheme, reducedMotion: 'reduce' })
-    await page.goto('')
+    await page.goto(language.path)
     await expect(page.getByRole('heading', { level: 1 })).toBeVisible()
     // Enhanced parts stay hidden until their script marks them ready: scan once they are shown.
     // The orbit's controls stay hidden under reduced motion, where the clippings are a flat grid
@@ -32,10 +41,49 @@ for (const colorScheme of ['light', 'dark'] as const) {
   })
 }
 
+for (const colorScheme of ['light', 'dark'] as const) {
+  test(`the open language menu meets WCAG 2.2 AA in the ${colorScheme} theme`, async ({ page }) => {
+    await page.emulateMedia({ colorScheme, reducedMotion: 'reduce' })
+    await page.goto(LANGUAGES[2]?.path ?? '')
+    await page.locator('[data-lang-menu] summary').click()
+    await expect(page.locator('[data-lang-menu] [aria-current="page"]')).toBeVisible()
+
+    expect(await violations(page)).toEqual([])
+  })
+}
+
 test('the missing page meets WCAG 2.2 AA', async ({ page }) => {
   await page.emulateMedia({ reducedMotion: 'reduce' })
   await page.goto('404.html')
   await expect(page.getByRole('heading', { level: 1 })).toBeVisible()
 
   expect(await violations(page)).toEqual([])
+})
+
+test('a clipping of the orbit is printed whole or not at all, at any turn of the ring', async ({
+  page,
+}) => {
+  await page.emulateMedia({ reducedMotion: 'no-preference' })
+  await page.goto('')
+  await settled(page)
+  const ring = page.locator('.orbit.is-3d [data-orbit-ring]')
+  await expect(ring).toHaveCount(1)
+
+  // Turns that leave a clipping near the side of the ring, where its print used to fade
+  for (const turn of [25, 85, 149, 205, 266, 331]) {
+    await ring.evaluate((element, degrees) => {
+      element.style.setProperty('--turn', `${degrees}deg`)
+    }, turn)
+    await expect
+      .poll(() =>
+        ring.evaluate(
+          (element) =>
+            [...element.querySelectorAll('.clipping__paper > *')].filter((part) => {
+              const opacity = Number.parseFloat(getComputedStyle(part).opacity)
+              return opacity > 0.01 && opacity < 0.99
+            }).length,
+        ),
+      )
+      .toBe(0)
+  }
 })

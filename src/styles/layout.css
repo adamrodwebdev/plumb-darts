@@ -100,7 +100,9 @@
   inset: 0 0 auto;
   z-index: 10;
   display: grid;
-  grid-template-columns: auto 1fr auto;
+  /* The wordmark and the controls never shrink: a row too wide fails the masthead test instead of
+     squeezing the logo (bug lessons, portfolio 1.10.0) */
+  grid-template-columns: max-content minmax(0, 1fr) max-content;
   align-items: center;
   gap: 1rem;
   min-height: var(--masthead-height);
@@ -118,6 +120,7 @@
 }
 
 .brand__mark {
+  flex: none;
   width: 1.125rem;
   height: 1.75rem;
   fill: none;
@@ -132,7 +135,7 @@
 }
 
 .brand__name {
-  font-family: var(--font-display);
+  font-family: var(--font-brand);
   font-size: 1.625rem;
   font-weight: 800;
   line-height: 1;
@@ -150,7 +153,9 @@
   transition: color 0.6s var(--ease-in-out);
 }
 
+/* The language list opens under the whole group, aligned on its right edge */
 .masthead__actions {
+  position: relative;
   display: flex;
   justify-content: flex-end;
   gap: 0.5rem;
@@ -181,6 +186,41 @@
 /* Labels that follow the 3D model are moved by transforms: clipped to their chapter, they can
    never stretch the page while they wait off screen */
 .chapter[data-pin] {
+  overflow: clip;
+}
+
+/* ---------- The journey: chapters 3 to 7 ----------
+   Stacked like the rest of the page by default (no script, reduced motion, a short screen). The
+   script turns it sideways (.is-sideways): the journey grows as tall as its scrolling (set by the
+   script), and its frame sticks to the screen while a strip of five screens slides left inside it,
+   each chapter holding the screen for a while. Sticky, not pinned by the script: nothing moves in
+   the page, so a focused control keeps its focus (bug lessons, 2026-11-09). */
+.journey {
+  position: relative;
+  /* Above the 3D stage like every chapter */
+  z-index: 3;
+}
+
+.journey.is-sideways .journey__frame {
+  position: sticky;
+  inset-block-start: 0;
+  container-type: inline-size;
+  height: 100svh;
+  /* The strip is five screens wide: clipped here, it never widens the page, which a phone would
+     zoom out to show (bug lessons, 2026-11-09) */
+  overflow: clip;
+}
+
+.journey.is-sideways .journey__track {
+  display: flex;
+  height: 100%;
+}
+
+.journey.is-sideways .chapter {
+  flex: 0 0 100cqi;
+  height: 100%;
+  min-height: 0;
+  /* Labels that follow the 3D model stay in their own screen */
   overflow: clip;
 }
 
@@ -226,8 +266,9 @@
   max-width: 34rem;
 }
 
-/* Phones: the object takes the top of the screen, the text sits below */
-.has-3d :is(.chapter--grip, .chapter--throw) .chapter__text {
+/* Phones: the object takes the top of the screen, the text sits below (the scene places the dart,
+   the exploded view and the board in that band: rules/choreography.ts, NARROW_STAGE) */
+.has-3d :is(.chapter--grip, .chapter--anatomy, .chapter--throw) .chapter__text {
   padding-block-start: 38svh;
 }
 
@@ -236,7 +277,7 @@
     align-content: center;
   }
 
-  .has-3d :is(.chapter--grip, .chapter--throw) .chapter__text {
+  .has-3d :is(.chapter--grip, .chapter--anatomy, .chapter--throw) .chapter__text {
     padding-block-start: 0;
   }
 }
@@ -270,8 +311,8 @@
   z-index: 1;
   font-family: var(--font-display);
   font-size: clamp(3.5rem, 1.25rem + 11.5vw, 8.75rem);
-  font-weight: 800;
-  line-height: 0.84;
+  font-weight: var(--display-heavy);
+  line-height: var(--leading-hero);
   letter-spacing: 0.01em;
   text-transform: uppercase;
 }
@@ -443,7 +484,7 @@
 }
 
 .footer__wordmark {
-  font-family: var(--font-display);
+  font-family: var(--font-brand);
   font-size: clamp(7rem, 26vw, 17.5rem);
   font-weight: 800;
   line-height: 0.8;
@@ -503,10 +544,30 @@
 .missed__title {
   font-family: var(--font-display);
   font-size: clamp(3.5rem, 1.25rem + 9vw, 8.75rem);
-  font-weight: 800;
+  font-weight: var(--display-heavy);
   line-height: 0.86;
   text-transform: uppercase;
   text-wrap: balance;
+}
+
+.missed__homes {
+  display: grid;
+  gap: 0.5rem;
+  margin-block-start: 0.5rem;
+}
+
+.missed__languages {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0 1.5rem;
+  padding: 0;
+  list-style: none;
+}
+
+.missed__languages a {
+  display: inline-flex;
+  align-items: center;
+  min-height: 2.75rem;
 }
 
 .missed__board {
@@ -556,4 +617,10 @@
     grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
     align-items: center;
   }
+}
+
+/* A chapter reached by an in-page link takes the focus (where the next Tab starts), without the
+   outline meant for controls */
+.chapter[tabindex='-1']:focus {
+  outline: none;
 }

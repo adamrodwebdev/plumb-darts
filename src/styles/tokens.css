@@ -16,10 +16,22 @@
   --accent: light-dark(#b33014, #ff5a36);
   --on-accent: light-dark(#fffaf5, #160b07);
 
-  --font-display: 'Plumb Hero', 'Big Shoulders Display', 'Arial Narrow', 'Roboto Condensed', Impact,
-    sans-serif;
+  --font-display:
+    'Plumb Hero', 'Big Shoulders Display', 'Arial Narrow', 'Roboto Condensed', Impact, sans-serif;
+  /* Figures set at another weight than the embedded headline face: the full face only, or their
+     digits would come from the headline's heavier cut */
+  --font-figures: 'Big Shoulders Display', 'Arial Narrow', 'Roboto Condensed', Impact, sans-serif;
+  /* The wordmark keeps the brand's face in every language ("Plumb Brand" exists only where the
+     headlines use another face) */
+  --font-brand:
+    'Plumb Brand', 'Plumb Hero', 'Big Shoulders Display', 'Arial Narrow', Impact, sans-serif;
   --font-mono: 'Geist Mono', ui-monospace, 'SF Mono', Menlo, Consolas, monospace;
   --font-body: system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', sans-serif;
+  --display-heavy: 800;
+  --display-bold: 700;
+  /* Tight leading for English capitals, which have neither accents nor descenders */
+  --leading-hero: 0.84;
+  --leading-title: 0.88;
 
   --ease-out: cubic-bezier(0.16, 1, 0.3, 1);
   --ease-in-out: cubic-bezier(0.65, 0, 0.35, 1);
@@ -30,6 +42,25 @@
   --chrome-bg: var(--night-bg);
   --chrome-ink: var(--night-ink);
   --chrome-muted: var(--night-muted);
+}
+
+/* Accented capitals (É, À, Ñ) rise to 0.97em in Big Shoulders, 0.17em above the caps: under the
+   English leading they would cut into the line above */
+:root:is(:lang(fr), :lang(es), :lang(it)) {
+  --leading-hero: 0.98;
+  --leading-title: 1;
+}
+
+/* Russian: Oswald (Big Shoulders has no Cyrillic), as tall in the caps, a sixth wider, and set
+   lighter to keep the same colour (stem 0.18 of the cap height at 500, Big Shoulders 0.16 at
+   800). Ё and Й rise to 1.04em, and Д, Ц, Щ descend 0.15em: a looser leading */
+:root:lang(ru) {
+  --font-display: 'Plumb Hero', 'Oswald', 'Arial Narrow', 'Roboto Condensed', Impact, sans-serif;
+  --font-figures: 'Oswald', 'Arial Narrow', 'Roboto Condensed', Impact, sans-serif;
+  --display-heavy: 500;
+  --display-bold: 400;
+  --leading-hero: 1.06;
+  --leading-title: 1.08;
 }
 
 :root[data-theme='light'] {

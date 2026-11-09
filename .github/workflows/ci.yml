@@ -29,7 +29,7 @@ jobs:
       - run: npm run build
       # Every visible string comes from the messages: a placeholder left in a page means a missing key
       - name: No placeholder left in the pages
-        run: "! grep -n '{{' dist/index.html dist/404.html"
+        run: "! grep -n '{{' dist/index.html dist/*/index.html dist/404.html"
 
   e2e:
     # Chromium, Firefox and WebKit on desktop, and two phones: Firefox does not start on the

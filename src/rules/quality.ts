@@ -4,16 +4,16 @@ export interface QualitySettings {
   /** Render scale cap: sharp enough, never the full 3× of a phone */
   readonly maxPixelRatio: number
   readonly antialias: boolean
-  /** Board face texture size in pixels */
+  /** Board face texture size in pixels: it picks the board's model file (rules/models.ts) */
   readonly boardTexture: number
-  /** Smoothness of the turned (lathe) parts */
-  readonly radialSegments: number
+  /** Thrown darts cast their shadow on the board (one shadow map, 1024 px) */
+  readonly shadows: boolean
 }
 
 export const QUALITY: Readonly<Record<Tier, QualitySettings>> = {
-  high: { maxPixelRatio: 1.5, antialias: true, boardTexture: 2048, radialSegments: 64 },
-  medium: { maxPixelRatio: 1.25, antialias: true, boardTexture: 1024, radialSegments: 48 },
-  low: { maxPixelRatio: 1, antialias: false, boardTexture: 1024, radialSegments: 32 },
+  high: { maxPixelRatio: 1.5, antialias: true, boardTexture: 2048, shadows: true },
+  medium: { maxPixelRatio: 1.25, antialias: true, boardTexture: 1024, shadows: true },
+  low: { maxPixelRatio: 1, antialias: false, boardTexture: 1024, shadows: false },
 }
 
 export interface DeviceHints {
@@ -55,5 +55,7 @@ export function median(values: readonly number[]): number {
   if (values.length === 0) return Number.POSITIVE_INFINITY
   const sorted = [...values].sort((a, b) => a - b)
   const middle = Math.floor(sorted.length / 2)
-  return sorted.length % 2 ? (sorted[middle] ?? 0) : ((sorted[middle - 1] ?? 0) + (sorted[middle] ?? 0)) / 2
+  return sorted.length % 2
+    ? (sorted[middle] ?? 0)
+    : ((sorted[middle - 1] ?? 0) + (sorted[middle] ?? 0)) / 2
 }

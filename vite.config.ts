@@ -4,17 +4,26 @@ import { defineConfig, type Plugin } from 'vite'
 import { compileHints } from './build/compileHints.ts'
 import { contentSecurityPolicy } from './build/csp.ts'
 import { deferredBoot } from './build/deferredBoot.ts'
-import { htmlI18n } from './build/htmlI18n.ts'
+import { COPY_FACES, EMBEDDED_FACES } from './build/faces.ts'
+import { htmlI18n, pageInputs } from './build/htmlI18n.ts'
 import { inlineStyles } from './build/inlineStyles.ts'
 
 const path = (relative: string): string => fileURLToPath(new URL(relative, import.meta.url))
 
-/** The theme script runs inline in <head>, before the first paint (allowed by its CSP hash). */
+const LOCALES = path('./src/i18n/locales')
+
+/**
+ * The head scripts run inline before the first paint (each allowed by its CSP hash): the theme,
+ * then the arrival on a journey chapter.
+ */
 function themeScript(): Plugin {
-  const source = readFileSync(path('./build/inline/theme.js'), 'utf8').trim()
+  const sources = ['./build/inline/theme.js', './build/inline/arrival.js'].map((file) =>
+    readFileSync(path(file), 'utf8').trim(),
+  )
+  const scripts = sources.map((source) => `<script>${source}</script>`).join('\n    ')
   return {
     name: 'theme-script',
-    transformIndexHtml: (html) => html.replace('<!-- theme-script -->', `<script>${source}</script>`),
+    transformIndexHtml: (html) => html.replace('<!-- theme-script -->', scripts),
   }
 }
 
@@ -23,21 +32,14 @@ function themeScript(): Plugin {
 export default defineConfig(({ command, isPreview }) => ({
   base: command === 'build' || isPreview === true ? '/plumb-darts/' : '/',
   plugins: [
-    htmlI18n({ messagesFile: path('./src/i18n/en.json') }),
+    // One page per language from index.html (fr/index.html…), each with its own head and menu
+    htmlI18n({ localesDir: LOCALES, template: path('./index.html') }),
     themeScript(),
     inlineStyles({
       entry: path('./src/styles/index.css'),
-      heroFont: {
-        file: path(
-          './node_modules/@fontsource-variable/big-shoulders-display/files/big-shoulders-display-latin-wght-normal.woff2',
-        ),
-        family: 'Plumb Hero',
-        weight: 800,
-        // Headline, wordmark and score digits: everything above the fold set in the display face
-        keys: ['hero.title1', 'hero.title2', 'hero.title3', 'footer.wordmark'],
-        extraGlyphs: '0123456789!',
-        messagesFile: path('./src/i18n/en.json'),
-      },
+      faces: EMBEDDED_FACES,
+      copyFaces: COPY_FACES,
+      localesDir: LOCALES,
     }),
     deferredBoot({ bootScript: path('./build/inline/boot.js') }),
     contentSecurityPolicy(),
@@ -49,13 +51,8 @@ export default defineConfig(({ command, isPreview }) => ({
     // paint, only on devices that get 3D, so the default 500 kB warning is raised for it alone
     chunkSizeWarningLimit: 650,
     rolldownOptions: {
-      input: {
-        main: path('./index.html'),
-        notFound: path('./404.html'),
-      },
+      // The home of each language and the 404 page
+      input: pageInputs(path('.')),
     },
-  },
-  worker: {
-    format: 'es',
   },
 }))

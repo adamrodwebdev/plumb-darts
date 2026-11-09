@@ -132,21 +132,30 @@ export async function createScene(options: SceneOptions): Promise<SceneHandle> {
           return
         }
         stage.camera.updateMatrixWorld()
+        // A dart from an earlier visit may still be pinned in the board: it flies in the scene
+        stage.scene.attach(dart.root)
         const from = stage.camera.localToWorld(HAND.clone())
         const to = board.toWorld(thrownDart.landing, new Vector3())
         sound.play('whoosh')
-        stage.play(
-          new DartFlight(dart, {
-            from,
-            to,
-            start: clock.now(),
-            instant: !motion(),
-            onLand: () => {
-              sound.play(thrownDart.gameShot ? 'win' : 'thud')
-              resolve()
-            },
-          }),
-        )
+        const flight = new DartFlight(dart, {
+          from,
+          to,
+          start: clock.now(),
+          instant: !motion(),
+          onLand: () => {
+            sound.play(thrownDart.gameShot ? 'win' : 'thud')
+            resolve()
+          },
+        })
+        stage.play({
+          step: (now) => {
+            if (flight.step(now)) return true
+            // Settled: pinned in the board, it leaves with it (it once floated in the air)
+            dart.root.userData['keepLook'] = true
+            board.root.attach(dart.root)
+            return false
+          },
+        })
       })
     },
     collect() {

@@ -162,26 +162,26 @@
   transition: transform 0.55s var(--ease-out);
 }
 
-.button:disabled {
+.button:is(:disabled, [aria-disabled='true']) {
   opacity: 0.42;
   cursor: not-allowed;
 }
 
 @media (hover: hover) and (pointer: fine) and (prefers-reduced-motion: no-preference) {
-  .button:is(:hover, :focus-visible):not(:disabled)::before {
+  .button:is(:hover, :focus-visible):not(:disabled, [aria-disabled='true'])::before {
     transform: translate3d(0, 0, 0) rotate(0deg);
   }
 
-  .button:is(:hover, :focus-visible):not(:disabled) .button__label {
+  .button:is(:hover, :focus-visible):not(:disabled, [aria-disabled='true']) .button__label {
     transform: translateY(-1.3em);
   }
 
-  .button:is(:hover, :focus-visible):not(:disabled) {
+  .button:is(:hover, :focus-visible):not(:disabled, [aria-disabled='true']) {
     border-color: var(--ink);
     color: var(--bg);
   }
 
-  .button:is(:hover, :focus-visible):not(:disabled) .button__icon {
+  .button:is(:hover, :focus-visible):not(:disabled, [aria-disabled='true']) .button__icon {
     transform: translateX(0.25rem);
   }
 }

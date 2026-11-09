@@ -6,6 +6,32 @@ All notable changes to this project are written here. The format follows
 
 ## [Unreleased]
 
+### Added
+
+- The journey: chapters 3 to 7 (the grip to the checkout) travel sideways where the screen is at
+  least 40rem tall and motion is welcome. Their frame sticks to the screen (CSS sticky) while a
+  strip of five screens slides left as the page scrolls down, each chapter holding the screen for
+  a while; the 3D dart and the board follow. The chapter menu, in-page links, an address such as
+  `#weight` and keyboard focus bring each chapter on; a chapter taller than its screen (the
+  finish on a phone) scrolls its text during its hold, and a focused control always shows above
+  the counter. Short screens and reduced motion keep the stacked story, and turning a phone to
+  landscape keeps the reader in the same chapter.
+- End-to-end checks of the journey: the chapter menu, a link on arrival, focus above the counter,
+  reduced motion, a screen that gets short.
+
+### Changed
+
+- The board slides in from the right with the finish and leaves by the left with it, receding,
+  and fades only on its way out of shot: it used to vanish in one frame. The darts thrown stay
+  pinned in it and leave with it, where they floated in the air.
+
+### Fixed
+
+- Playing the finish with the keyboard: the Throw button kept the focus only by chance. It was
+  disabled while the dart flew, and a disabled button loses the focus (Chrome hands it to the
+  page), so the next Enter went nowhere. It now waits as `aria-disabled`; after the last dart the
+  focus moves on to Collect the darts, then back to Throw.
+
 ## [0.2.0] - 2026-11-09
 
 First published version, on GitHub Pages. Lighthouse 100 in the four categories on mobile

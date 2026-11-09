@@ -3,7 +3,7 @@ import { formatDate, formatSpecs } from './specs'
 import { unbreakable } from './typography'
 
 /** No-break space, as every face of the page draws it */
-const NBSP = ' '
+const NBSP = '\u00a0'
 
 describe('the dart’s facts, formatted by Intl in each language', () => {
   test('in English: points, unit symbols, no space before %', () => {
@@ -36,20 +36,23 @@ describe('the dart’s facts, formatted by Intl in each language', () => {
     'never breaks a measure, nor uses the narrow space no face draws (%s)',
     (locale) => {
       const values = Object.values(formatSpecs(locale))
-      expect(values.filter((value) => /[  ]/.test(value))).toEqual([])
+      expect(values.filter((value) => /[ \u202f]/.test(value))).toEqual([])
     },
   )
 })
 
 describe('a clipping’s date', () => {
   test.each([
-    { locale: 'en-GB', text: `12${NBSP}Oct${NBSP}2026` },
-    { locale: 'fr-FR', text: `12${NBSP}oct.${NBSP}2026` },
-    { locale: 'ru-RU', text: `12${NBSP}окт.${NBSP}2026${NBSP}г.` },
-    { locale: 'id-ID', text: `12${NBSP}Okt${NBSP}2026` },
-  ])('reads like a source line in $locale', ({ locale, text }) => {
-    expect(formatDate(locale, '2026-10-12')).toBe(text)
-  })
+    { locale: 'en-GB', text: `12${NBSP}Oct 2026` },
+    { locale: 'fr-FR', text: `12${NBSP}oct. 2026` },
+    { locale: 'ru-RU', text: `12${NBSP}окт. 2026${NBSP}г.` },
+    { locale: 'id-ID', text: `12${NBSP}Okt 2026` },
+  ])(
+    'reads like a source line in $locale, breaking only between month and year',
+    ({ locale, text }) => {
+      expect(formatDate(locale, '2026-10-12')).toBe(text)
+    },
+  )
 
   test.each(['2026-13-01', '2026-02-30', '12/10/2026', '2026-1-2', '', '1e3-01-01'])(
     'fails the build on %j, which is no date',
@@ -61,6 +64,6 @@ describe('a clipping’s date', () => {
 
 describe('unbreakable', () => {
   test('turns spaces and narrow no-break spaces into no-break spaces', () => {
-    expect(unbreakable('1 441 g')).toBe(`1${NBSP}441${NBSP}g`)
+    expect(unbreakable('1\u202f441 g')).toBe(`1${NBSP}441${NBSP}g`)
   })
 })

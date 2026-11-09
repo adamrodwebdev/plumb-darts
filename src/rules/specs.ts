@@ -82,7 +82,7 @@ export function formatSpecs(locale: string): Readonly<Record<SpecName, string>> 
     weightLong: measure(locale, DART_SPECS.weight, 'long'),
     tungsten: measure(locale, DART_SPECS.tungsten),
     // The barrel's length by its diameter: "50 × 6.6 mm"
-    barrelSize: `${measure(locale, DART_SPECS.barrelLength)} × ${measure(locale, DART_SPECS.barrelDiameter)}`,
+    barrelSize: `${measure(locale, DART_SPECS.barrelLength)}\u00a0×\u00a0${measure(locale, DART_SPECS.barrelDiameter)}`,
     length: measure(locale, DART_SPECS.length),
     cog: measure(locale, DART_SPECS.centreOfGravity),
     tipLength: measure(locale, DART_SPECS.tipLength),
@@ -94,7 +94,11 @@ const YEAR = { min: 2000, max: 2100, integer: true } as const
 const MONTH = { min: 1, max: 12, integer: true } as const
 const DAY = { min: 1, max: 31, integer: true } as const
 
-/** A clipping's date as a newspaper's source line prints it: "12 Oct 2026", "12 oct. 2026" */
+/**
+ * A clipping's date as a newspaper's source line prints it: "12 Oct 2026", "12 окт. 2026 г.".
+ * The day stays with its month and the year with what follows it (Russian's "г."); the line may
+ * break between the month and the year, in a narrow clipping.
+ */
 export function formatDate(locale: string, isoDate: string): string {
   const [year, month, day] = /^(\d{4})-(\d{2})-(\d{2})$/.exec(isoDate)?.slice(1) ?? []
   const date = new Date(
@@ -105,12 +109,18 @@ export function formatDate(locale: string, isoDate: string): string {
     ),
   )
   if (date.toISOString().slice(0, 10) !== isoDate) throw new Error(`${isoDate}: no such day`)
-  return unbreakable(
-    new Intl.DateTimeFormat(locale, {
-      day: 'numeric',
-      month: 'short',
-      year: 'numeric',
-      timeZone: 'UTC',
-    }).format(date),
-  )
+  const parts = new Intl.DateTimeFormat(locale, {
+    day: 'numeric',
+    month: 'short',
+    year: 'numeric',
+    timeZone: 'UTC',
+  }).formatToParts(date)
+  return parts
+    .map((part, index) => {
+      if (part.type !== 'literal') return part.value
+      const sides = `${parts[index - 1]?.type ?? ''} ${parts[index + 1]?.type ?? ''}`
+      const breakable = sides === 'month year' || sides === 'year month'
+      return breakable ? part.value.replace(/\u202f/g, ' ') : unbreakable(part.value)
+    })
+    .join('')
 }

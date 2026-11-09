@@ -46,7 +46,7 @@ describe('html i18n', () => {
       '<p>{{ hero.eyebrow }}</p><html lang="{{ page.lang }}"><b>{{ fact.weight }}</b>' +
       '<time>{{ date 2026-10-12 }}</time>'
     expect(fillPlaceholders(html, messages, VALUES, 'fr/index.html')).toBe(
-      '<p>Only 22\u00a0g</p><html lang="fr"><b>22\u00a0g</b><time>12\u00a0oct.\u00a02026</time>',
+      '<p>Only 22\u00a0g</p><html lang="fr"><b>22\u00a0g</b><time>12\u00a0oct. 2026</time>',
     )
   })
 

@@ -5,5 +5,5 @@
  * has takes both places, as the French copy itself writes it.
  */
 export function unbreakable(text: string): string {
-  return text.replace(/[  ]/g, ' ')
+  return text.replace(/[ \u202f]/g, '\u00a0')
 }

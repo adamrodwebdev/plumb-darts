@@ -293,10 +293,6 @@
 }
 
 /* ---------- Language menu: a native <details>, usable without the script ---------- */
-.lang-menu {
-  position: relative;
-}
-
 .lang-menu__toggle {
   display: inline-flex;
   align-items: center;
@@ -383,6 +379,32 @@
   height: 0.5rem;
   border-radius: 50%;
   background: var(--accent);
+}
+
+/* Under 24rem the wordmark and three controls fit on one line only if the sound button shows its
+   bars alone (its name stays for screen readers) and the language button drops its arrow: measured
+   in the widest language, Spanish, from 320 to 430 px (2026-11-09) */
+@media (width < 24rem) {
+  .sound-button {
+    padding: 0;
+  }
+
+  .sound-button__label {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    overflow: hidden;
+    clip-path: inset(50%);
+    white-space: nowrap;
+  }
+
+  .lang-menu__chevron {
+    display: none;
+  }
+
+  .lang-menu__toggle {
+    padding-inline: 0.75rem;
+  }
 }
 
 /* ---------- Score counter (HUD) ---------- */

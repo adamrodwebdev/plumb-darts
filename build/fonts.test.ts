@@ -43,7 +43,7 @@ describe('the WOFF2 reader', () => {
   })
 
   test('names the characters it lacks', () => {
-    expect(missingCharacters('a Ж', bigShoulders)).toEqual(['U+202F', 'U+0416'])
+    expect(missingCharacters('a\u202fЖ', bigShoulders)).toEqual(['U+202F', 'U+0416'])
   })
 
   test('refuses a file that is not WOFF2', () => {

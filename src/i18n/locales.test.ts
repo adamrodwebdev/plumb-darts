@@ -110,7 +110,7 @@ describe.each(LANGUAGES)('the $name messages', (language) => {
   })
 
   test('use typographic apostrophes and ellipses, and no narrow space the fonts lack', () => {
-    const plain = texts.filter(({ text }) => /'|\.\.\.| | {2}/.test(text))
+    const plain = texts.filter(({ text }) => /'|\.\.\.|\u202f| {2}/.test(text))
     expect(plain.map(({ key, text }) => `${key}: "${text}"`)).toEqual([])
   })
 })
@@ -122,13 +122,15 @@ describe('typography per language', () => {
     )
 
   test('French puts a no-break space before : ; ! ? and inside « »', () => {
-    const wrong = textsIn('fr').filter(({ text }) => /[^ ][:;!?»]/.test(text) || /«[^ ]/.test(text))
+    const wrong = textsIn('fr').filter(
+      ({ text }) => /[^\u00a0][:;!?»]/.test(text) || /«[^\u00a0]/.test(text),
+    )
     expect(wrong.map(({ key, text }) => `${key}: "${text}"`)).toEqual([])
   })
 
   test('Russian sets no space before ! ? : ; and binds each dash to the word before it', () => {
     const wrong = textsIn('ru').filter(
-      ({ text }) => /\s[!?:;]/.test(text) || /[^ ]—/.test(text) || /["„“”]/.test(text),
+      ({ text }) => /\s[!?:;]/.test(text) || /[^\u00a0]—/.test(text) || /["„“”]/.test(text),
     )
     expect(wrong.map(({ key, text }) => `${key}: "${text}"`)).toEqual([])
   })

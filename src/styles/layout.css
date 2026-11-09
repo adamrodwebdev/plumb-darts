@@ -100,7 +100,9 @@
   inset: 0 0 auto;
   z-index: 10;
   display: grid;
-  grid-template-columns: auto 1fr auto;
+  /* The wordmark and the controls never shrink: a row too wide fails the masthead test instead of
+     squeezing the logo (bug lessons, portfolio 1.10.0) */
+  grid-template-columns: max-content minmax(0, 1fr) max-content;
   align-items: center;
   gap: 1rem;
   min-height: var(--masthead-height);
@@ -118,6 +120,7 @@
 }
 
 .brand__mark {
+  flex: none;
   width: 1.125rem;
   height: 1.75rem;
   fill: none;
@@ -150,7 +153,9 @@
   transition: color 0.6s var(--ease-in-out);
 }
 
+/* The language list opens under the whole group, aligned on its right edge */
 .masthead__actions {
+  position: relative;
   display: flex;
   justify-content: flex-end;
   gap: 0.5rem;

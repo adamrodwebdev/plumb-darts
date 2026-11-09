@@ -235,20 +235,39 @@
    neighbours peek out on both sides */
 @media (width < 40rem) {
   .orbit.is-3d {
-    height: 30.5rem;
+    height: auto;
     perspective: 900px;
   }
 
-  /* The headline sits above the ring on phones: behind it, the cards would hide it */
+  /* The headline sits above the ring on phones, in the flow: behind it, the cards would hide it,
+     and a headline on two lines (or set in a taller face) once ran into the clippings, which a
+     longer language also makes taller (2026-11-09). The ring then holds the tallest clipping,
+     magnified by the perspective, below it. */
   .orbit.is-3d .orbit__space {
-    inset: 3.5rem 0 4.75rem;
+    position: relative;
+    inset: auto;
+    display: flex;
+    flex-direction: column;
     transform: rotateX(-4deg);
   }
 
   .orbit.is-3d .orbit__title {
-    inset: -3.5rem 0 auto;
+    position: static;
+    margin-block-end: 0.75rem;
     font-size: 2.5rem;
     transform: none;
+  }
+
+  .orbit.is-3d .orbit__ring {
+    position: relative;
+    inset: auto;
+    height: 24.5rem;
+  }
+
+  .orbit.is-3d .orbit__controls {
+    position: relative;
+    inset: auto;
+    margin-block-start: 0.75rem;
   }
 
   .orbit.is-3d .clipping {

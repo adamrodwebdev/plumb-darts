@@ -86,7 +86,7 @@ describe('Translator in French', () => {
   const translator = new Translator(french, 'fr-FR')
 
   test('groups digits with the no-break space every face draws, not Intl’s narrow one', () => {
-    expect(translator.number(1441)).toBe('1 441')
+    expect(translator.number(1441)).toBe('1\u00a0441')
   })
 
   test('counts zero and one in the singular', () => {

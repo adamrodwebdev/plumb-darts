@@ -1,0 +1,16 @@
+Plumb Darts: the 3D models
+
+dart.glb, board.glb and board-1k.glb
+Copyright (c) 2026 AdamRodWebDev. All rights reserved.
+
+These files are licensed only to the Plumb Darts demo
+(https://adamrodwebdev.github.io/plumb-darts/), built from
+https://github.com/adamrodwebdev/plumb-darts. Any other use, copy or
+redistribution needs the author's written permission.
+
+The MIT licence of the code does not cover them: they are not in the
+public repository and are copied in from a private one when the site is
+built. Each file carries this notice in its asset.copyright and
+asset.extras fields.
+
+Contact: https://github.com/adamrodwebdev

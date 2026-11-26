@@ -9,11 +9,16 @@
     "node": ">=24"
   },
   "scripts": {
+    "assets": "node build/privateAssets.ts",
+    "assets:lock": "node build/privateAssets.ts --lock",
+    "predev": "node build/privateAssets.ts",
     "dev": "vite",
+    "prebuild": "node build/privateAssets.ts",
     "build": "vite build",
     "preview": "vite preview",
     "typecheck": "tsc --noEmit -p tsconfig.json && tsc --noEmit -p tsconfig.node.json",
     "lint": "oxlint . && eslint .",
+    "pretest": "node build/privateAssets.ts",
     "test": "vitest run",
     "test:e2e": "playwright test",
     "format": "prettier --write src build e2e scripts"

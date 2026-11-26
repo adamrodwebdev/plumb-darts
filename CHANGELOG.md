@@ -6,6 +6,16 @@ All notable changes to this project are written here. The format follows
 
 ## [Unreleased]
 
+### Changed
+
+- The 3D models are ours, and no longer in this public repository: they live in a private one,
+  marked with our copyright (`asset.copyright` and `asset.extras`). The build copies them to
+  `public/models/` at the commit pinned in `private-assets.lock.json` and checks each file's size
+  and SHA-256 (`npm run assets`, run before `dev`, `test` and `build`). When a file is missing or
+  differs, the build stops and names it. Their notice is `public/models/LICENSE.txt`: the MIT
+  licence covers the code only.
+- CI and Pages read the models with a read-only token, given to that step alone, before `npm ci`.
+
 ## [0.3.2] - 2026-11-09
 
 The press chapter fits every screen.

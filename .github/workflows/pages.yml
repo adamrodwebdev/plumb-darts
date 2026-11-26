@@ -34,6 +34,13 @@ jobs:
         with:
           node-version: 24
           cache: npm
+      # Our own models live in a private repository. Its read-only token goes to this step alone,
+      # before npm ci: the script imports nothing from node_modules, so no third-party code has run
+      # on the runner yet
+      - name: Our models, from the private repository
+        run: node build/privateAssets.ts
+        env:
+          PRIVATE_ASSETS_TOKEN: ${{ secrets.PRIVATE_ASSETS_TOKEN }}
       - run: npm ci
       - run: npm run build
       - uses: actions/configure-pages@45bfe0192ca1faeb007ade9deae92b16b8254a0d # v6.0.0

@@ -123,6 +123,13 @@ web with glTF Transform and meshoptimizer (`public/models/`).
   the scene uses, their maps, a vertex and texture budget, the point's position and the board's
   radius (the scoring rules') must all be there. A refused file sends the page to its art
   without 3D, as any other failure of the scene does.
+- **Kept private** (`build/privateAssets.ts`): the three files are ours and not under the MIT
+  licence, so they are not in this repository. They live in a private one, each marked with our
+  copyright (`asset.copyright` and `asset.extras`). `npm run assets` copies them to
+  `public/models/` at the commit pinned in `private-assets.lock.json` and checks each file's size
+  and SHA-256; `npm run dev`, `npm test` and `npm run build` run it first. When a file is
+  missing or differs, it stops and names the file. Their notice:
+  [`public/models/LICENSE.txt`](public/models/LICENSE.txt).
 
 ## Run it
 
@@ -133,8 +140,15 @@ npm ci
 npm run dev
 ```
 
+The 3D models come from a private repository ([The 3D models](#the-3d-models)). `npm run assets`
+reads them from a clone of it in the folder next to this one (or the folder `PRIVATE_ASSETS_DIR`
+names), else from GitHub with `PRIVATE_ASSETS_TOKEN` or your `gh` login. Without access, it stops
+and says what is missing.
+
 | Script | What it does |
 |---|---|
+| `npm run assets` | Copies our 3D models from the private repository, checked against `private-assets.lock.json` (run by `dev`, `test` and `build`) |
+| `npm run assets:lock` | Pins the private repository's `origin/main` in the lock, once a new model is pushed there |
 | `npm run dev` | Vite dev server on http://localhost:5173 |
 | `npm run build` | Production build in `dist/` (base path `/plumb-darts/`) |
 | `npm run preview` | Serves the build on http://localhost:4173/plumb-darts/ |
@@ -164,18 +178,20 @@ src/
   styles/       tokens (light-dark), layout, components, motion — inlined at build
 build/          Vite plugins: html i18n (a page per language), inline styles with each page's fonts
                 (embedded headline subsets, faces cut to its language), deferred boot, CSP, compile
-                hints; the WOFF2 coverage reader
-public/models/  the dart and the board (GLB: meshopt geometry, WebP maps)
+                hints; the WOFF2 coverage reader; the private models step (privateAssets.ts)
+public/models/  the dart and the board (GLB: meshopt geometry, WebP maps), copied in from the
+                private repository and ignored by git; their notice (LICENSE.txt)
 ```
 
 ## Tests
 
 `npm test` runs the unit suite (scoring rings and segments, the 501 digits, the choreography's
 pose maths, quality tiers and software renderers, a seeded 3000-dart simulation of the throw, the
-translator, the input readers and the GLB reader against hostile files, the build plugins, and the
-shipped model files: within their limits, with the nodes the scene uses and only extensions the
-page decodes). For the six languages it checks that every messages file has exactly the English
-keys, the same placeholders and the plural forms `Intl.PluralRules` asks for; that no key is
+translator, the input readers and the GLB reader against hostile files, the build plugins, the
+private models step (its lock read field by field, each copy checked by size and fingerprint, on
+real git clones), and the shipped model files: within their limits, with the nodes the scene uses
+and only extensions the page decodes). For the six languages it checks that every messages file
+has exactly the English keys, the same placeholders and the plural forms `Intl.PluralRules` asks for; that no key is
 orphaned; each language's typography (French no-break spaces, Russian dashes, Spanish opening
 marks); that every character a page shows is in the faces that set it, read from the WOFF2 files;
 and that every page has its `lang`, its canonical address and its `hreflang` links.
@@ -206,6 +222,9 @@ blocking, on a fast laptop).
 - `dev`: work in progress, pushed freely. Pull requests target `dev`.
 - `main`: what is published. GitHub Pages deploys `main` only after its CI ends green
   (`.github/workflows/pages.yml`). `dev` is merged into `main` only to publish.
+- CI and Pages read the models with `PRIVATE_ASSETS_TOKEN`: a fine-grained token that reads the
+  private repository alone (Contents: read-only), stored as a secret of this repository, for
+  Actions and for Dependabot (whose pull requests only see Dependabot secrets).
 
 ## Credits
 
@@ -220,4 +239,6 @@ blocking, on a fast laptop).
 
 ## Licence
 
-Code under the [MIT licence](LICENSE). Fonts under their own SIL Open Font License.
+Code under the [MIT licence](LICENSE). The 3D models are not: © 2026 AdamRodWebDev, all rights
+reserved ([public/models/LICENSE.txt](public/models/LICENSE.txt)). Fonts under their own SIL Open
+Font License.

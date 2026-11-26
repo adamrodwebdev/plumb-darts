@@ -1,0 +1,22 @@
+{
+  "repository": "adamrodwebdev/private-assets",
+  "folder": "plumb-darts",
+  "commit": "ba44c8a391eb0419d397e35ec100eba02a8615bf",
+  "files": [
+    {
+      "path": "models/board-1k.glb",
+      "size": 313940,
+      "sha256": "4af9adffa12613cf051e33d2394c0c8a46502d781e05436d6399424e1410942f"
+    },
+    {
+      "path": "models/board.glb",
+      "size": 509048,
+      "sha256": "9195f9f3296c50c4d7198ada642497aa2e0c8b0be8c8c8912d96ebfdb1465c1b"
+    },
+    {
+      "path": "models/dart.glb",
+      "size": 319292,
+      "sha256": "1ec68ca3a17bda8a77d90049e96fe568b28192de0d4b87756ce5f392ecebc2aa"
+    }
+  ]
+}

@@ -239,6 +239,6 @@ blocking, on a fast laptop).
 
 ## Licence
 
-Code under the [MIT licence](LICENSE). The 3D models are not: © 2026 AdamRodWebDev, all rights
+Code under the [MIT licence](LICENSE). The 3D models are not: © 2026 AdamRodWebTech, all rights
 reserved ([public/models/LICENSE.txt](public/models/LICENSE.txt)). Fonts under their own SIL Open
 Font License.

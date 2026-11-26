@@ -15,6 +15,8 @@ All notable changes to this project are written here. The format follows
   differs, the build stops and names it. Their notice is `public/models/LICENSE.txt`: the MIT
   licence covers the code only.
 - CI and Pages read the models with a read-only token, given to that step alone, before `npm ci`.
+- The copyright lines name the company, AdamRodWebTech: the code's MIT licence, the models' notice
+  and the mark inside each model. The credits still name the author, AdamRodWebDev.
 
 ## [0.3.2] - 2026-11-09
 

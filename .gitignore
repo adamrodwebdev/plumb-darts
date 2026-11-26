@@ -11,3 +11,7 @@ blob-report/
 
 # Local Claude Code settings: never in the repository
 .claude/
+
+# Our own 3D models: not in this public repository. npm run assets copies them from the private
+# one, at the commit and fingerprints of private-assets.lock.json
+/public/models/*.glb

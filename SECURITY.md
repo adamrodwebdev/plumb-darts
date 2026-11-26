@@ -22,6 +22,12 @@ The policy allows two things a static page would not need without its 3D models:
 `blob:` in `connect-src` (GLTFLoader reads the models' embedded images back from blob URLs it
 creates). No page starts a worker: `worker-src 'none'`.
 
+The build reads our 3D models from a private repository (`build/privateAssets.ts`). In CI, its
+read-only token (`PRIVATE_ASSETS_TOKEN`: Contents, read-only, on that repository alone) goes to that
+one step, which runs before `npm ci` and imports nothing from `node_modules`; a fork's pull request
+gets no secret. The lock's paths come from an allow-list (`models/<name>.glb`), each file is
+checked against the lock's size and SHA-256 before it is written, and the token is never printed.
+
 To report a problem, open an issue or write through the contact on
 https://github.com/adamrodwebdev.
 

@@ -176,11 +176,17 @@ for (const language of LANGUAGES) {
       }, at)
       await expect.poll(() => leftOf(page, stop.id)).toBe(0)
 
-      const { bottom, counter } = await restingText(page, stop.id)
-      expect(
-        bottom,
-        `${stop.id}: its text ends at ${bottom}, the counter starts at ${counter}`,
-      ).toBeLessThanOrEqual(counter)
+      // Two equal reads 200 ms apart are not always rest: on a busy CI runner WebKit read the
+      // throw's French text 38 px under the counter, then 15 px on the retry, two different places
+      // (2026-11-26). So the read is retried until the text clears the counter, and the test fails
+      // only if it never does
+      await expect(async () => {
+        const { bottom, counter } = await restingText(page, stop.id)
+        expect(
+          bottom,
+          `${stop.id}: its text ends at ${bottom}, the counter starts at ${counter}`,
+        ).toBeLessThanOrEqual(counter)
+      }).toPass({ timeout: 15_000 })
     }
   })
 }
@@ -196,7 +202,9 @@ test('on a short screen, a link to a chapter lands on it once the chapters are p
 
   await expect
     .poll(() =>
-      page.locator('#anatomy').evaluate((element) => Math.round(element.getBoundingClientRect().top)),
+      page
+        .locator('#anatomy')
+        .evaluate((element) => Math.round(element.getBoundingClientRect().top)),
     )
     .toBeLessThan(120)
   expect(

@@ -22,6 +22,13 @@ jobs:
         with:
           node-version: 24
           cache: npm
+      # Our own models live in a private repository. Its read-only token goes to this step alone,
+      # before npm ci: the script imports nothing from node_modules, so no third-party code has run
+      # on the runner yet (a fork's pull request gets no secret, and stops here)
+      - name: Our models, from the private repository
+        run: node build/privateAssets.ts
+        env:
+          PRIVATE_ASSETS_TOKEN: ${{ secrets.PRIVATE_ASSETS_TOKEN }}
       - run: npm ci
       - run: npm run lint
       - run: npm run typecheck
@@ -42,6 +49,10 @@ jobs:
         with:
           node-version: 24
           cache: npm
+      - name: Our models, from the private repository
+        run: node build/privateAssets.ts
+        env:
+          PRIVATE_ASSETS_TOKEN: ${{ secrets.PRIVATE_ASSETS_TOKEN }}
       - run: npm ci
       - run: npx playwright install --with-deps chromium firefox webkit
       - run: npm run build
@@ -59,6 +70,10 @@ jobs:
         with:
           node-version: 24
           cache: npm
+      - name: Our models, from the private repository
+        run: node build/privateAssets.ts
+        env:
+          PRIVATE_ASSETS_TOKEN: ${{ secrets.PRIVATE_ASSETS_TOKEN }}
       - run: npm ci
       - run: npm run build
       - name: Preview server
